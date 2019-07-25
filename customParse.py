@@ -41,9 +41,9 @@ rep2 = {"rd#": " road ", "rd-": " road  ", "h#": " house ", "h-": " house ", "bl
 area_dict = {"mirpur": " mirpur ", "uttara": " uttara "} # define desired replacements here
 expand = multiple_replace(rep2, input_address.lower())
 expand = multiple_replace(area_dict, expand.lower())
-print(word_tokenize(expand))
-addresscomponents = word_tokenize(expand)
+print('tokenize ', word_tokenize(expand))
 print('\n')
+addresscomponents = word_tokenize(expand)
 
 
 
@@ -60,8 +60,8 @@ for i, comp in enumerate(addresscomponents):
             tempArray.append(temp)
         # print comp.rstrip('[!@#$-]')
 
-print(tempArray)
-
+print('final pre-processing',tempArray)
+print "\n"
 
 
 def check_area(token, idx):
@@ -76,12 +76,14 @@ def check_area(token, idx):
                 global area_pos, area_flag
                 area_flag = True 
                 area_pos = idx
+                for i, comp in enumerate(tempArray):
+                    check_sub_area(comp, i)
+
                 return True
 
 
 
 def check_sub_area(token, idx):
-    print area_flag
     if area_flag== True:
         # todo
         global area_pos
@@ -89,12 +91,21 @@ def check_sub_area(token, idx):
         if (idx-area_pos == 1 and any(char.isdigit() for char in tempArray[idx])):
             if(area.lower() == 'mirpur'):
                 token = 'section '+ tempArray[idx]
-                print token
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
                     for j, subarea in enumerate(subarea_list):
                         if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
-                            print('sub area ',subarea[1])
+                            matched[subareakey] = token.lower()
+                            subarea_flag = True
+                            return True
+
+        elif(abs(idx-area_pos) > 1 or abs(idx-area_pos) == 1 and not any(char.isdigit() for char in tempArray[idx])):
+            token = token.lstrip('[0!@#$-]')
+            token = token.rstrip('[0!@#$-]')
+            with open('./subarea-list.csv','rt')as f:
+                    subarea_list = csv.reader(f)
+                    for j, subarea in enumerate(subarea_list):
+                        if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
                             matched[subareakey] = token.lower()
                             subarea_flag = True
                             return True
@@ -113,9 +124,6 @@ def check_sub_area(token, idx):
 #             matched[housekey] = token
 #             return True
 
-# further cleaning...............
-
-
 
 # Parsing..............................
 for i, comp in enumerate(tempArray):
@@ -127,7 +135,7 @@ for i, comp in enumerate(tempArray):
         if (check_sub_area(comp, i)):
             continue
 
-print(matched)
+print('parsing result', matched)
 
 
 
