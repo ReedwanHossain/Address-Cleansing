@@ -11,7 +11,7 @@ while True:
 
 
 
-    # initializaion............................
+# initializaion............................
     namekey = 'name'
     housekey = 'House'
     roadkey = 'road'
@@ -29,8 +29,9 @@ while True:
     subarea_flag = False
     subarea_pos = 0
     matched = {}
+    matched_array = []
 
-    prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho']
+    prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
     address_component = ['', 'house', 'road', 'block', 'section', 'sector', 'avenue']
 
@@ -45,17 +46,14 @@ while True:
     rep2 = {
                 "rd#": " road ", "rd-": " road  ", "rd:": " road  ", "h#": " house ", "h-": " house ", "h:": " house ",
                 "bl-":" block ","bl#":" block ", "bl:":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ',
-                'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ',
-                'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue '
+                'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
+                'house no': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
+                'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '',
             } 
     area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ",} # define desired replacements here
     expand = multiple_replace(rep2, input_address.lower())
     expand = multiple_replace(area_dict, expand.lower())
-    print "Tokenize"
-    print word_tokenize(expand)
-    print('\n')
     addresscomponents = word_tokenize(expand)
-
 
 
     tempArray = []
@@ -64,15 +62,18 @@ while True:
             if comp == "," or comp == "":
                 continue
            
-            temp = comp.lstrip('[0:!@#$-]')
-            temp = temp.rstrip('[:!@#$-]')
+            temp = comp.lstrip('[0:!@#$-=+.]')
+            temp = temp.rstrip('[:!@#$-]=+.')
             temp = temp.strip(" ");
             if(temp != ""):
                 tempArray.append(temp)
             # print comp.rstrip('[!@#$-]')
     print "final pre-processing "
-    print(tempArray)
     cleanAddressStr = ' '.join(tempArray)
+    cleanAddressStr = re.sub(r" ?\([^)]+\)", "", cleanAddressStr)
+    print cleanAddressStr
+    tempArray = word_tokenize(cleanAddressStr)
+    print tempArray
     print "\n"
 
     tempObjArray = []
@@ -92,8 +93,9 @@ while True:
           area_list = csv.reader(f)
           for j, area in enumerate(area_list):
 
-                if (area_token[0].lower().strip() == area[0].lower()):
+                if (area_token[0].lower().strip() == area[0].lower() and area_token[0].lower().strip() in cleanAddressStr.lower()):
                     matched[areakey] = area[0].lower()
+                    matched_array.append(area[0].lower())
                     global area_pos, area_flag
                     area_flag = True 
                     area_pos = idx
@@ -124,13 +126,14 @@ while True:
                     for j, subarea in enumerate(subarea_list):
                         if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
                             matched[subareakey] = token.lower()
+                            matched_array.append(token.lower())
                             subarea_flag = True
                             return True
 
-            if(abs(idx-area_pos) > 1 or abs(idx-area_pos) == 1 and not any(char.isdigit() for char in tempArray[idx])):
+            elif(abs(idx-area_pos) > 1 or abs(idx-area_pos) == 1 and not any(char.isdigit() for char in tempArray[idx])):
                 global cleanAddressStr
-                token = token.lstrip('[0:!@#$-]')
-                token = token.rstrip('[:!@#$-]')
+                token = token.lstrip('[0:!@#$-=+.]')
+                token = token.rstrip('[:!@#$-=+.]')
                 prefix_flag = False
                 # if idx != tempArray.count:   
                 # for k, prefix in enumerate(prefix_dict):
@@ -142,6 +145,7 @@ while True:
 
                 if (token.lower() =='section' or token.lower() =='sector' and token.lower() in cleanAddressStr.lower()):
                         matched[subareakey] = token +' '+ tempArray[idx+1]
+                        matched_array.append(matched[subareakey])
                         subarea_flag = True
                         return True
 
@@ -151,22 +155,59 @@ while True:
                         if (area.lower() == subarea[0].lower() and (token.lower() in subarea[1].lower() and subarea[1].lower() in cleanAddressStr.lower())):
                             print '............: '+subarea[1]
                             matched[subareakey] = subarea[1].lower()
+                            matched_array.append(matched[subareakey])
                             subarea_flag = True
-                    
+        
+
+        elif area_flag == False:
+            with open('./subarea-list.csv','rt')as f:
+                subarea_list = csv.reader(f)
+                for j, subarea in enumerate(subarea_list):
+                    if (token.lower() in subarea[1].lower() and subarea[1].lower() in cleanAddressStr.lower()):
+                        matched[subareakey] = subarea[1].lower()
+                        matched[areakey] = subarea[0].lower()
+                        matched_array.append(matched[areakey])
+                        matched_array.append(matched[subareakey])
+                        subarea_flag = True
+                        return True        
 
 
 
 
 
-    # def check_holding(token, idx):
-    #     if (any(char.isdigit() for char in token)):
-    #         if idx == 0:
-    #             matched[housekey] = token
-    #             return True
+    def check_holding(token, idx):
+        if (any(char.isdigit() for char in token)):
+            if idx == 0:
+                matched[housekey] = token
+                matched_array.append(token)
+                return True
 
-    #         elif (addresscomponents[idx+1].lower() == 'house' or addresscomponents[idx-1].lower() == 'house'):
-    #             matched[housekey] = token
-    #             return True
+        elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(tempArray)-1):
+            if (any(char.isdigit() for char in tempArray[idx+1])):
+                matched[housekey] = tempArray[idx+1]
+                matched_array.append(tempArray[idx+1])
+                return True
+
+
+    def check_road(road, idx):
+
+        if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road:
+            if idx != len(tempArray)-1:
+                if (any(char.isdigit() for char in tempArray[idx+1])):
+                    matched[roadkey] = road+" "+tempArray[idx+1]
+                    matched_array.append(matched[roadkey])
+                    return True
+            if idx != 0:
+                if (not any(char.isdigit() for char in tempArray[idx-1])):
+                    i = idx-1
+                    road_str =  ''
+                    while i>=0 and tempArray[i] not in address_component and tempArray[i] not in matched_array:
+                        road_str = tempArray[i] +" "+ road_str
+                        i=i-1
+                    matched[roadkey] = road_str +" "+ road
+                    matched_array.append(matched[roadkey])
+                    return True
+                        
 
 
     # Parsing..............................
@@ -174,10 +215,12 @@ while True:
             comp=comp.strip()
             # print(comp)
             if (check_area(comp, i)):
-                continue
-
+                pass
             if (check_sub_area(comp, i)):
-                print('subarea')
-                continue
+                pass
+            if (check_holding(comp, i)):
+                pass
+            if (check_road(comp, i)):
+                pass
     print('Parse Result')
     print(matched)
