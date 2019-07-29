@@ -29,6 +29,13 @@ while True:
     subarea_flag = False
     subarea_pos = 0
     matched = {}
+
+    matched[housekey] = None
+    matched[roadkey] = None
+    matched[ssareakey] = None
+    matched[subareakey] = None
+    matched[areakey] = None
+
     matched_array = []
 
     prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
@@ -44,8 +51,8 @@ while True:
       return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text) 
 
     rep2 = {
-                "rd#": " road ", "rd-": " road  ", "rd:": " road  ", "h#": " house ", "h-": " house ", "h:": " house ",
-                "bl-":" block ","bl#":" block ", "bl:":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ',
+                "rd#": " road ", "rd-": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r-": " road ", ",r-": " road ", "h#": " house ", "h-": " house ", "h:": " house ",
+                "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
                 'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
                 'house no': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
                 'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '',
@@ -95,7 +102,7 @@ while True:
 
                 if (area_token[0].lower().strip() == area[0].lower() and area_token[0].lower().strip() in cleanAddressStr.lower()):
                     matched[areakey] = area[0].lower()
-                    matched_array.append(area[0].lower())
+                    # matched_array.append(area[0].lower())
                     global area_pos, area_flag
                     area_flag = True 
                     area_pos = idx
@@ -126,7 +133,7 @@ while True:
                     for j, subarea in enumerate(subarea_list):
                         if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
                             matched[subareakey] = token.lower()
-                            matched_array.append(token.lower())
+                            # matched_array.append(token.lower())
                             subarea_flag = True
                             return True
 
@@ -134,18 +141,15 @@ while True:
                 global cleanAddressStr
                 token = token.lstrip('[0:!@#$-=+.]')
                 token = token.rstrip('[:!@#$-=+.]')
-                prefix_flag = False
-                # if idx != tempArray.count:   
-                # for k, prefix in enumerate(prefix_dict):
-                #     pre_token = prefix + ' ' + token
-                #     if pre_token in cleanAddressStr:
-                #         token = pre_token.lstrip()
-                #         token = token.rstrip()
-                #         prefix_flag = True       
+                prefix_flag = False      
 
                 if (token.lower() =='section' or token.lower() =='sector' and token.lower() in cleanAddressStr.lower()):
                         matched[subareakey] = token +' '+ tempArray[idx+1]
-                        matched_array.append(matched[subareakey])
+                        if (area.lower()=='mirpur'):
+                            matched[subareakey] = 'section' +' '+ tempArray[idx+1]
+                        elif(area.lower()=='uttara'):
+                            matched[subareakey] = 'sector' +' '+ tempArray[idx+1]
+                        # matched_array.append(matched[subareakey])
                         subarea_flag = True
                         return True
 
@@ -153,9 +157,8 @@ while True:
                     subarea_list = csv.reader(f)
                     for j, subarea in enumerate(subarea_list):
                         if (area.lower() == subarea[0].lower() and (token.lower() in subarea[1].lower() and subarea[1].lower() in cleanAddressStr.lower())):
-                            print '............: '+subarea[1]
                             matched[subareakey] = subarea[1].lower()
-                            matched_array.append(matched[subareakey])
+                            # matched_array.append(matched[subareakey])
                             subarea_flag = True
         
 
@@ -166,8 +169,8 @@ while True:
                     if (token.lower() in subarea[1].lower() and subarea[1].lower() in cleanAddressStr.lower()):
                         matched[subareakey] = subarea[1].lower()
                         matched[areakey] = subarea[0].lower()
-                        matched_array.append(matched[areakey])
-                        matched_array.append(matched[subareakey])
+                        # matched_array.append(matched[areakey])
+                        # matched_array.append(matched[subareakey])
                         subarea_flag = True
                         return True        
 
@@ -179,13 +182,13 @@ while True:
         if (any(char.isdigit() for char in token)):
             if idx == 0:
                 matched[housekey] = token
-                matched_array.append(token)
+                # matched_array.append(token)
                 return True
 
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(tempArray)-1):
             if (any(char.isdigit() for char in tempArray[idx+1])):
                 matched[housekey] = tempArray[idx+1]
-                matched_array.append(tempArray[idx+1])
+                # matched_array.append(tempArray[idx+1])
                 return True
 
 
@@ -195,17 +198,18 @@ while True:
             if idx != len(tempArray)-1:
                 if (any(char.isdigit() for char in tempArray[idx+1])):
                     matched[roadkey] = road+" "+tempArray[idx+1]
-                    matched_array.append(matched[roadkey])
+                    # matched_array.append(matched[roadkey])
                     return True
             if idx != 0:
                 if (not any(char.isdigit() for char in tempArray[idx-1])):
+                    print "...................mirpur"
                     i = idx-1
                     road_str =  ''
                     while i>=0 and tempArray[i] not in address_component and tempArray[i] not in matched_array:
                         road_str = tempArray[i] +" "+ road_str
                         i=i-1
                     matched[roadkey] = road_str +" "+ road
-                    matched_array.append(matched[roadkey])
+                    # matched_array.append(matched[roadkey])
                     return True
                         
 
@@ -214,13 +218,22 @@ while True:
     for i, comp in enumerate(tempArray):
             comp=comp.strip()
             # print(comp)
-            if (check_area(comp, i)):
-                pass
-            if (check_sub_area(comp, i)):
-                pass
-            if (check_holding(comp, i)):
-                pass
-            if (check_road(comp, i)):
-                pass
+            if (matched[areakey]==None):
+                if check_area(comp,i):
+                    matched_array.append(matched[areakey])
+                    pass
+            if (matched[subareakey]==None):
+                if check_sub_area(comp,i):
+                    matched_array.append(matched[subareakey])
+                    pass
+            if (matched[areakey]==None):
+                if check_holding(comp,i):
+                    matched_array.append(matched[housekey])
+                    pass
+            if (matched[roadkey]==None):
+                if check_road(comp,i):
+                    matched_array.append(matched[roadkey])
+                    pass
     print('Parse Result')
     print(matched)
+    print matched_array
