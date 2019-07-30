@@ -4,7 +4,7 @@ import nltk
 import csv
 from nltk.tokenize import sent_tokenize, word_tokenize
 
-with open('./rapido.csv','rt')as f:
+with open('./chaldal.csv','rt')as f:
     test_data = csv.reader(f)
     for t, td in enumerate(test_data):
         input_address = td[0]
@@ -29,14 +29,20 @@ with open('./rapido.csv','rt')as f:
         subarea_flag = False
         subarea_pos = 0
         matched = {}
+        #init value...................
+        matched[housekey] = None
+        matched[roadkey] = None
+        matched[ssareakey] = None
+        matched[subareakey] = None
+        matched[areakey] = None
+
         matched_array = []
 
         prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
         address_component = ['', 'house', 'road', 'block', 'section', 'sector', 'avenue']
 
-        # pre-processing.......................
-
+        # pre-processing...........................................................
         def multiple_replace(dict, text):
           # Create a regular expression  from the dictionary keys
           regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
@@ -44,13 +50,13 @@ with open('./rapido.csv','rt')as f:
           return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text) 
 
         rep2 = {
-                    "rd#": " road ", "rd-": " road  ", "rd:": " road  ", "r-": " road ", "r:": " road ", "r#": " road ", "h#": " house ", "h-": " house ", "h:": " house ", "^h\d{2}": " house ",
+                    "rd#": " road ", "rd-": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r-": " road ", " ,r-": " road ", "h#": " house ", "h-": " house ", "h:": " house ",
                     "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
                     'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
                     'house no': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-                    'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '',
+                    'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
                 } 
-        area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ",} # define desired replacements here
+        area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
         expand = multiple_replace(rep2, input_address.lower())
         expand = multiple_replace(area_dict, expand.lower())
         addresscomponents = word_tokenize(expand)
@@ -84,6 +90,8 @@ with open('./rapido.csv','rt')as f:
                 'is_visited' : False,
             }
             tempObjArray.append(obj)
+
+
        
 
         def check_area(token, idx):
@@ -93,7 +101,7 @@ with open('./rapido.csv','rt')as f:
               area_list = csv.reader(f)
               for j, area in enumerate(area_list):
 
-                    if (area_token[0].lower().strip() == area[0].lower() and area_token[0].lower().strip() in cleanAddressStr.lower()):
+                    if (area_token[0].lower() == area[0].lower() and area_token[0].lower() in cleanAddressStr.lower()):
                         matched[areakey] = area[0].lower()
                         # matched_array.append(area[0].lower())
                         global area_pos, area_flag
@@ -168,7 +176,11 @@ with open('./rapido.csv','rt')as f:
                             return True        
 
 
-
+        def check_super_sub_area(token, idx):
+            if ('block' in cleanAddressStr and 'mirpur' in cleanAddressStr.lower() and token == 'block'):
+                if idx != len(tempArray)-1:
+                    matched[ssareakey] = token+" "+tempArray[idx+1]
+                    return True
 
 
         def check_holding(token, idx):
@@ -185,22 +197,35 @@ with open('./rapido.csv','rt')as f:
                     return True
 
 
+
         def check_road(road, idx):
 
-            if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road:
+            if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'shorok' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road:
+
                 if idx != len(tempArray)-1:
                     if (any(char.isdigit() for char in tempArray[idx+1])):
-                        matched[roadkey] = road+" "+tempArray[idx+1]
-                        # matched_array.append(matched[roadkey])
+                        if(matched[roadkey]==None):
+                                matched[roadkey] = road+" "+tempArray[idx+1]
+                                return True
+                        matched[roadkey] = matched[roadkey] +", "+road+" " +tempArray[idx+1]
                         return True
                 if idx != 0:
                     if (not any(char.isdigit() for char in tempArray[idx-1])):
                         i = idx-1
                         road_str =  ''
-                        while i>=0 and tempArray[i] not in address_component and tempArray[i] not in matched_array:
+                        if (not matched[areakey] == None and tempArray[i] == matched[areakey]):
+                            matched[roadkey] = matched[areakey] +" "+ road
+                            return True
+
+                        while i>=0 and tempArray[i] not in matched_array:
+                            if not i==0 and tempArray[i-1] in address_component:
+                                break
                             road_str = tempArray[i] +" "+ road_str
                             i=i-1
-                        matched[roadkey] = road_str +" "+ road
+                        if(matched[roadkey]==None):
+                            matched[roadkey] = road_str + road
+                            return True
+                        matched[roadkey] = matched[roadkey] +", "+road_str + road
                         # matched_array.append(matched[roadkey])
                         return True
                             
@@ -213,18 +238,20 @@ with open('./rapido.csv','rt')as f:
                 if (check_area(comp, i)):
                     matched_array.append(matched[areakey])
                     pass
-                elif (check_sub_area(comp, i)):
+                if (check_sub_area(comp, i)):
                     matched_array.append(matched[subareakey])
                     pass
-                elif (check_holding(comp, i)):
+                if (check_super_sub_area(comp, i)):
+                    matched_array.append(matched[ssareakey])
+                    pass
+                if (check_holding(comp, i)):
                     matched_array.append(matched[housekey])
                     pass
-                elif (check_road(comp, i)):
+                if (check_road(comp, i)):
                     matched_array.append(matched[roadkey])
                     pass
         print('Parse Result')
-        print(matched)
-        print matched_array
+        print matched
         print ('................................................................................')
 
 
@@ -233,7 +260,7 @@ with open('./rapido.csv','rt')as f:
 # old parser..............................
 def isroad(road):
     road=road.lower()
-    return 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'chowrasta' in road or 'sorok' in road or 'goli' in road
+    return 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'shorok' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'chowrasta' in road or 'sorok' in road or 'goli' in road
 
 def ishouse(house):
     house=house.lower()
