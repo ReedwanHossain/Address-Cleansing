@@ -4,17 +4,18 @@ import nltk
 import csv
 from nltk.tokenize import sent_tokenize, word_tokenize
 
+dict_data = []
 with open('./rapido.csv','rt')as f:
     test_data = csv.reader(f)
     for t, td in enumerate(test_data):
         input_address = td[0]
         # input_address = raw_input('Enter Address: ')
-        print 'input address'
+        input_address = " "+input_address
         print input_address+"\n"
-        
+        input_address = re.sub( r'([a-zA-Z])(\d)', r'\1-\2', input_address ) #insert a '-' between letters and number
         addresskey = 'address'
         namekey = 'name'
-        housekey = 'House'
+        housekey = 'house'
         roadkey = 'road'
         ssareakey = 'supersubarea'
         subareakey = 'subarea'
@@ -37,6 +38,7 @@ with open('./rapido.csv','rt')as f:
         matched[subareakey] = None
         matched[areakey] = None
 
+        matched[addresskey] = input_address
         matched_array = []
 
         prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
@@ -55,7 +57,7 @@ with open('./rapido.csv','rt')as f:
                     "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
                     'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
                     'house no': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-                    'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
+                    'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
                 } 
         area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
         expand = multiple_replace(rep2, input_address.lower())
@@ -129,7 +131,9 @@ with open('./rapido.csv','rt')as f:
 
                     elif(area.lower() == 'uttara'):
                         token = 'sector '+ tempArray[idx]
-                    
+                    elif token == 'block' and area.lower() == 'bashundhara' or area.lower() == 'banani' or area.lower() == 'khilgaon' or area.lower() == 'banasree' or area.lower() == 'baridhara' or area.lower() == 'lalmatia':
+                        if idx != len(tempArray)-1:
+                            token = token+" "+tempArray[idx+1]
                     with open('./subarea-list.csv','rt')as f:
                         subarea_list = csv.reader(f)
                         for j, subarea in enumerate(subarea_list):
@@ -220,6 +224,9 @@ with open('./rapido.csv','rt')as f:
 
                         while i>=0:
                             if not i==0 and tempArray[i-1] in address_component or tempArray[i-1] in matched_array:
+                                if not any(char.isdigit() for char in tempArray[i]):
+                                    road_str = tempArray[i]+ " " + road_str
+                                    break
                                 break
                             road_str = tempArray[i] +" "+ road_str
                             i=i-1
@@ -229,8 +236,6 @@ with open('./rapido.csv','rt')as f:
                         matched[roadkey] = matched[roadkey] +", "+road_str + road
                         # matched_array.append(matched[roadkey])
                         return True
-                            
-
 
         # Parsing..............................
         for i, comp in enumerate(tempArray):
@@ -256,8 +261,19 @@ with open('./rapido.csv','rt')as f:
         print('Parse Result')
         print matched
         print ('................................................................................')
+        dict_data.append(matched)
 
 
+csv_columns = ['address', 'area','subarea','supersubarea', 'house', 'road']
+csv_file = "output.csv"
+try:
+    with open(csv_file, 'w') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+        writer.writeheader()
+        for data in dict_data:
+            writer.writerow(data)
+except IOError:
+    print("I/O error") 
 
 
 # old parser..............................

@@ -7,9 +7,9 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 while True:
     input_address = raw_input('Enter Address: ')
     print 'input address'
+    input_address = " "+input_address
     print input_address+"\n"
-
-
+    input_address = re.sub( r'([a-zA-Z])(\d)', r'\1-\2', input_address ) #insert a '-' between letters and number
 
 # initializaion............................
     addresskey = 'address'
@@ -55,7 +55,7 @@ while True:
                 "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
                 'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
                 'house no': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-                'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
+                'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
             } 
     area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
     expand = multiple_replace(rep2, input_address.lower())
@@ -129,7 +129,9 @@ while True:
 
                 elif(area.lower() == 'uttara'):
                     token = 'sector '+ tempArray[idx]
-                
+                elif token == 'block' and area.lower() == 'bashundhara' or area.lower() == 'banani' or area.lower() == 'khilgaon' or area.lower() == 'banasree' or area.lower() == 'baridhara' or area.lower() == 'lalmatia':
+                    if idx != len(tempArray)-1:
+                        token = token+" "+tempArray[idx+1]
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
                     for j, subarea in enumerate(subarea_list):
@@ -187,13 +189,13 @@ while True:
     def check_holding(token, idx):
         if (any(char.isdigit() for char in token)):
             if idx == 0:
-                matched[housekey] = token
+                matched[housekey] = "house "+token
                 # matched_array.append(token)
                 return True
 
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(tempArray)-1):
             if (any(char.isdigit() for char in tempArray[idx+1])):
-                matched[housekey] = tempArray[idx+1]
+                matched[housekey] = token.lower()+" "+tempArray[idx+1]
                 # matched_array.append(tempArray[idx+1])
                 return True
 
@@ -232,8 +234,6 @@ while True:
                     matched[roadkey] = matched[roadkey] +", "+road_str + road
                     # matched_array.append(matched[roadkey])
                     return True
-                        
-
 
     # Parsing..............................
     for i, comp in enumerate(tempArray):
@@ -258,7 +258,9 @@ while True:
 
     print('Parse Result')
     print matched
-    # print matched_array
-    # for i, addcomp in enumerate(matched):
-    #     if matched[addcomp]==None:
-    #         print addcomp
+    # print matched[housekey]+" "+matched[roadkey]+" "+matched[ssareakey]+" "+matched[subareakey]+" "+matched[areakey]
+    final_address = ""
+    for i, addcomp in enumerate(matched):
+        if matched[addcomp]!=None:
+            final_address = final_address+", "+matched[addcomp]
+    print final_address
