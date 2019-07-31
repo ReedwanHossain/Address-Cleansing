@@ -12,6 +12,7 @@ while True:
 
 
 # initializaion............................
+    addresskey = 'address'
     namekey = 'name'
     housekey = 'House'
     roadkey = 'road'
@@ -40,7 +41,7 @@ while True:
 
     prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
-    address_component = ['', 'house', 'road', 'block', 'section', 'sector', 'avenue']
+    address_component = ['', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
 
     # pre-processing...........................................................
     def multiple_replace(dict, text):
@@ -217,8 +218,11 @@ while True:
                         matched[roadkey] = matched[areakey] +" "+ road
                         return True
 
-                    while i>=0 and tempArray[i] not in matched_array:
-                        if not i==0 and tempArray[i-1] in address_component:
+                    while i>=0:
+                        if not i==0 and tempArray[i-1] in address_component or tempArray[i-1] in matched_array:
+                            if not any(char.isdigit() for char in tempArray[i]):
+                                road_str = tempArray[i]+ " " + road_str
+                                break
                             break
                         road_str = tempArray[i] +" "+ road_str
                         i=i-1
@@ -250,8 +254,11 @@ while True:
             if (check_road(comp, i)):
                 matched_array.append(matched[roadkey])
                 pass
+
+
     print('Parse Result')
     print matched
-    for i, addcomp in enumerate(matched):
-        if matched[addcomp]==None:
-            print addcomp
+    # print matched_array
+    # for i, addcomp in enumerate(matched):
+    #     if matched[addcomp]==None:
+    #         print addcomp

@@ -4,7 +4,7 @@ import nltk
 import csv
 from nltk.tokenize import sent_tokenize, word_tokenize
 
-with open('./chaldal.csv','rt')as f:
+with open('./rapido.csv','rt')as f:
     test_data = csv.reader(f)
     for t, td in enumerate(test_data):
         input_address = td[0]
@@ -12,6 +12,7 @@ with open('./chaldal.csv','rt')as f:
         print 'input address'
         print input_address+"\n"
         
+        addresskey = 'address'
         namekey = 'name'
         housekey = 'House'
         roadkey = 'road'
@@ -40,7 +41,7 @@ with open('./chaldal.csv','rt')as f:
 
         prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
-        address_component = ['', 'house', 'road', 'block', 'section', 'sector', 'avenue']
+        address_component = ['', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
 
         # pre-processing...........................................................
         def multiple_replace(dict, text):
@@ -217,8 +218,8 @@ with open('./chaldal.csv','rt')as f:
                             matched[roadkey] = matched[areakey] +" "+ road
                             return True
 
-                        while i>=0 and tempArray[i] not in matched_array:
-                            if not i==0 and tempArray[i-1] in address_component:
+                        while i>=0:
+                            if not i==0 and tempArray[i-1] in address_component or tempArray[i-1] in matched_array:
                                 break
                             road_str = tempArray[i] +" "+ road_str
                             i=i-1
@@ -250,6 +251,8 @@ with open('./chaldal.csv','rt')as f:
                 if (check_road(comp, i)):
                     matched_array.append(matched[roadkey])
                     pass
+
+
         print('Parse Result')
         print matched
         print ('................................................................................')
