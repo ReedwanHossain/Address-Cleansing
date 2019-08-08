@@ -36,7 +36,8 @@ while True:
     matched[ssareakey] = None
     matched[subareakey] = None
     matched[areakey] = None
-
+    global cleanAddressStr
+    cleanAddressStr = ''
     matched_array = []
 
     prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
@@ -119,11 +120,11 @@ while True:
 
     def check_sub_area(token, idx):
         if area_flag== True:
+           
             # todo
             global area_pos
             area = matched[areakey].lower()
-            if (idx-area_pos == 1 and any(char.isdigit() for char in tempArray[idx])):
-                
+            if (idx-area_pos == 1 and any(char.isdigit() for char in tempArray[idx])):  
                 if(area.lower() == 'mirpur'):
                     token = 'section '+ tempArray[idx]
 
@@ -166,6 +167,7 @@ while True:
                             subarea_flag = True
         
 
+        
         elif area_flag == False:
             with open('./subarea-list.csv','rt')as f:
                 subarea_list = csv.reader(f)
@@ -189,7 +191,7 @@ while True:
     def check_holding(token, idx):
         if (any(char.isdigit() for char in token)):
             if idx == 0:
-                matched[housekey] = "house "+token
+                matched[housekey] = token
                 # matched_array.append(token)
                 return True
 
@@ -222,6 +224,7 @@ while True:
 
                     while i>=0:
                         if not i==0 and tempArray[i-1] in address_component or tempArray[i-1] in matched_array:
+                            print('road token....line 227 '+road)
                             if not any(char.isdigit() for char in tempArray[i]):
                                 road_str = tempArray[i]+ " " + road_str
                                 break
