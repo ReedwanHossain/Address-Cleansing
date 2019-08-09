@@ -5,7 +5,7 @@ import csv
 from nltk.tokenize import sent_tokenize, word_tokenize
 
 dict_data = []
-with open('./chaldal.csv','rt')as f:
+with open('./cafe_fb.csv','rt')as f:
     test_data = csv.reader(f)
     for t, td in enumerate(test_data):
         input_address = td[0]

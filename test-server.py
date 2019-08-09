@@ -188,7 +188,6 @@ class Address(object):
                     return True
 
     def parse_address(self, input_address):
-
         input_address = " "+input_address
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1-\2', input_address ) #insert a '-' between letters and number
 
@@ -264,11 +263,13 @@ class Address(object):
             self.matched[self.subareakey] = ''
 
         try:
-            self.matched[self.areakey] = self.matched[self.areakey]
+            self.matched[self.areakey] = self.matched[self.areakey]+","
         except Exception as e:
             self.matched[self.areakey] = ''
 
         full_address = self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.ssareakey] + self.matched[self.subareakey] + self.matched[self.areakey]
+        full_address = full_address.lstrip(' ,')
+        full_address = full_address.rstrip(' ,')
         return full_address
         
 
