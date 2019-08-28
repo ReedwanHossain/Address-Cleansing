@@ -1,12 +1,14 @@
 from flask_cors import CORS
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_restful import reqparse, abort, Api, Resource
 import urllib
 import re
 import nltk
 import csv
 from nltk.tokenize import sent_tokenize, word_tokenize
+#from gevent.pywsgi import WSGIServer
 #nltk.download('all')
+#nltk.download('punkt')
 class Address(object):
        
     # initializaion............................
@@ -36,7 +38,6 @@ class Address(object):
         self.matched[self.ssareakey] = None
         self.matched[self.subareakey] = None
         self.matched[self.areakey] = None
-        self.cleanAddressStr = ''
         self.tempArray = []
         self.matched_array = []
 
@@ -45,10 +46,10 @@ class Address(object):
     address_component = ['', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
 
     rep2 = {
-        "rd#": " road ", "rd-": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r-": " road ", " ,r-": " road ", "h#": " house ", "h-": " house ", "h:": " house ",
+        "rd#": " road ", "rd-": " road  ", "rd": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r-": " road ", " ,r-": " road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
-        'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
-        'house no': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
+        'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
+        'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
     } 
     area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
@@ -207,13 +208,9 @@ class Address(object):
                 if(temp != ""):
                     self.tempArray.append(temp)
                 # print comp.rstrip('[!@#$-]')
-        print "final pre-processing "
         self.cleanAddressStr = ' '.join(self.tempArray)
         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
-        print self.cleanAddressStr
         self.tempArray = word_tokenize(self.cleanAddressStr)
-        print self.tempArray
-        print "\n"
 
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
@@ -235,8 +232,6 @@ class Address(object):
                     self.matched_array.append(self.matched[self.roadkey])
                     pass
 
-
-        print('Parse Result')
 
         final_address = self.bind_address()
         return final_address
@@ -274,105 +269,48 @@ class Address(object):
         
 
 
-    # def file_parse(self, test_data):
-
-    #     for t, td in enumerate(test_data):
-    #         input_address = td['address']
-    #         # input_address = raw_input('Enter Address: ')
-    #         input_address = " "+input_address
-    #         print input_address+"\n"
-    #         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1-\2', input_address ) #insert a '-' between letters and number
-    #         expand = self.multiple_replace(self.rep2, input_address.lower())
-    #         expand = self.multiple_replace(self.area_dict, expand.lower())
-    #         addresscomponents = word_tokenize(expand)
-
-    #         for i, comp in enumerate(addresscomponents):
-    #                 comp=comp.strip()
-    #                 if comp == "," or comp == "":
-    #                     continue
-                   
-    #                 temp = comp.lstrip('[0:!@#$-=+.]')
-    #                 temp = temp.rstrip('[:!@#$-]=+.')
-    #                 temp = temp.strip(" ");
-    #                 if(temp != ""):
-    #                     self.tempArray.append(temp)
-    #                 # print comp.rstrip('[!@#$-]')
-    #         print "final pre-processing "
-    #         self.cleanAddressStr = ' '.join(self.tempArray)
-    #         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
-    #         print self.cleanAddressStr
-    #         self.tempArray = word_tokenize(self.cleanAddressStr)
-    #         print self.tempArray
-    #         print "\n"
-
-    #         # Parsing..............................
-    #         for i, comp in enumerate(self.tempArray):
-    #                 comp=comp.strip()
-    #                 # print(comp)
-    #                 if (self.check_area(comp, i)):
-    #                     self.matched_array.append(self.matched[self.areakey])
-    #                     print 'area'
-    #                     pass
-    #                 if (self.check_sub_area(comp, i)):
-    #                     self.matched_array.append(self.matched[self.subareakey])
-    #                     print 'subarea'
-    #                     pass
-    #                 if (self.check_super_sub_area(comp, i)):
-    #                     self.matched_array.append(self.matched[self.ssareakey])
-    #                     print 'ssarea check'
-    #                     pass
-    #                 if (self.check_holding(comp, i)):
-    #                     self.matched_array.append(self.matched[self.housekey])
-    #                     print 'holding check'
-    #                     pass
-    #                 if (self.check_road(comp, i)):
-    #                     self.matched_array.append(self.matched[self.roadkey])
-    #                     print 'road check'
-    #                     pass
-
-
-    #         print('Parse Result')
-    #         print self.matched
-    #         print ('................................................................................')
-    #         self.dict_data.append(self.matched)
-
-
-    #     csv_columns = ['address', 'area','subarea','supersubarea', 'house', 'road']
-    #     csv_file = "outputfile.csv"
-    #     try:
-    #         with open(csv_file, 'w') as csvfile:
-    #             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-    #             writer.writeheader()
-    #             for data in sefl.dict_data:
-    #                 writer.writerow(data)
-    #     except IOError:
-    #         print("I/O error") 
-    #     return 'done'
-
-
-
 #Flask App.................................
 app = Flask(__name__)
 CORS(app)
 
-# @app.route('/uploader', methods = ['GET', 'POST'])
-# def upload_file():
-#    if request.method == 'POST':
-#       add_parse = None
-#       add_parse = Address()
-#       fstring = csv.DictReader(request.files['file'])
-#       add_parse.file_parse(fstring)
-#       return 'okk'
+@app.route('/uploader', methods = ['POST'])
+def upload_file():
+    if request.method == 'POST':
+        result_array = []
 
-@app.route('/parse', methods = ['GET'])
+        fstring = csv.DictReader(request.files['file'])
+        for t, td in enumerate(fstring):
+            add_parse = None
+            add_parse = Address()
+            input_address = td['address']
+            result_array.append({'input-address': input_address ,'clean-address': add_parse.parse_address(input_address)})
+           
+        csv_columns = ['input-address' ,'clean-address']
+        csv_file = "parsed.csv"
+
+        try:
+            with open(csv_file, 'w') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+                writer.writeheader()
+                for data in result_array:
+                    writer.writerow(data)
+        except IOError:
+            print("I/O error") 
+
+    try:
+        return send_from_directory('.', 'parsed.csv', attachment_filename='parsed.csv', as_attachment=True)
+    except FileNotFoundError:
+        abort(404)
+
+@app.route('/', methods = ['GET'])
 def parse_it():
    add_parse = None
    add_parse = Address()
    addr = request.args.get('addr')
-   de_addr = urllib.unquote(addr)
-   print "address.........."+de_addr
-   return add_parse.parse_address(de_addr)
+   # de_addr = urllib.unquote(addr)
+   # print "address.........."+de_addr
+   return add_parse.parse_address(addr)
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host = '127.0.0.1', port = 8070)
+    app.run(debug=True, host = '127.0.0.1', port = 8010)
