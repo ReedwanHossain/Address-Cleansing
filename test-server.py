@@ -1,5 +1,6 @@
 from flask_cors import CORS
-from flask import Flask, request, send_from_directory
+from json import dumps
+from flask import Flask, request, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
 import urllib
 import re
@@ -272,6 +273,38 @@ class Address(object):
 #Flask App.................................
 app = Flask(__name__)
 CORS(app)
+
+# @app.route('/uploader', methods = ['POST'])
+# def upload_file():
+#     if request.method == 'POST':
+#         result_array = []
+
+#         fstring = csv.DictReader(request.files['file'])
+#         for t, td in enumerate(fstring):
+#             add_parse = None
+#             add_parse = Address()
+#             input_address = td['address']
+#             result_array.append({'before': input_address ,'after': add_parse.parse_address(input_address)})
+        
+
+#         return make_response(dumps(result_array))
+   
+#     #     csv_columns = ['input-address' ,'clean-address']
+#     #     csv_file = "parsed.csv"
+
+#     #     try:
+#     #         with open(csv_file, 'w') as csvfile:
+#     #             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+#     #             writer.writeheader()
+#     #             for data in result_array:
+#     #                 writer.writerow(data)
+#     #     except IOError:
+#     #         print("I/O error") 
+
+#     # try:
+#     #     return send_from_directory('.', 'parsed.csv', attachment_filename='parsed.csv', as_attachment=True)
+#     # except FileNotFoundError:
+#     #     abort(404)
 
 @app.route('/uploader', methods = ['POST'])
 def upload_file():
