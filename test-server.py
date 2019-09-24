@@ -7,9 +7,12 @@ import re
 import nltk
 import csv
 from nltk.tokenize import sent_tokenize, word_tokenize
+
+from spellcheck import SpellCheck
 #from gevent.pywsgi import WSGIServer
 #nltk.download('all')
 #nltk.download('punkt')
+
 class Address(object):
        
     # initializaion............................
@@ -104,7 +107,7 @@ class Address(object):
                 token = token.lstrip('[0:!@#$-=+.]')
                 token = token.rstrip('[:!@#$-=+.]')
                 prefix_flag = False      
-                if (token.lower() =='section' or token.lower() =='sector' and token.lower() in self.cleanAddressStr.lower()):
+                if (idx < len(self.tempArray)-1 and (token.lower() =='section' or token.lower() =='sector' and token.lower() in self.cleanAddressStr.lower())):
                         self.matched[self.subareakey] = token +' '+ self.tempArray[idx+1]
                         if (area.lower()=='mirpur'):
                             self.matched[self.subareakey] = 'section' +' '+ self.tempArray[idx+1]
@@ -191,12 +194,25 @@ class Address(object):
 
     def parse_address(self, input_address):
         input_address = " "+input_address
+        input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
+        x = input_address.split("*")
+        input_address = " "
+        spell_check=SpellCheck('area-list.txt')
+        for i in x:
+            spell_check.check(i)
+            i=str(spell_check.correct())
+            input_address+=i
+        # print " cocat   "+input_address
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1-\2', input_address ) #insert a '-' between letters and number
-
+        #print input_address
         # pre-processing...........................................................
+
         expand = self.multiple_replace(self.rep2, input_address.lower())
+        #print "202 ..............."+expand 
         expand = self.multiple_replace(self.area_dict, expand.lower())
+        #print "204 ..............."+expand 
         addresscomponents = word_tokenize(expand)
+        
 
         for i, comp in enumerate(addresscomponents):
                 comp=comp.strip()
@@ -211,12 +227,22 @@ class Address(object):
                 # print comp.rstrip('[!@#$-]')
         self.cleanAddressStr = ' '.join(self.tempArray)
         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
+        #self.cleanAddressStr="mrpr s2"
+        # spell_check=SpellCheck('area-list.txt')
+        # spell_check.check(self.cleanAddressStr)
+        # self.cleanAddressStr=str(spell_check.correct())
+        #print self.cleanAddressStr+"................"
+        
         self.tempArray = word_tokenize(self.cleanAddressStr)
-
+        # print self.cleanAddressStr
+        #print self.tempArray
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
                 comp=comp.strip()
                 # print(comp)
+                # spell_check=SpellCheck('area-list.txt')
+                # spell_check.check(comp)
+                # comp==str(spell_check.correct())
                 if (self.check_area(comp, i)):
                     self.matched_array.append(self.matched[self.areakey])
                     pass
