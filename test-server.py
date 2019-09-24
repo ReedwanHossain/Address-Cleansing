@@ -25,11 +25,9 @@ class Address(object):
         self.ssareakey = 'supersubarea'
         self.subareakey = 'subarea'
         self.areakey = 'area'
-        self.house_nokey = 'house_no'
-        self.road_idkey = 'road_id'
-        self.area_idkey = 'area_id'
-        self.subarea_idkey = 'subarea_id'
-        self.supersubarea_idkey = 'supersubarea_id'
+        self.districtkey = 'district'
+        self.sub_districtkey = 'sub_district'
+        self.unionkey = 'union'
         # flags.......................
         self.area_flag = False
         self.area_pos = 0
@@ -42,6 +40,9 @@ class Address(object):
         self.matched[self.ssareakey] = None
         self.matched[self.subareakey] = None
         self.matched[self.areakey] = None
+        self.matched[self.districtkey] = None
+        self.matched[self.sub_districtkey] = None
+        self.matched[self.unionkey] = None
         self.tempArray = []
         self.matched_array = []
 
@@ -62,7 +63,42 @@ class Address(object):
         # Create a regular expression  from the dictionary keys
         regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
         # For each match, look-up corresponding value in dictionary
-        return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text) 
+        return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
+
+
+    def check_district(self, token, idx):
+        dist_token = self.multiple_replace(self.area_dict, token.lower())
+        dist_token = word_tokenize(dist_token)
+        with open('./dsu.csv','rt')as f:
+          district_list = csv.reader(f)
+          for j, district in enumerate(district_list):
+                if (dist_token[0].lower() == district[2].lower() and dist_token[0].lower() in self.cleanAddressStr.lower()):
+                    self.matched[self.districtkey] = district[2].lower()
+                    print "Dis.................."+self.matched[self.districtkey]
+                    return True
+
+
+    def check_sub_district(self, token, idx):
+        sub_dist_token = self.multiple_replace(self.area_dict, token.lower())
+        sub_dist_token = word_tokenize(sub_dist_token)
+        with open('./dsu.csv','rt')as f:
+          sub_district_list = csv.reader(f)
+          for j, sub_district in enumerate(sub_district_list):
+                if (sub_dist_token[0].lower() == sub_district[1].lower() and sub_dist_token[0].lower() in self.cleanAddressStr.lower()):
+                    self.matched[self.sub_districtkey] = sub_district[1].lower()
+                    print "SubDis.................."+self.matched[self.sub_districtkey]
+                    return True
+
+    def check_union(self, token, idx):
+        union_token = self.multiple_replace(self.area_dict, token.lower())
+        union_token = word_tokenize(union_token)
+        with open('./dsu.csv','rt')as f:
+          union_list = csv.reader(f)
+          for j, union in enumerate(union_list):
+                if (union_token[0].lower() == union[0].lower() and union_token[0].lower() in self.cleanAddressStr.lower()):
+                    self.matched[self.unionkey] = union[0].lower()
+                    print "Union.................."+self.matched[self.unionkey]
+                    return True
 
     def check_area(self, token, idx):
 
@@ -240,24 +276,30 @@ class Address(object):
         for i, comp in enumerate(self.tempArray):
                 comp=comp.strip()
                 # print(comp)
-                # spell_check=SpellCheck('area-list.txt')
-                # spell_check.check(comp)
-                # comp==str(spell_check.correct())
                 if (self.check_area(comp, i)):
                     self.matched_array.append(self.matched[self.areakey])
-                    pass
+                    continue
                 if (self.check_sub_area(comp, i)):
                     self.matched_array.append(self.matched[self.subareakey])
-                    pass
+                    continue
                 if (self.check_super_sub_area(comp, i)):
                     self.matched_array.append(self.matched[self.ssareakey])
-                    pass
+                    continue
                 if (self.check_holding(comp, i)):
                     self.matched_array.append(self.matched[self.housekey])
-                    pass
+                    continue
                 if (self.check_road(comp, i)):
                     self.matched_array.append(self.matched[self.roadkey])
-                    pass
+                    continue
+                if (self.check_district(comp, i)):
+                    self.matched_array.append(self.matched[self.districtkey])
+                    continue
+                if (self.check_sub_district(comp, i)):
+                    self.matched_array.append(self.matched[self.sub_districtkey])
+                    continue
+                if (self.check_union(comp, i)):
+                    self.matched_array.append(self.matched[self.unionkey])
+                    continue
 
 
         final_address = self.bind_address()
@@ -285,11 +327,27 @@ class Address(object):
             self.matched[self.subareakey] = ''
 
         try:
-            self.matched[self.areakey] = self.matched[self.areakey]+","
+            self.matched[self.areakey] = self.matched[self.areakey]+", "
         except Exception as e:
             self.matched[self.areakey] = ''
 
-        full_address = self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.ssareakey] + self.matched[self.subareakey] + self.matched[self.areakey]
+        try:
+            self.matched[self.unionkey] = self.matched[self.unionkey]+", "
+        except Exception as e:
+            self.matched[self.unionkey] = ''
+
+        try:
+            self.matched[self.sub_districtkey] = self.matched[self.sub_districtkey]+", "
+        except Exception as e:
+            self.matched[self.sub_districtkey] = ''
+
+        try:
+            self.matched[self.districtkey] = self.matched[self.districtkey]+","
+        except Exception as e:
+            self.matched[self.districtkey] = ''
+
+
+        full_address = self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.ssareakey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
         return full_address
