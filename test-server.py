@@ -4,15 +4,13 @@ from flask import Flask, request, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
 import urllib
 import re
-import nltk
+import re
+#import nltk
 import csv
-from nltk.tokenize import sent_tokenize, word_tokenize
-
-from spellcheck import SpellCheck
+#from nltk.tokenize import sent_tokenize, word_tokenize
 #from gevent.pywsgi import WSGIServer
 #nltk.download('all')
 #nltk.download('punkt')
-
 class Address(object):
        
     # initializaion............................
@@ -28,6 +26,7 @@ class Address(object):
         self.districtkey = 'district'
         self.sub_districtkey = 'sub_district'
         self.unionkey = 'union'
+        self.blockkey='block'
         # flags.......................
         self.area_flag = False
         self.area_pos = 0
@@ -43,6 +42,7 @@ class Address(object):
         self.matched[self.districtkey] = None
         self.matched[self.sub_districtkey] = None
         self.matched[self.unionkey] = None
+        self.matched[self.blockkey] = None
         self.tempArray = []
         self.matched_array = []
 
@@ -51,64 +51,73 @@ class Address(object):
     address_component = ['', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
 
     rep2 = {
-        "rd#": " road ", "rd-": " road  ", "rd": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r-": " road ", " ,r-": " road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
+        "rd#": " road ", "rd-": " road  ", "rd": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
     } 
     area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
-        
+    
     def multiple_replace(self, dict, text):
         # Create a regular expression  from the dictionary keys
         regex = re.compile("(%s)" % "|".join(map(re.escape, dict.keys())))
         # For each match, look-up corresponding value in dictionary
-        return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
+        # print "pattern................"+regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text)
+        return regex.sub(lambda mo: dict[mo.string[mo.start():mo.end()]], text) 
 
 
     def check_district(self, token, idx):
         dist_token = self.multiple_replace(self.area_dict, token.lower())
-        dist_token = word_tokenize(dist_token)
+        #dist_token = word_tokenize(dist_token)
+        dist_token = dist_token.split()
         with open('./dsu.csv','rt')as f:
           district_list = csv.reader(f)
           for j, district in enumerate(district_list):
                 if (dist_token[0].lower() == district[2].lower() and dist_token[0].lower() in self.cleanAddressStr.lower()):
                     self.matched[self.districtkey] = district[2].lower()
-                    print "Dis.................."+self.matched[self.districtkey]
+                    #print "Dis.................."+self.matched[self.districtkey]
                     return True
 
 
     def check_sub_district(self, token, idx):
         sub_dist_token = self.multiple_replace(self.area_dict, token.lower())
-        sub_dist_token = word_tokenize(sub_dist_token)
+        #sub_dist_token = word_tokenize(sub_dist_token)
+        sub_dist_token = sub_dist_token.split()
         with open('./dsu.csv','rt')as f:
           sub_district_list = csv.reader(f)
           for j, sub_district in enumerate(sub_district_list):
                 if (sub_dist_token[0].lower() == sub_district[1].lower() and sub_dist_token[0].lower() in self.cleanAddressStr.lower()):
                     self.matched[self.sub_districtkey] = sub_district[1].lower()
-                    print "SubDis.................."+self.matched[self.sub_districtkey]
+                    #print "SubDis.................."+self.matched[self.sub_districtkey]
                     return True
 
     def check_union(self, token, idx):
         union_token = self.multiple_replace(self.area_dict, token.lower())
-        union_token = word_tokenize(union_token)
+        #union_token = word_tokenize(union_token)
+        union_token = union_token.split()
         with open('./dsu.csv','rt')as f:
           union_list = csv.reader(f)
           for j, union in enumerate(union_list):
                 if (union_token[0].lower() == union[0].lower() and union_token[0].lower() in self.cleanAddressStr.lower()):
                     self.matched[self.unionkey] = union[0].lower()
-                    print "Union.................."+self.matched[self.unionkey]
+                    #print "Union.................."+self.matched[self.unionkey]
                     return True
+
+
+
 
     def check_area(self, token, idx):
 
         area_token = self.multiple_replace(self.area_dict, token.lower())
-        area_token = word_tokenize(area_token)
+        #area_token = word_tokenize(area_token)
+        area_token = area_token.split()
         with open('./area-list.csv','rt')as f:
           area_list = csv.reader(f)
           for j, area in enumerate(area_list):
                 if (area_token[0].lower() == area[0].lower() and area_token[0].lower() in self.cleanAddressStr.lower()):
                     self.matched[self.areakey] = area[0].lower()
+                    #print(self.matched[self.areakey])
                     # matched_array.append(area[0].lower())
                     self.area_flag = True 
                     self.area_pos = idx
@@ -143,7 +152,7 @@ class Address(object):
                 token = token.lstrip('[0:!@#$-=+.]')
                 token = token.rstrip('[:!@#$-=+.]')
                 prefix_flag = False      
-                if (idx < len(self.tempArray)-1 and (token.lower() =='section' or token.lower() =='sector' and token.lower() in self.cleanAddressStr.lower())):
+                if (token.lower() =='section' or token.lower() =='sector' and token.lower() in self.cleanAddressStr.lower()):
                         self.matched[self.subareakey] = token +' '+ self.tempArray[idx+1]
                         if (area.lower()=='mirpur'):
                             self.matched[self.subareakey] = 'section' +' '+ self.tempArray[idx+1]
@@ -182,17 +191,66 @@ class Address(object):
 
 
     def check_holding(self, token, idx):
+
         if (any(char.isdigit() for char in token)):
             if idx == 0:
                 self.matched[self.housekey] = token
                 # matched_array.append(token)
                 return True
+            elif 'house' not in self.tempArray and self.matched[self.housekey] == None:
+                check_match=0
+                with open('./subarea-list.csv','rt')as f:
+                    area_list = csv.reader(f)
+                    for j, area in enumerate(area_list):
+                        if area[0].lower()==self.tempArray[idx-1].lower():
+                            check_match=1
+                            break
+                if check_match==0:
+                    self.matched[self.housekey] = token
+                    return True
+
+
+
+                    
 
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
-            if (any(char.isdigit() for char in self.tempArray[idx+1])):
+            #print(self.tempArray)
+            tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
+            tempList=set(tempList)
+            if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList):
+            #chk_house_no=re.search(r'\w', self.tempArray[idx+1].strip(","))
+            #if chk_house_no:
                 self.matched[self.housekey] = self.tempArray[idx+1]
+                #print(self.tempArray[idx+2])
+                if idx < len(self.tempArray)-2:
+                    p1=re.match(r'[0-9]+', self.tempArray[idx+2])
+                    p2=re.match(r'^[a-z]$', self.tempArray[idx+2])
+                    p3=re.match(r'^[A-Z]$', self.tempArray[idx+2])
+                    if p1 or p2 or p3 or (self.tempArray[idx+2] in tempList):
+                        self.matched[self.housekey] = self.tempArray[idx+1]+"-"+self.tempArray[idx+2]
+                    #print(self.matched[self.housekey])
+    
+                #print(type(self.matched[self.housekey]))
                 # matched_array.append(tempArray[idx+1])
                 return True
+    
+    def check_block(self, token, idx):
+        tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
+        tempList=set(tempList)
+        #print(self.tempArray)
+        if (token.lower() == 'block' and idx < len(self.tempArray)-1):
+            #print("got block------------"+ self.tempArray[idx+1])
+            p=re.match(r'^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$', self.tempArray[idx+1])
+            p1=re.match(r'[0-9]+', self.tempArray[idx+1])
+            p2=re.match(r'^[a-z]$', self.tempArray[idx+1])
+            p3=re.match(r'^[A-Z]$', self.tempArray[idx+1])
+            p_slash=re.match(r'(^[a-z])/[0-9]+$',self.tempArray[idx+1])
+            p_hi=re.match(r'(^[a-z])-[0-9]+$',self.tempArray[idx+1])
+            if p or p1 or p2 or p3 or p_slash or p_hi or (self.tempArray[idx+1] in tempList):
+                #print("got block pattern------------"+self.tempArray[idx+1])
+                self.matched[self.blockkey] = self.tempArray[idx+1]
+            return True
+
 
 
 
@@ -227,28 +285,20 @@ class Address(object):
                     self.matched[self.roadkey] = self.matched[self.roadkey] +", "+road_str + road
                     # matched_array.append(matched[roadkey])
                     return True
+    
+
+
 
     def parse_address(self, input_address):
         input_address = " "+input_address
-        input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
-        x = input_address.split("*")
-        input_address = " "
-        spell_check=SpellCheck('area-list.txt')
-        for i in x:
-            spell_check.check(i)
-            i=str(spell_check.correct())
-            input_address+=i
-        # print " cocat   "+input_address
+        input_address=input_address.replace(',',' ')
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1-\2', input_address ) #insert a '-' between letters and number
-        #print input_address
+        #print input_address+"..................."
         # pre-processing...........................................................
-
         expand = self.multiple_replace(self.rep2, input_address.lower())
-        #print "202 ..............."+expand 
         expand = self.multiple_replace(self.area_dict, expand.lower())
-        #print "204 ..............."+expand 
-        addresscomponents = word_tokenize(expand)
-        
+        #addresscomponents = word_tokenize(expand)
+        addresscomponents = expand.split()
 
         for i, comp in enumerate(addresscomponents):
                 comp=comp.strip()
@@ -263,15 +313,10 @@ class Address(object):
                 # print comp.rstrip('[!@#$-]')
         self.cleanAddressStr = ' '.join(self.tempArray)
         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
-        #self.cleanAddressStr="mrpr s2"
-        # spell_check=SpellCheck('area-list.txt')
-        # spell_check.check(self.cleanAddressStr)
-        # self.cleanAddressStr=str(spell_check.correct())
-        #print self.cleanAddressStr+"................"
-        
-        self.tempArray = word_tokenize(self.cleanAddressStr)
-        # print self.cleanAddressStr
-        #print self.tempArray
+        #print(self.cleanAddressStr)
+        #self.tempArray = word_tokenize(self.cleanAddressStr)
+        self.tempArray = self.cleanAddressStr.split()
+
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
                 comp=comp.strip()
@@ -285,12 +330,15 @@ class Address(object):
                 if (self.check_super_sub_area(comp, i)):
                     self.matched_array.append(self.matched[self.ssareakey])
                     continue
-                if (self.check_holding(comp, i)):
-                    self.matched_array.append(self.matched[self.housekey])
-                    continue
                 if (self.check_road(comp, i)):
                     self.matched_array.append(self.matched[self.roadkey])
                     continue
+                if  (self.check_block(comp, i)):
+                    self.matched_array.append(self.matched[self.blockkey])
+                    continue
+                if (self.check_holding(comp, i)):
+                    self.matched_array.append(self.matched[self.housekey])
+                    continue               
                 if (self.check_district(comp, i)):
                     self.matched_array.append(self.matched[self.districtkey])
                     continue
@@ -302,7 +350,9 @@ class Address(object):
                     continue
 
 
+
         final_address = self.bind_address()
+        #print(final_address)
         return final_address
 
     def bind_address(self):
@@ -315,6 +365,10 @@ class Address(object):
             self.matched[self.roadkey] = self.matched[self.roadkey]+", "
         except Exception as e:
             self.matched[self.roadkey] = ''
+        try:
+            self.matched[self.blockkey] = "block "+self.matched[self.blockkey]+", "
+        except Exception as e:
+            self.matched[self.blockkey] = ''
 
         try:
             self.matched[self.ssareakey] = self.matched[self.ssareakey]+", "
@@ -347,48 +401,16 @@ class Address(object):
             self.matched[self.districtkey] = ''
 
 
-        full_address = self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.ssareakey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
+        full_address = self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.ssareakey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
         return full_address
-        
 
 
 #Flask App.................................
 app = Flask(__name__)
 CORS(app)
 
-# @app.route('/uploader', methods = ['POST'])
-# def upload_file():
-#     if request.method == 'POST':
-#         result_array = []
-
-#         fstring = csv.DictReader(request.files['file'])
-#         for t, td in enumerate(fstring):
-#             add_parse = None
-#             add_parse = Address()
-#             input_address = td['address']
-#             result_array.append({'before': input_address ,'after': add_parse.parse_address(input_address)})
-        
-
-#         return make_response(dumps(result_array))
-   
-#     #     csv_columns = ['input-address' ,'clean-address']
-#     #     csv_file = "parsed.csv"
-
-#     #     try:
-#     #         with open(csv_file, 'w') as csvfile:
-#     #             writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-#     #             writer.writeheader()
-#     #             for data in result_array:
-#     #                 writer.writerow(data)
-#     #     except IOError:
-#     #         print("I/O error") 
-
-#     # try:
-#     #     return send_from_directory('.', 'parsed.csv', attachment_filename='parsed.csv', as_attachment=True)
-#     # except FileNotFoundError:
-#     #     abort(404)
 
 @app.route('/uploader', methods = ['POST'])
 def upload_file():
