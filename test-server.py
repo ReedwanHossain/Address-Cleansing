@@ -197,6 +197,20 @@ class Address(object):
                 self.matched[self.housekey] = token
                 # matched_array.append(token)
                 return True
+            elif 'house' not in self.tempArray and self.matched[self.housekey] == None:
+                check_match=0
+                with open('./subarea-list.csv','rt')as f:
+                    area_list = csv.reader(f)
+                    for j, area in enumerate(area_list):
+                        if area[0].lower()==self.tempArray[idx-1].lower():
+                            check_match=1
+                            break
+                if check_match==0:
+                    self.matched[self.housekey] = token
+                    return True
+
+
+
                     
 
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
@@ -316,15 +330,15 @@ class Address(object):
                 if (self.check_super_sub_area(comp, i)):
                     self.matched_array.append(self.matched[self.ssareakey])
                     continue
-                if (self.check_holding(comp, i)):
-                    self.matched_array.append(self.matched[self.housekey])
-                    continue
                 if (self.check_road(comp, i)):
                     self.matched_array.append(self.matched[self.roadkey])
                     continue
                 if  (self.check_block(comp, i)):
                     self.matched_array.append(self.matched[self.blockkey])
                     continue
+                if (self.check_holding(comp, i)):
+                    self.matched_array.append(self.matched[self.housekey])
+                    continue               
                 if (self.check_district(comp, i)):
                     self.matched_array.append(self.matched[self.districtkey])
                     continue
