@@ -11,6 +11,8 @@ import csv
 #from gevent.pywsgi import WSGIServer
 #nltk.download('all')
 #nltk.download('punkt')
+
+from spellcheck import SpellCheck
 class Address(object):
        
     # initializaion............................
@@ -48,12 +50,12 @@ class Address(object):
 
     prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
-    address_component = ['', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
+    address_component = ['','code','street','floor','level', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
 
     rep2 = {
-        "rd#": " road ", "rd-": " road  ", "rd": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
+        "rd#": " road ", "rd-": " road  ", " rd": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
-        'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
+        'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
     } 
@@ -152,7 +154,7 @@ class Address(object):
                 token = token.lstrip('[0:!@#$-=+.]')
                 token = token.rstrip('[:!@#$-=+.]')
                 prefix_flag = False      
-                if (token.lower() =='section' or token.lower() =='sector' and token.lower() in self.cleanAddressStr.lower()):
+                if ((token.lower() =='section' or token.lower() =='sector') and token.lower() in self.cleanAddressStr.lower() and idx < len(self.tempArray)-1):
                         self.matched[self.subareakey] = token +' '+ self.tempArray[idx+1]
                         if (area.lower()=='mirpur'):
                             self.matched[self.subareakey] = 'section' +' '+ self.tempArray[idx+1]
@@ -192,12 +194,13 @@ class Address(object):
 
     def check_holding(self, token, idx):
 
-        if (any(char.isdigit() for char in token)):
-            if idx == 0:
+        if (any(char.isdigit() for char in token)) and idx < len(self.tempArray)-1:
+            if idx == 0 and self.tempArray[idx+1].lower()!='floor':
+                
                 self.matched[self.housekey] = token
                 # matched_array.append(token)
                 return True
-            elif 'house' not in self.tempArray and self.matched[self.housekey] == None:
+            elif  self.matched[self.housekey] == None and self.tempArray[idx-1].lower() not in self.address_component and self.tempArray[idx+1].lower() not in self.address_component:
                 check_match=0
                 with open('./subarea-list.csv','rt')as f:
                     area_list = csv.reader(f)
@@ -207,11 +210,7 @@ class Address(object):
                             break
                 if check_match==0:
                     self.matched[self.housekey] = token
-                    return True
-
-
-
-                    
+                    return True                   
 
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
             #print(self.tempArray)
@@ -291,11 +290,29 @@ class Address(object):
 
     def parse_address(self, input_address):
         input_address = " "+input_address
+        input_address = input_address.lower()
         input_address=input_address.replace(',',' ')
+
+        input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
+        x = input_address.split("*")
+        input_address = " "
+        spell_check=SpellCheck('area-list.txt')
+        for i in x:
+            spell_check.check(i)
+            i=str(spell_check.correct())
+            input_address+=i
+
+        #print("before -----"+input_address)
+        block_h=re.search('block h',input_address)
+        if block_h:
+            self.matched[self.blockkey] = 'h'
+            input_address = re.sub('block h','', input_address)
+            #print("after prune -----"+input_address)
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1-\2', input_address ) #insert a '-' between letters and number
         #print input_address+"..................."
         # pre-processing...........................................................
         expand = self.multiple_replace(self.rep2, input_address.lower())
+        print(expand)
         expand = self.multiple_replace(self.area_dict, expand.lower())
         #addresscomponents = word_tokenize(expand)
         addresscomponents = expand.split()
@@ -315,7 +332,10 @@ class Address(object):
         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
         #print(self.cleanAddressStr)
         #self.tempArray = word_tokenize(self.cleanAddressStr)
-        self.tempArray = self.cleanAddressStr.split()
+
+                #self.cleanAddressStr="mrpr s2"
+
+        print(self.tempArray)
 
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
