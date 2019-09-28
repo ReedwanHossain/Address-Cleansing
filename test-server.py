@@ -59,7 +59,7 @@ class Address(object):
         "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no=': '', 'no.': '',
+        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '',
     } 
     area_dict = {"mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
     
@@ -195,14 +195,14 @@ class Address(object):
 
 
     def check_holding(self, token, idx):
+        tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
 
         if (any(char.isdigit() for char in token)) and idx < len(self.tempArray)-1:
             if idx == 0 and self.tempArray[idx+1].lower()!='floor':
-                
                 self.matched[self.housekey] = token
                 # matched_array.append(token)
                 return True
-            elif  self.matched[self.housekey] == None and self.tempArray[idx-1].lower() not in self.address_component and self.tempArray[idx+1].lower() not in self.address_component:
+            if  self.matched[self.housekey] == None and self.tempArray[idx-1].lower() not in self.address_component and self.tempArray[idx+1].lower() not in self.address_component:
                 check_match=0
                 with open('./subarea-list.csv','rt')as f:
                     area_list = csv.reader(f)
@@ -212,11 +212,12 @@ class Address(object):
                             break
                 if check_match==0:
                     self.matched[self.housekey] = token
-                    return True                   
+                    if (any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList): 
+                        self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+1]  
+                    return True            
 
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
             #print(self.tempArray)
-            tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
             tempList=set(tempList)
             if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList):
             #chk_house_no=re.search(r'\w', self.tempArray[idx+1].strip(","))
@@ -318,6 +319,8 @@ class Address(object):
     def parse_address(self, input_address):
         input_address = " "+input_address
         input_address = input_address.lower()
+        input_address=re.sub(r'\([^)]*\)', '', input_address)
+        input_address=re.sub(r'(\s*)(floor|flat|level)(\s*(:)*\s*(-)*\s*)([0-9]+((th|rd|st|nd))) | (\s*)([0-9]+(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level)', '', input_address)
         input_address=input_address.replace(',',' ')
         #print("before -----"+input_address)
     #print("after prune -----"+input_address)
