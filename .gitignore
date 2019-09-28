@@ -1,6 +1,4 @@
-rapido.csv
-dsu.csv
-chaldal.csv
-area-list.csv
-area-pattern.csv
-subarea-list.csv
+# Ignore all text files
+*.csv
+*.txt
+*.pyc
