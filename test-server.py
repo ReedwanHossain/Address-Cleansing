@@ -49,13 +49,15 @@ class Address(object):
         self.matched[self.blockkey] = None
         self.tempArray = []
         self.matched_array = []
+        self.area_pattern = None
+
 
     prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
     address_component = ['','sarani','sarak','rasta','goli','lane','code','street','floor','level', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
 
     rep2 = {
-        "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
+        "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-":" block ","bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
@@ -196,13 +198,18 @@ class Address(object):
 
     def check_holding(self, token, idx):
         tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
-
-        if (any(char.isdigit() for char in token)) and idx < len(self.tempArray)-1:
+        if (any(char.isdigit() for char in token) or token in tempList) and idx < len(self.tempArray)-1 and self.matched[self.housekey]==None:
             if idx == 0 and self.tempArray[idx+1].lower()!='floor':
                 self.matched[self.housekey] = token
                 # matched_array.append(token)
+                if ((any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList)) and idx < len(self.tempArray)-2 :
+                    self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+1] 
+                    if ((any(char.isdigit() for char in self.tempArray[idx+2])) or re.match(r'^[a-z]$', self.tempArray[idx+2]) or (self.tempArray[idx+2] in tempList)) and idx < len(self.tempArray)-3:
+                        self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+2]
                 return True
-            if  self.matched[self.housekey] == None and self.tempArray[idx-1].lower() not in self.address_component and self.tempArray[idx+1].lower() not in self.address_component:
+
+
+            if self.tempArray[idx-1].lower() not in self.address_component and self.tempArray[idx+1].lower() not in self.address_component:
                 check_match=0
                 with open('./subarea-list.csv','rt')as f:
                     area_list = csv.reader(f)
@@ -210,11 +217,17 @@ class Address(object):
                         if area[0].lower()==self.tempArray[idx-1].lower():
                             check_match=1
                             break
-                if check_match==0:
-                    self.matched[self.housekey] = token
-                    if (any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList): 
-                        self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+1]  
-                    return True            
+                if self.matched[self.housekey]==None:
+                    self.matched[self.housekey]=""
+                if check_match==0 and token not in self.matched[self.housekey]:
+                    print(self.matched[self.housekey])
+                    if ((any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList))  and idx < len(self.tempArray)-2: 
+                        self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+1] 
+                        if ((any(char.isdigit() for char in self.tempArray[idx+2])) or re.match(r'^[a-z]$', self.tempArray[idx+2]) or (self.tempArray[idx+2] in tempList)) and idx < len(self.tempArray)-3:
+                             self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+2] 
+                    return True 
+            return True
+
 
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
             #print(self.tempArray)
@@ -274,10 +287,9 @@ class Address(object):
             p_slash=re.match(r'(^[a-z])/[0-9]+$',self.tempArray[idx+1])
             p_hi=re.match(r'(^[a-z])-[0-9]+$',self.tempArray[idx+1])
             if p or p1 or p2 or p3 or p_slash or p_hi or (self.tempArray[idx+1] in tempList):
-                #print("got block pattern------------"+self.tempArray[idx+1])
+                #print("got block pattern-----------H-"+self.tempArray[idx+1])
                 self.matched[self.blockkey] = self.tempArray[idx+1]
             return True
-
 
 
 
@@ -312,7 +324,60 @@ class Address(object):
                     self.matched[self.roadkey] = self.matched[self.roadkey] +", "+road_str + road
                     # matched_array.append(matched[roadkey])
                     return True
-    
+        
+    def check_address_status(self):
+        print self.matched
+        with open('./area-pattern.csv','rt')as f:
+            area_pattern = csv.reader(f)
+            checkst=0
+            getarea=0
+            for j, status in enumerate(area_pattern):
+                #print(",,,,,,,,,,,,"+str(status))
+
+                area_name=status[0].lower()
+                house_st=status[1]
+                road_st=status[2]
+                block_st=status[3]
+                ssarea_st=status[4]
+                subarea_st=status[5]
+                
+                #print("area   "+area_name)
+                dict_areakey=self.matched[self.areakey].replace(',','')
+                #print(dict_areakey)
+                if self.matched[self.areakey]=='':
+                    checkst=1
+                elif area_name.strip()==dict_areakey.strip():
+                    getarea=1
+                    #print("area matched")
+                    if house_st=='H' and self.matched[self.housekey]=='':
+                        #print("1111111")
+                        checkst=1
+                    if road_st=='H' and self.matched[self.roadkey]=='':
+                        checkst=1
+                    if block_st=='H' and self.matched[self.blockkey]=='':
+                        checkst=1
+                    if ssarea_st=='H' and self.matched[self.ssareakey]=='':
+                        checkst=1
+                    if subarea_st=='H' and self.matched[self.subareakey]=='':
+                        checkst=1
+            
+            if checkst==1 or getarea==0:
+                print("INCOMPLETE ADDRESS")
+                return "incomplete"
+            else:
+                print("COMPLETE ADDRESS")
+                return "complete"
+
+
+
+
+
+
+
+
+
+                #print(j)
+                #print(len(status))
 
 
 
@@ -328,7 +393,7 @@ class Address(object):
         #print input_address+"..................."
         # pre-processing...........................................................
         expand = self.multiple_replace(self.rep2, input_address.lower())
-        print(expand)
+        #print(expand)
         expand = self.multiple_replace(self.area_dict, expand.lower())
 
         '''
@@ -347,13 +412,13 @@ class Address(object):
             input_address+=i
         expand=input_address
         '''
-
         #print("before -----"+input_address)
         block_h=re.search('block h',input_address)
         if block_h:
             self.matched[self.blockkey] = 'h'
             input_address = re.sub('block h','', input_address)
-        
+        #print("      expand"+expand)
+        expand=re.sub(r'(\s*)(floor|flat|level)(\s*(:)*\s*(-)*\s*)([0-9]+((th|rd|st|nd))) | (\s*)([0-9]+(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level)', '', expand)
         #addresscomponents = word_tokenize(expand)
         addresscomponents = expand.split()
 
@@ -364,7 +429,7 @@ class Address(object):
                
                 temp = comp.lstrip('[0:!@#$-=+.]')
                 temp = temp.rstrip('[:!@#$-]=+.')
-                temp = temp.strip(" ");
+                temp = temp.strip(" ")
                 if(temp != ""):
                     self.tempArray.append(temp)
                 # print comp.rstrip('[!@#$-]')
@@ -387,9 +452,9 @@ class Address(object):
                 if (self.check_sub_area(comp, i)):
                     self.matched_array.append(self.matched[self.subareakey])
                     continue
-                if (self.check_super_sub_area(comp, i)):
-                    self.matched_array.append(self.matched[self.ssareakey])
-                    continue
+                # if (self.check_super_sub_area(comp, i)):
+                #     self.matched_array.append(self.matched[self.ssareakey])
+                #     continue
                 if (self.check_road(comp, i)):
                     self.matched_array.append(self.matched[self.roadkey])
                     continue
@@ -414,9 +479,13 @@ class Address(object):
 
 
 
-        final_address = self.bind_address()
-        #print(final_address)
-        return final_address
+        final_address = self.bind_address()        
+        #print(self.matched)
+        obj = {
+            'status' : self.check_address_status(),
+            'address' : final_address
+        }
+        return obj
 
     def bind_address(self):
 
@@ -425,6 +494,7 @@ class Address(object):
         except Exception as e:
             self.matched[self.buildingkey] = '' 
         try:
+            self.matched[self.housekey]=self.matched[self.housekey].strip('-')
             self.matched[self.housekey] = "house "+self.matched[self.housekey]+", "
         except Exception as e:
             self.matched[self.housekey] = '' 
@@ -438,10 +508,10 @@ class Address(object):
         except Exception as e:
             self.matched[self.blockkey] = ''
 
-        try:
-            self.matched[self.ssareakey] = self.matched[self.ssareakey]+", "
-        except Exception as e:
-            self.matched[self.ssareakey] = ''
+        # try:
+        #     self.matched[self.ssareakey] = self.matched[self.ssareakey]+", "
+        # except Exception as e:
+        #     self.matched[self.ssareakey] = ''
 
         try:
             self.matched[self.subareakey] = self.matched[self.subareakey]+", "
@@ -469,7 +539,7 @@ class Address(object):
             self.matched[self.districtkey] = ''
 
 
-        full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.ssareakey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
+        full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
         return full_address
@@ -490,9 +560,10 @@ def upload_file():
             add_parse = None
             add_parse = Address()
             input_address = td['address']
-            result_array.append({'input-address': input_address ,'clean-address': add_parse.parse_address(input_address)})
+            result = add_parse.parse_address(input_address)
+            result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status']})
            
-        csv_columns = ['input-address' ,'clean-address']
+        csv_columns = ['input-address' ,'clean-address', 'status']
         csv_file = "parsed.csv"
 
         try:
@@ -516,7 +587,7 @@ def parse_it():
    addr = request.args.get('addr')
    # de_addr = urllib.unquote(addr)
    # print "address.........."+de_addr
-   return add_parse.parse_address(addr)
+   return add_parse.parse_address(addr).address
 
 
 if __name__ == '__main__':
