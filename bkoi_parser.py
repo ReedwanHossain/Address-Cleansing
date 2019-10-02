@@ -50,7 +50,17 @@ class Address(object):
         self.tempArray = []
         self.matched_array = []
         self.area_pattern = None
+        
+    status_pattern= {
+    '$1':['H','R','B','SS','S'],
+    '$2':['H','R','SS','S'],
+    '$3':['H','R','B','S'],
+    '$4':['H','R','S'],
+    '$5':['H','R','B'],
+    '$6':['H','SS','S'],
+    '$1':['H','S'],
 
+    }
 
     prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
@@ -66,6 +76,7 @@ class Address(object):
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ',
     } 
+    
     area_dict = {"nikunjo": " nikunja ", "nikunja": " nikunja ", "mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
     
     def multiple_replace(self, dict, text):
@@ -402,27 +413,30 @@ class Address(object):
         input_address=input_address.lower()+"  "
         input_address="  "+input_address.lower()
         input_address=re.sub(r'\([^)]*\)', '', input_address)
+        #behind to hospital delete text
         input_address=re.sub(r'(behind|nearby|near by|near to|opposite|beside)[^)]*(building|house|hospital|university)', '', input_address)
-        input_address=re.sub(r'((\s*)(floor|room|flat|level)(\s*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room))(\s*)|(((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room)(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
+        #delete flat no. or etc
+        input_address=re.sub(r'((\s*)(floor|room|flat|level)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room))(\s*)|(((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room)(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
         input_address=input_address.replace(',',' ')
-        #print("before -----"+input_address)
-    #print("after prune -----"+input_address)
+        print("before -----"+input_address)
+        
         input_address=re.sub('(h|b|r)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
-        block_h=re.search('block h',input_address)
+        
+        block_h=re.search('block(\s*)(:)*(-)*(\s*)(h)',input_address)
         if block_h:
             self.matched[self.blockkey] = 'h'
-            input_address = re.sub('block h','', input_address)
+            input_address = re.sub('block(\s*)(:)*(-)*(\s*)(h)',' ', input_address)
 
-        block_b=re.search('block b',input_address)
+        block_b=re.search('block(\s*)(:)*(-)*(\s*)(b)',input_address)
         if block_b:
             self.matched[self.blockkey] = 'b'
-            input_address = re.sub('block b','', input_address)
+            input_address = re.sub('block(\s*)(:)*(-)*(\s*)(b)',' ', input_address)
         
-        block_r=re.search('block r',input_address)
+        block_r=re.search('block(\s*)(:)*(-)*(\s*)(r)',input_address)
         if block_r:
             self.matched[self.blockkey] = 'r'
-            input_address = re.sub('block r','  ', input_address)
-        
+            input_address = re.sub('block(\s*)(:)*(-)*(\s*)(r)',' ', input_address)
+        print("after prune -----"+input_address)
         input_address = re.sub( r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         input_address = re.sub( r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         #print input_address+"..................."
