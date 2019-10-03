@@ -69,7 +69,7 @@ class Address(object):
     building_name_key = ['','plaza' , 'market' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'monjil' , 'manjil' , 'building' , 'headquarter' ]
     tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
     rep2 = {
-        'east':' east ', 'west':' west ', 'north':' north ', 'south':' south ', 'middle':' middle ', 'purba':' purba ', 'poschim':' poschim ', 'uttar':' uttar ', 'dakshin':' dakshin ', 'moddho':' moddho ', 'dokkhin':' dokkhin ', 'dakkhin':' dakkhin ',
+        #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
@@ -319,7 +319,7 @@ class Address(object):
 
     def check_road(self, road, idx):
         tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
-        if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'shorok' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'sarak' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road or 'line' in road or 'len' in road :
+        if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'shorok' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'sarak' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road or 'line' in road :
             if idx != len(self.tempArray)-1:
                 if (any(char.isdigit() for char in self.tempArray[idx+1])):
                     num=re.findall(r'\d+', self.tempArray[idx+1])
@@ -414,29 +414,45 @@ class Address(object):
         input_address="  "+input_address.lower()
         input_address=re.sub(r'\([^)]*\)', '', input_address)
         #behind to hospital delete text
+        input_address=input_address.replace(".","")
+        input_address=input_address.replace("-"," ")
+        input_address=input_address.replace(":"," ")
+        input_address=input_address.replace(" no "," ")
         input_address=re.sub(r'(behind|nearby|near by|near to|opposite|beside)[^)]*(building|house|hospital|university)', '', input_address)
         #delete flat no. or etc
-        input_address=re.sub(r'((\s*)(floor|room|flat|level)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room))(\s*)|(((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room)(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
+        temp_input_address=input_address.split()
+        if 'flat' in input_address:
+            temp_input_address=input_address.split()
+        #print(temp_input_address)
+            for i,t in enumerate(temp_input_address):
+                if t=='flat' and any(char.isdigit() for char in temp_input_address[i+1]):
+                    temp_input_address.remove(temp_input_address[i])
+                    temp_input_address.remove(temp_input_address[i])
+                    break
+            input_address = ' '.join(str(e) for e in temp_input_address)
+            print("after delete flat  "+input_address)
+
+
+        input_address=re.sub(r'((\s*)(floor|room|flat|level)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room))(\s*)|(((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
         input_address=input_address.replace(',',' ')
         print("before -----"+input_address)
         
         input_address=re.sub('(h|b|r)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
-        
-        block_h=re.search('block(\s*)(:)*(-)*(\s*)(h)',input_address)
+        block_h=re.search('block(\s*)(no)*(:)*(-)*(\s*)(h)',input_address)
         if block_h:
             self.matched[self.blockkey] = 'h'
-            input_address = re.sub('block(\s*)(:)*(-)*(\s*)(h)',' ', input_address)
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(h)',' ', input_address)
 
-        block_b=re.search('block(\s*)(:)*(-)*(\s*)(b)',input_address)
+        block_b=re.search('block(\s*)(no)*(:)*(-)*(\s*)(b)',input_address)
         if block_b:
             self.matched[self.blockkey] = 'b'
-            input_address = re.sub('block(\s*)(:)*(-)*(\s*)(b)',' ', input_address)
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(b)',' ', input_address)
         
-        block_r=re.search('block(\s*)(:)*(-)*(\s*)(r)',input_address)
+        block_r=re.search('block(\s*)(no)*(:)*(-)*(\s*)(r)',input_address)
         if block_r:
             self.matched[self.blockkey] = 'r'
-            input_address = re.sub('block(\s*)(:)*(-)*(\s*)(r)',' ', input_address)
-        print("after prune -----"+input_address)
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(r)',' ', input_address)
+        #print("after prune -----"+input_address)
         input_address = re.sub( r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         input_address = re.sub( r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         #print input_address+"..................."
@@ -448,6 +464,7 @@ class Address(object):
         expand = self.multiple_replace(self.area_dict, expand.lower())
         #unknown char remove
         expand = re.sub( r'#|"',' ', expand )
+        print("after prune -----"+expand)
         '''
         #spell_checker
         input_address=expand
