@@ -248,7 +248,7 @@ class Address(object):
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
             #print(self.tempArray)
             tempList=set(tempList)
-            if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList):
+            if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList) or (re.match(r'^[a-z]/[a-z]$', self.tempArray[idx+1])):
             #chk_house_no=re.search(r'\w', self.tempArray[idx+1].strip(","))
             #if chk_house_no:
 
@@ -361,22 +361,22 @@ class Address(object):
         
     def check_address_status(self):
         print self.matched
-        with open('./area-pattern.csv','rt')as f:
+        with open('./subarea-list.csv','rt')as f:
             area_pattern = csv.reader(f)
             checkst=0
             getarea=0
             for j, status in enumerate(area_pattern):
                 #print(",,,,,,,,,,,,"+str(status))
 
-                area_name=status[0].lower()
-                house_st=status[1]
-                road_st=status[2]
-                block_st=status[3]
-                ssarea_st=status[4]
-                subarea_st=status[5]
+                area_name=status[1].lower()
+                house_st=status[2]
+                road_st=status[3]
+                block_st=status[4]
+                ssarea_st=status[5]
+                subarea_st=status[6]
                 
                 #print("area   "+area_name)
-                dict_areakey=self.matched[self.areakey].replace(',','')
+                dict_areakey=self.matched[self.subareakey].replace(',','')
                 #print(dict_areakey)
                 if self.matched[self.areakey]=='':
                     checkst=1
