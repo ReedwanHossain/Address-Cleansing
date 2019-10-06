@@ -71,7 +71,7 @@ class Address(object):
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
-        "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
+        "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ', ' sec ':' section ', 'sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ',
@@ -157,9 +157,6 @@ class Address(object):
                     token = 'section '+ self.tempArray[idx]
                 elif(area.lower() == 'uttara'):
                     token = 'sector '+ self.tempArray[idx]
-                elif token == 'block' and area.lower() == 'bashundhara' or area.lower() == 'banani' or area.lower() == 'khilgaon' or area.lower() == 'banasree' or area.lower() == 'baridhara' or area.lower() == 'lalmatia':
-                    if idx != len(self.tempArray)-1:
-                        token = token+" "+self.tempArray[idx+1]
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
                     for j, subarea in enumerate(subarea_list):
@@ -184,7 +181,10 @@ class Address(object):
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
                     for j, subarea in enumerate(subarea_list):
+                        #print(subarea)
+                        subarea[0]=subarea[0].strip()
                         if (area.lower() == subarea[0].lower() and (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
+                            print(subarea[1].lower())
                             self.matched[self.subareakey] = subarea[1].lower()
                             # matched_array.append(matched[subareakey])
                             self.subarea_flag = True
@@ -368,7 +368,8 @@ class Address(object):
             for j, status in enumerate(area_pattern):
                 #print(",,,,,,,,,,,,"+str(status))
 
-                area_name=status[1].lower()
+                area_name=status[0].lower()
+                sub_area_name=status[1].lower()
                 house_st=status[2]
                 road_st=status[3]
                 block_st=status[4]
@@ -376,11 +377,14 @@ class Address(object):
                 subarea_st=status[6]
                 
                 #print("area   "+area_name)
-                dict_areakey=self.matched[self.subareakey].replace(',','')
+                dict_areakey=self.matched[self.areakey].replace(',','')
+                dict_sub_areakey=self.matched[self.subareakey].replace(',','')
                 #print(dict_areakey)
                 if self.matched[self.areakey]=='':
                     checkst=1
-                elif area_name.strip()==dict_areakey.strip():
+                    break
+                elif dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()==dict_areakey.strip():
+                    print(",,,,,,,,,,,,"+str(status))
                     getarea=1
                     #print("area matched")
                     if house_st=='H' and self.matched[self.housekey]=='':
@@ -394,13 +398,16 @@ class Address(object):
                         checkst=1
                     if subarea_st=='H' and self.matched[self.subareakey]=='':
                         checkst=1
+                    break
             
             if checkst==1 or getarea==0:
                 print("INCOMPLETE ADDRESS")
                 return "incomplete"
-            else:
+            elif getarea==1 and checkst==0:
                 print("COMPLETE ADDRESS")
                 return "complete"
+            else:
+                return "incomplete"
 
 
 
@@ -418,7 +425,7 @@ class Address(object):
         input_address=input_address.replace("-"," ")
         input_address=input_address.replace(":"," ")
         input_address=input_address.replace(" no "," ")
-        input_address=re.sub(r'(behind|nearby|near by|near to|opposite|beside)[^)]*(building|house|hospital|university)', '', input_address)
+        input_address=re.sub(r'(behind|nearby|near by|near to|opposite|beside)[^)]*(building|house|hospital|university|city)', '', input_address)
         #delete flat no. or etc
         temp_input_address=input_address.split()
         if 'flat' in input_address:
@@ -430,12 +437,12 @@ class Address(object):
                     temp_input_address.remove(temp_input_address[i])
                     break
             input_address = ' '.join(str(e) for e in temp_input_address)
-            print("after delete flat  "+input_address)
+            #print("after delete flat  "+input_address)
 
 
         input_address=re.sub(r'((\s*)(floor|room|flat|level)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room))(\s*)|(((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
         input_address=input_address.replace(',',' ')
-        print("before -----"+input_address)
+        #print("before -----"+input_address)
         
         input_address=re.sub('(h|b|r)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
         block_h=re.search('block(\s*)(no)*(:)*(-)*(\s*)(h)',input_address)
@@ -464,7 +471,7 @@ class Address(object):
         expand = self.multiple_replace(self.area_dict, expand.lower())
         #unknown char remove
         expand = re.sub( r'#|"',' ', expand )
-        print("after prune -----"+expand)
+        #print("after prune -----"+expand)
         '''
         #spell_checker
         input_address=expand
@@ -475,9 +482,10 @@ class Address(object):
         print("before -----"+input_address)
         for i in x:
             print("before  spell -----"+i)
-            spell_check.check(i)
-            i=str(spell_check.correct())
-            print("after  spell -----"+i)
+            if len(i)>5:
+                spell_check.check(i)
+                i=str(spell_check.correct())
+                print("after  spell -----"+i)
             input_address+=i
         expand=input_address
         '''
@@ -514,11 +522,14 @@ class Address(object):
         for i, comp in enumerate(self.tempArray):
                 comp=comp.strip()
                 # print(comp)
-                if (self.check_area(comp, i)):
-                    self.matched_array.append(self.matched[self.areakey])
-                    continue
+
                 if (self.check_sub_area(comp, i)):
+                    #print(comp)
                     self.matched_array.append(self.matched[self.subareakey])
+                    continue
+                if (self.check_area(comp, i)):
+                    #print(comp)
+                    self.matched_array.append(self.matched[self.areakey])
                     continue
                 # if (self.check_super_sub_area(comp, i)):
                 #     self.matched_array.append(self.matched[self.ssareakey])
