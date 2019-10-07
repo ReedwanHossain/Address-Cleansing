@@ -180,10 +180,11 @@ class Address(object):
 
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
+                    #print(self.area_flag)
                     for j, subarea in enumerate(subarea_list):
                         #print(subarea)
                         subarea[0]=subarea[0].strip()
-                        if (area.lower() == subarea[0].lower() and (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
+                        if ( (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
                             print(subarea[1].lower())
                             self.matched[self.subareakey] = subarea[1].lower()
                             # matched_array.append(matched[subareakey])
@@ -365,6 +366,12 @@ class Address(object):
             area_pattern = csv.reader(f)
             checkst=0
             getarea=0
+            
+            assignaddress=0
+            if self.matched[self.areakey] not in self.cleanAddressStr:
+                print(",,,,,,,,,, area was assigned by sub area")
+                same_sub_area_count=1
+                assignaddress=1
             for j, status in enumerate(area_pattern):
                 #print(",,,,,,,,,,,,"+str(status))
 
@@ -383,6 +390,13 @@ class Address(object):
                 if self.matched[self.areakey]=='':
                     checkst=1
                     break
+                if dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()!=dict_areakey.strip() and assignaddress==1:
+                    same_sub_area_count+=1
+                    print(same_sub_area_count)
+                    if same_sub_area_count>=2:
+                        checkst=1
+                        break
+
                 elif dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()==dict_areakey.strip():
                     print(",,,,,,,,,,,,"+str(status))
                     getarea=1
@@ -398,7 +412,6 @@ class Address(object):
                         checkst=1
                     if subarea_st=='H' and self.matched[self.subareakey]=='':
                         checkst=1
-                    break
             
             if checkst==1 or getarea==0:
                 print("INCOMPLETE ADDRESS")
@@ -421,7 +434,17 @@ class Address(object):
         input_address="  "+input_address.lower()
         input_address=re.sub(r'\([^)]*\)', '', input_address)
         #behind to hospital delete text
-        input_address=input_address.replace(".","")
+
+        if re.search('\d{5}',input_address):
+            temp_input_address=input_address.split()
+        #print(temp_input_address)
+            for i,t in enumerate(temp_input_address):
+                if re.search('\d{5}',t):
+                    temp_input_address[i]=""
+            input_address = ' '.join(str(e) for e in temp_input_address)
+
+
+        #input_address=input_address.replace(".","")
         input_address=input_address.replace("-"," ")
         input_address=input_address.replace(":"," ")
         input_address=input_address.replace(" no "," ")
@@ -459,6 +482,11 @@ class Address(object):
         if block_r:
             self.matched[self.blockkey] = 'r'
             input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(r)',' ', input_address)
+        
+        block_s=re.search('block(\s*)(no)*(:)*(-)*(\s*)(s)',input_address)
+        if block_s:
+            self.matched[self.blockkey] = 's'
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(s)',' ', input_address)
         #print("after prune -----"+input_address)
         input_address = re.sub( r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         input_address = re.sub( r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address ) #insert a '-' between letters and number
@@ -611,7 +639,10 @@ class Address(object):
             self.matched[self.areakey] = ''
 
         try:
-            self.matched[self.unionkey] = self.matched[self.unionkey]+", "
+            if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                self.matched[self.unionkey] = self.matched[self.unionkey]+", "
+            else:
+                self.matched[self.unionkey] = ''
         except Exception as e:
             self.matched[self.unionkey] = ''
 
