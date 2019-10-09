@@ -47,7 +47,7 @@ class SpellCheck:
             for name in self.dictionary:
                 
                 # if the fuzzywuzzy returns the matched value greater than 80
-                if fuzz.ratio(string_words[i].lower(), name.lower()) >= 75:
+                if fuzz.ratio(string_words[i].lower(), name.lower()) >= 90:
                     
                     # append the dict word to the suggestion list
                     suggestions.append(name)
@@ -72,7 +72,7 @@ class SpellCheck:
                 # calulcate the match probability
                 percent = fuzz.ratio(string_words[i].lower(), name.lower())
                 # if the fuzzywuzzy returns the matched value greater than 80
-                if percent >= 75:
+                if percent >= 80:
 
                     #print string_words[i]+" : "+name+" : "+str(percent)
                     #string_words[i] = name
