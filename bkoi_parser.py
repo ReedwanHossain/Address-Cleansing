@@ -50,20 +50,33 @@ class Address(object):
         self.tempArray = []
         self.matched_array = []
         self.area_pattern = None
+        
+    status_pattern= {
+    '$1':['H','R','B','SS','S'],
+    '$2':['H','R','SS','S'],
+    '$3':['H','R','B','S'],
+    '$4':['H','R','S'],
+    '$5':['H','R','B'],
+    '$6':['H','SS','S'],
+    '$1':['H','S'],
 
+    }
 
     prefix_dict = ['', 'east', 'west', 'north', 'south', 'middle', 'purba', 'poschim', 'uttar', 'dakshin', 'moddho', 'dokkhin', 'dakkhin']
 
     address_component = ['','sarani','sarak','rasta','goli','lane','code','street','floor','level', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
-
+    
+    building_name_key = ['','plaza' , 'market' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'monjil' , 'manjil' , 'building' , 'headquarter' ]
+    tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
     rep2 = {
-        'east':' east ', 'west':' west ', 'north':' north ', 'south':' south ', 'middle':' middle ', 'purba':' purba ', 'poschim':' poschim ', 'uttar':' uttar ', 'dakshin':' dakshin ', 'moddho':' moddho ', 'dokkhin':' dokkhin ', 'dakkhin':' dakkhin ',
+        #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
-        "bl-":" block "," b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ','sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', 's#': ' sector ', 's:': ' sector ',
+        "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ', ' sec ':' section ', 'sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '',
+        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ',
     } 
+    
     area_dict = {"nikunjo": " nikunja ", "nikunja": " nikunja ", "mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
     
     def multiple_replace(self, dict, text):
@@ -144,9 +157,6 @@ class Address(object):
                     token = 'section '+ self.tempArray[idx]
                 elif(area.lower() == 'uttara'):
                     token = 'sector '+ self.tempArray[idx]
-                elif token == 'block' and area.lower() == 'bashundhara' or area.lower() == 'banani' or area.lower() == 'khilgaon' or area.lower() == 'banasree' or area.lower() == 'baridhara' or area.lower() == 'lalmatia':
-                    if idx != len(self.tempArray)-1:
-                        token = token+" "+self.tempArray[idx+1]
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
                     for j, subarea in enumerate(subarea_list):
@@ -170,8 +180,12 @@ class Address(object):
 
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
+                    #print(self.area_flag)
                     for j, subarea in enumerate(subarea_list):
-                        if (area.lower() == subarea[0].lower() and (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
+                        #print(subarea)
+                        subarea[0]=subarea[0].strip()
+                        if ( (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
+                            print(subarea[1].lower())
                             self.matched[self.subareakey] = subarea[1].lower()
                             # matched_array.append(matched[subareakey])
                             self.subarea_flag = True
@@ -235,7 +249,7 @@ class Address(object):
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
             #print(self.tempArray)
             tempList=set(tempList)
-            if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList):
+            if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList) or (re.match(r'^[a-z]/[a-z]$', self.tempArray[idx+1])):
             #chk_house_no=re.search(r'\w', self.tempArray[idx+1].strip(","))
             #if chk_house_no:
 
@@ -260,7 +274,7 @@ class Address(object):
 
 
     def check_holding_name(self, token,idx):
-        if 'plaza' in token or 'market' in token or 'villa' in token or 'mansion' in token or 'vila' in token or 'tower' in token or 'place' in token or 'complex' in token or 'center' in token or 'centre' in token or 'mall' in token or 'monjil' in token or 'manjil' in token or 'building' in token or 'headquarter' in token:
+        if 'plaza' in token or 'market' in token or 'villa' in token or 'cottage' in token or 'mansion' in token or 'vila' in token or 'tower' in token or 'place' in token or 'complex' in token or 'center' in token or 'centre' in token or 'mall' in token or 'monjil' in token or 'manjil' in token or 'building' in token or 'headquarter' in token:
             if idx != len(self.tempArray)-1 and idx != 0 :
                 i=idx-1
                 building_str = ''
@@ -268,7 +282,7 @@ class Address(object):
                 while i>=0:
                     if any(char.isdigit() for char in self.tempArray[i]):
                         break
-                    if not i==0 and self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in self.matched_array:
+                    if not i==0 and (self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in self.tempList):
                         if not any(char.isdigit() for char in self.tempArray[i]):
                             building_str = self.tempArray[i]+ " " + building_str
                             break
@@ -305,13 +319,21 @@ class Address(object):
 
 
     def check_road(self, road, idx):
-        if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'shorok' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road or 'line' in road or 'len' in road :
+        tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
+        if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'shorok' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'sarak' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road or 'line' in road :
             if idx != len(self.tempArray)-1:
                 if (any(char.isdigit() for char in self.tempArray[idx+1])):
-                    if(self.matched[self.roadkey]==None):
+                    num=re.findall(r'\d+', self.tempArray[idx+1])
+                    num = max(map(int, num))
+                    #print(num)
+                    if(self.matched[self.roadkey]==None and num<1000):
                             self.matched[self.roadkey] = road+" "+self.tempArray[idx+1]
                             return True
-                    self.matched[self.roadkey] = self.matched[self.roadkey] +", "+road+" " +self.tempArray[idx+1]
+                    #road x avenue y
+                    if self.matched[self.roadkey]==None:
+                        self.matched[self.roadkey]=''
+                    if num<1000:
+                        self.matched[self.roadkey] = self.matched[self.roadkey] +", "+road+" " +self.tempArray[idx+1]
                     return True
             if idx != 0:
                 if (not any(char.isdigit() for char in self.tempArray[idx-1])):
@@ -322,7 +344,9 @@ class Address(object):
                         return True
 
                     while i>=0:
-                        if not i==0 and self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in self.matched_array:
+                        if any(char.isdigit() for char in self.tempArray[i]) or self.tempArray[i] in self.address_component:
+                            break
+                        if not i==0 and (self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in self.building_name_key or self.tempArray[i-1] in tempList ):
                             if not any(char.isdigit() for char in self.tempArray[i]):
                                 road_str = self.tempArray[i]+ " " + road_str
                                 break
@@ -338,26 +362,43 @@ class Address(object):
         
     def check_address_status(self):
         print self.matched
-        with open('./area-pattern.csv','rt')as f:
+        with open('./subarea-list.csv','rt')as f:
             area_pattern = csv.reader(f)
             checkst=0
             getarea=0
+            
+            assignaddress=0
+            if self.matched[self.areakey] not in self.cleanAddressStr:
+                print(",,,,,,,,,, area was assigned by sub area")
+                same_sub_area_count=1
+                assignaddress=1
             for j, status in enumerate(area_pattern):
                 #print(",,,,,,,,,,,,"+str(status))
 
                 area_name=status[0].lower()
-                house_st=status[1]
-                road_st=status[2]
-                block_st=status[3]
-                ssarea_st=status[4]
-                subarea_st=status[5]
+                sub_area_name=status[1].lower()
+                house_st=status[2]
+                road_st=status[3]
+                block_st=status[4]
+                ssarea_st=status[5]
+                subarea_st=status[6]
                 
                 #print("area   "+area_name)
                 dict_areakey=self.matched[self.areakey].replace(',','')
+                dict_sub_areakey=self.matched[self.subareakey].replace(',','')
                 #print(dict_areakey)
                 if self.matched[self.areakey]=='':
                     checkst=1
-                elif area_name.strip()==dict_areakey.strip():
+                    break
+                if dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()!=dict_areakey.strip() and assignaddress==1:
+                    same_sub_area_count+=1
+                    print(same_sub_area_count)
+                    if same_sub_area_count>=2:
+                        checkst=1
+                        break
+
+                elif dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()==dict_areakey.strip():
+                    print(",,,,,,,,,,,,"+str(status))
                     getarea=1
                     #print("area matched")
                     if house_st=='H' and self.matched[self.housekey]=='':
@@ -375,35 +416,78 @@ class Address(object):
             if checkst==1 or getarea==0:
                 print("INCOMPLETE ADDRESS")
                 return "incomplete"
-            else:
+            elif getarea==1 and checkst==0:
                 print("COMPLETE ADDRESS")
                 return "complete"
-
-
-
-
-
-
-
-
-
-                #print(j)
-                #print(len(status))
+            else:
+                return "incomplete"
 
 
 
     def parse_address(self, input_address):
         input_address = " "+input_address
         input_address = input_address.lower()
-        input_address=re.sub(r'\([^)]*\)', '', input_address)
+        
         input_address = re.sub(',',' ', input_address)
         input_address = re.sub( r'#|"',' ', input_address )
         input_address=input_address.lower()+"  "
         input_address="  "+input_address.lower()
-        input_address=re.sub(r'(\s*)(floor|room|flat|level)(\s*(:)*\s*(-)*\s*)([0-9]+((th|rd|st|nd|[a-z]*))) | (\s*)([0-9]+(th|rd|st|nd|[a-z]*))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room)  |  ((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*[a-z]*))  | ((floor|flat|level|room)(\s*)([0-9]+)(th|rd|st|nd)*[a-z]+)  ', '', input_address)
+        input_address=re.sub(r'\([^)]*\)', '', input_address)
+        #behind to hospital delete text
+
+        if re.search('\d{5}',input_address):
+            temp_input_address=input_address.split()
+        #print(temp_input_address)
+            for i,t in enumerate(temp_input_address):
+                if re.search('\d{5}',t):
+                    temp_input_address[i]=""
+            input_address = ' '.join(str(e) for e in temp_input_address)
+
+
+        #input_address=input_address.replace(".","")
+        input_address=input_address.replace("-"," ")
+        input_address=input_address.replace(":"," ")
+        input_address=input_address.replace(" no "," ")
+        input_address=re.sub(r'(behind|nearby|near by|near to|opposite|beside)[^)]*(building|house|hospital|university|city)', '', input_address)
+        #delete flat no. or etc
+        temp_input_address=input_address.split()
+        if 'flat' in input_address:
+            temp_input_address=input_address.split()
+        #print(temp_input_address)
+            for i,t in enumerate(temp_input_address):
+                if t=='flat' and any(char.isdigit() for char in temp_input_address[i+1]):
+                    temp_input_address.remove(temp_input_address[i])
+                    temp_input_address.remove(temp_input_address[i])
+                    break
+            input_address = ' '.join(str(e) for e in temp_input_address)
+            #print("after delete flat  "+input_address)
+
+
+        input_address=re.sub(r'((\s*)(floor|room|flat|level)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room))(\s*)|(((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
         input_address=input_address.replace(',',' ')
         #print("before -----"+input_address)
-    #print("after prune -----"+input_address)
+        
+        input_address=re.sub('(h|b|r)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
+        block_h=re.search('block(\s*)(no)*(:)*(-)*(\s*)(h)',input_address)
+        if block_h:
+            self.matched[self.blockkey] = 'h'
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(h)',' ', input_address)
+
+        block_b=re.search('block(\s*)(no)*(:)*(-)*(\s*)(b)',input_address)
+        if block_b:
+            self.matched[self.blockkey] = 'b'
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(b)',' ', input_address)
+        
+        block_r=re.search('block(\s*)(no)*(:)*(-)*(\s*)(r)',input_address)
+        if block_r:
+            self.matched[self.blockkey] = 'r'
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(r)',' ', input_address)
+        
+        block_s=re.search('block(\s*)(no)*(:)*(-)*(\s*)(s)',input_address)
+        if block_s:
+            self.matched[self.blockkey] = 's'
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(s)',' ', input_address)
+        #print("after prune -----"+input_address)
         input_address = re.sub( r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         input_address = re.sub( r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         #print input_address+"..................."
@@ -415,6 +499,7 @@ class Address(object):
         expand = self.multiple_replace(self.area_dict, expand.lower())
         #unknown char remove
         expand = re.sub( r'#|"',' ', expand )
+        #print("after prune -----"+expand)
         '''
         #spell_checker
         input_address=expand
@@ -425,32 +510,21 @@ class Address(object):
         print("before -----"+input_address)
         for i in x:
             print("before  spell -----"+i)
-            spell_check.check(i)
-            i=str(spell_check.correct())
-            print("after  spell -----"+i)
+            if len(i)>5:
+                spell_check.check(i)
+                i=str(spell_check.correct())
+                print("after  spell -----"+i)
             input_address+=i
         expand=input_address
         '''
         #print("before -----"+input_address)
-        block_h=re.search('block h',expand)
-        if block_h:
-            self.matched[self.blockkey] = 'h'
-            expand = re.sub('block h','', expand)
 
-        block_b=re.search('block b',expand)
-        if block_b:
-            self.matched[self.blockkey] = 'b'
-            expand = re.sub('block b','', expand)
         
-        block_r=re.search('block r',expand)
-        if block_r:
-            self.matched[self.blockkey] = 'r'
-            expand = re.sub('block r','  ', expand)
         
         expand=expand.lower()+"  "
-        expand=re.sub(r'((\s*)(floor|flat|level)(\s*(:)*\s*(-)*\s*)([0-9]+((th|rd|st|nd)))) | ((\s*)([0-9]+(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level)(\s*))  | ((floor|flat|level)[0-9]+(th|rd|st|nd)*[a-z]+) ', '', expand)
+        #expand=re.sub(r'((\s*)(floor|flat|level)(\s*(:)*\s*(-)*\s*)([0-9]+((th|rd|st|nd)))) | ((\s*)([0-9]+(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level)(\s*))  | ((floor|flat|level)[0-9]+(th|rd|st|nd)*[a-z]+) ', ' ', expand)
         #addresscomponents = word_tokenize(expand)
-        #print("      expand"+expand)
+        #print("      expand  "+expand)
         addresscomponents = expand.split()
 
         for i, comp in enumerate(addresscomponents):
@@ -476,11 +550,14 @@ class Address(object):
         for i, comp in enumerate(self.tempArray):
                 comp=comp.strip()
                 # print(comp)
-                if (self.check_area(comp, i)):
-                    self.matched_array.append(self.matched[self.areakey])
-                    continue
+
                 if (self.check_sub_area(comp, i)):
+                    #print(comp)
                     self.matched_array.append(self.matched[self.subareakey])
+                    continue
+                if (self.check_area(comp, i)):
+                    #print(comp)
+                    self.matched_array.append(self.matched[self.areakey])
                     continue
                 # if (self.check_super_sub_area(comp, i)):
                 #     self.matched_array.append(self.matched[self.ssareakey])
@@ -562,17 +639,26 @@ class Address(object):
             self.matched[self.areakey] = ''
 
         try:
-            self.matched[self.unionkey] = self.matched[self.unionkey]+", "
+            if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                self.matched[self.unionkey] = self.matched[self.unionkey]+", "
+            else:
+                self.matched[self.unionkey] = ''
         except Exception as e:
             self.matched[self.unionkey] = ''
 
         try:
-            self.matched[self.sub_districtkey] = self.matched[self.sub_districtkey]+", "
+            if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                self.matched[self.sub_districtkey] = self.matched[self.sub_districtkey]+", "
+            else:
+                self.matched[self.sub_districtkey]= ''
         except Exception as e:
             self.matched[self.sub_districtkey] = ''
 
         try:
-            self.matched[self.districtkey] = self.matched[self.districtkey]+","
+            if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                self.matched[self.districtkey] = self.matched[self.districtkey]+","
+            else:
+                self.matched[self.districtkey]= ''
         except Exception as e:
             self.matched[self.districtkey] = ''
 
@@ -584,49 +670,4 @@ class Address(object):
 
 
 #Flask App.................................
-app = Flask(__name__)
-CORS(app)
 
-
-@app.route('/uploader', methods = ['POST'])
-def upload_file():
-    if request.method == 'POST':
-        result_array = []
-
-        fstring = csv.DictReader(request.files['file'])
-        for t, td in enumerate(fstring):
-            add_parse = None
-            add_parse = Address()
-            input_address = td['address']
-            result = add_parse.parse_address(input_address)
-            result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status']})
-           
-        csv_columns = ['input-address' ,'clean-address', 'status']
-        csv_file = "parsed.csv"
-
-        try:
-            with open(csv_file, 'w') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
-                writer.writeheader()
-                for data in result_array:
-                    writer.writerow(data)
-        except IOError:
-            print("I/O error") 
-
-    try:
-        return send_from_directory('.', 'parsed.csv', attachment_filename='parsed.csv', as_attachment=True)
-    except FileNotFoundError:
-        abort(404)
-
-@app.route('/', methods = ['GET'])
-def parse_it():
-   add_parse = None
-   add_parse = Address()
-   addr = request.args.get('addr')
-   # de_addr = urllib.unquote(addr)
-   # print "address.........."+de_addr
-   return add_parse.parse_address(addr)["address"]
-
-
-if __name__ == '__main__':
-    app.run(debug=True, host = '127.0.0.1', port = 8010)
