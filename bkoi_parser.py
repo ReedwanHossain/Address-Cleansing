@@ -50,6 +50,8 @@ class Address(object):
         self.tempArray = []
         self.matched_array = []
         self.area_pattern = None
+        self.get_multiple_subarea=[]
+        self.get_multiple_area=[]
         
     status_pattern= {
     '$1':['H','R','B','SS','S'],
@@ -66,7 +68,7 @@ class Address(object):
 
     address_component = ['','sarani','sarak','rasta','goli','lane','code','street','floor','level', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
     
-    building_name_key = ['','plaza' , 'market' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'monjil' , 'manjil' , 'building' , 'headquarter' ]
+    building_name_key = ['building','plaza' , 'market' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'monjil' , 'manjil' , 'building' , 'headquarter' , 'bhaban', 'mosque', 'masjid', 'mosjid','hospital','university','school','mandir','mondir','police station']
     tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
@@ -141,9 +143,7 @@ class Address(object):
                     # matched_array.append(area[0].lower())
                     self.area_flag = True 
                     self.area_pos = idx
-                    for i, comp in enumerate(self.tempArray):
-                        self.check_sub_area(comp, i)
-                        continue
+                    self.get_multiple_area.append(area[0].lower())
                     return True
 
 
@@ -163,6 +163,7 @@ class Address(object):
                         if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
                             self.matched[self.subareakey] = token.lower()
                             self.subarea_flag = True
+                            self.get_multiple_subarea.append(token.lower())
                             return True
 
             elif(abs(idx-self.area_pos) > 1 or abs(idx-self.area_pos) == 1 and not any(char.isdigit() for char in self.tempArray[idx])):
@@ -173,8 +174,10 @@ class Address(object):
                         self.matched[self.subareakey] = token +' '+ self.tempArray[idx+1]
                         if (area.lower()=='mirpur'):
                             self.matched[self.subareakey] = 'section' +' '+ self.tempArray[idx+1]
+                            self.get_multiple_subarea.append('section' +' '+ self.tempArray[idx+1])
                         elif(area.lower()=='uttara'):
                           self. matched[self.subareakey] = 'sector' +' '+ self.tempArray[idx+1]
+                          self.get_multiple_subarea.append('section' +' '+ self.tempArray[idx+1])
                         self.subarea_flag = True
                         return True
 
@@ -187,6 +190,7 @@ class Address(object):
                         if ( (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
                             print(subarea[1].lower())
                             self.matched[self.subareakey] = subarea[1].lower()
+                            self.get_multiple_subarea.append(subarea[1].lower())
                             # matched_array.append(matched[subareakey])
                             self.subarea_flag = True
         
@@ -198,6 +202,9 @@ class Address(object):
                     if (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower()):
                         self.matched[self.subareakey] = subarea[1].lower()
                         self.matched[self.areakey] = subarea[0].lower()
+
+                        self.get_multiple_subarea.append(subarea[1].lower())
+                        self.get_multiple_area.append(subarea[0].lower())
                         # matched_array.append(matched[areakey])
                         # matched_array.append(matched[subareakey])
                         self.subarea_flag = True
@@ -274,7 +281,7 @@ class Address(object):
 
 
     def check_holding_name(self, token,idx):
-        if 'plaza' in token or 'market' in token or 'villa' in token or 'cottage' in token or 'mansion' in token or 'vila' in token or 'tower' in token or 'place' in token or 'complex' in token or 'center' in token or 'centre' in token or 'mall' in token or 'monjil' in token or 'manjil' in token or 'building' in token or 'headquarter' in token:
+        if any( char in token for char in self.building_name_key):
             if idx != len(self.tempArray)-1 and idx != 0 :
                 i=idx-1
                 building_str = ''
@@ -362,16 +369,25 @@ class Address(object):
         
     def check_address_status(self):
         print self.matched
+        #print(self.get_multiple_subarea)
+        #print(self.get_multiple_area)
+        #self.get_multiple_subarea=list(set(self.get_multiple_subarea))
+        print(len(self.get_multiple_subarea))
         with open('./subarea-list.csv','rt')as f:
             area_pattern = csv.reader(f)
             checkst=0
             getarea=0
             
-            assignaddress=0
+            assignaddress=1
+            self.matched[self.areakey]=self.matched[self.areakey].replace(',','')
             if self.matched[self.areakey] not in self.cleanAddressStr:
-                print(",,,,,,,,,, area was assigned by sub area")
                 same_sub_area_count=1
-                assignaddress=1
+            print(self.tempArray)
+            print(self.matched[self.areakey])
+            self.matched[self.areakey]=self.matched[self.areakey].strip()
+            if self.matched[self.areakey] in self.tempArray:
+                print(",,,,,,,,,, area was not assigned by sub area")
+                assignaddress=0
             for j, status in enumerate(area_pattern):
                 #print(",,,,,,,,,,,,"+str(status))
 
@@ -448,6 +464,14 @@ class Address(object):
         input_address=input_address.replace("-"," ")
         input_address=input_address.replace(":"," ")
         input_address=input_address.replace(" no "," ")
+        
+        try:
+            first_street=re.match(r'\W*(\w[^,. !?"]*)', input_address).groups()[0]
+        except:
+            first_street=""
+        if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:':
+            input_address=input_address.replace(first_street," ")
+        
         input_address=re.sub(r'(behind|nearby|near by|near to|opposite|beside)[^)]*(building|house|hospital|university|city)', '', input_address)
         #delete flat no. or etc
         temp_input_address=input_address.split()
@@ -455,19 +479,22 @@ class Address(object):
             temp_input_address=input_address.split()
         #print(temp_input_address)
             for i,t in enumerate(temp_input_address):
-                if t=='flat' and any(char.isdigit() for char in temp_input_address[i+1]):
-                    temp_input_address.remove(temp_input_address[i])
-                    temp_input_address.remove(temp_input_address[i])
-                    break
+                if i < len(temp_input_address)-1:
+                    if t=='flat' and any(char.isdigit() for char in temp_input_address[i+1]):
+                        temp_input_address.remove(temp_input_address[i])
+                        temp_input_address.remove(temp_input_address[i])
+                        break
             input_address = ' '.join(str(e) for e in temp_input_address)
             #print("after delete flat  "+input_address)
 
 
-        input_address=re.sub(r'((\s*)(floor|room|flat|level)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room))(\s*)|(((\s*)(floor|flat|level|room)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
+        input_address=re.sub(r'((\s*)(floor|room|flat|level|flr)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr))(\s*)|(((\s*)(floor|flat|level|room|flr)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
         input_address=input_address.replace(',',' ')
         #print("before -----"+input_address)
         
-        input_address=re.sub('(h|b|r)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
+
+
+        input_address=re.sub('(h|b|r|s)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
         block_h=re.search('block(\s*)(no)*(:)*(-)*(\s*)(h)',input_address)
         if block_h:
             self.matched[self.blockkey] = 'h'
@@ -500,7 +527,7 @@ class Address(object):
         #unknown char remove
         expand = re.sub( r'#|"',' ', expand )
         #print("after prune -----"+expand)
-        '''
+
         #spell_checker
         input_address=expand
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
@@ -509,14 +536,16 @@ class Address(object):
         spell_check=SpellCheck('area-list.txt')
         print("before -----"+input_address)
         for i in x:
-            print("before  spell -----"+i)
+            #print("before  spell -----"+i)
+            i=i.strip()
+            print(len(i))
             if len(i)>5:
                 spell_check.check(i)
                 i=str(spell_check.correct())
-                print("after  spell -----"+i)
+                #print("after  spell -----"+i)
             input_address+=i
         expand=input_address
-        '''
+        
         #print("before -----"+input_address)
 
         
@@ -589,6 +618,25 @@ class Address(object):
                         self.matched_array.append(self.matched[self.unionkey])
                     continue
 
+        getarea=list(set(self.get_multiple_area))
+        if len(getarea)>=2:
+            #print("-----------------")
+            for area in getarea:
+                with open('./subarea-list.csv','rt')as f:
+                    subarea_list = csv.reader(f)
+                    for j, subarea in enumerate(subarea_list):
+                        #print(subarea[0]+"----"+subarea[1])
+                        if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey]:
+                            #area=area.rstrip(',')
+                            self.matched[self.areakey]=area.lower()
+                            #print(subarea[0]+"----"+subarea[1])
+                            break
+
+
+                        
+
+            
+
 
 
         final_address = self.bind_address()        
@@ -647,8 +695,8 @@ class Address(object):
             self.matched[self.unionkey] = ''
 
         try:
-            if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
-                self.matched[self.sub_districtkey] = self.matched[self.sub_districtkey]+", "
+            if (self.matched[self.areakey]==None or se1lf.matched[self.areakey]==''):
+                self.matched[self.sub_districtkey] = s1elf.matched[self.sub_districtkey]+", "
             else:
                 self.matched[self.sub_districtkey]= ''
         except Exception as e:
