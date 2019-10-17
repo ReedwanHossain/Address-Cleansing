@@ -52,15 +52,14 @@ class Address(object):
         self.area_pattern = None
         self.get_multiple_subarea=[]
         self.get_multiple_area=[]
+        self.subarea_list_pattern=[]
         
     status_pattern= {
-    '$1':['H','R','B','SS','S'],
-    '$2':['H','R','SS','S'],
-    '$3':['H','R','B','S'],
-    '$4':['H','R','S'],
-    '$5':['H','R','B'],
-    '$6':['H','SS','S'],
-    '$1':['H','S'],
+    'house':'',
+    'road':'',
+    'block':'',
+    'ssarea':'',
+    'subarea':'',
 
     }
 
@@ -164,6 +163,11 @@ class Address(object):
                             self.matched[self.subareakey] = token.lower()
                             self.subarea_flag = True
                             self.get_multiple_subarea.append(token.lower())
+                            tempObj = {
+                                'area': subarea[0].lower(),
+                                'subarea': subarea[1].lower(),
+                                'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            }
+                            self.subarea_list_pattern.append(tempObj)
                             return True
 
             elif(abs(idx-self.area_pos) > 1 or abs(idx-self.area_pos) == 1 and not any(char.isdigit() for char in self.tempArray[idx])):
@@ -175,9 +179,21 @@ class Address(object):
                         if (area.lower()=='mirpur'):
                             self.matched[self.subareakey] = 'section' +' '+ self.tempArray[idx+1]
                             self.get_multiple_subarea.append('section' +' '+ self.tempArray[idx+1])
+                            tempObj = {
+                                'area': self.matched[self.areakey].lower(),
+                                'subarea': self.matched[self.subareakey].lower(),
+                                'pattern': ['H', 'H', 'H', 'L', 'H']                            
+                            }
+                            self.subarea_list_pattern.append(tempObj)
                         elif(area.lower()=='uttara'):
-                          self. matched[self.subareakey] = 'sector' +' '+ self.tempArray[idx+1]
-                          self.get_multiple_subarea.append('section' +' '+ self.tempArray[idx+1])
+                            self. matched[self.subareakey] = 'sector' +' '+ self.tempArray[idx+1]
+                            self.get_multiple_subarea.append('sector' +' '+ self.tempArray[idx+1])
+                            tempObj = {
+                                'area': self.matched[self.areakey].lower(),
+                                'subarea': self.matched[self.subareakey].lower(),
+                                'pattern': ['H', 'H', 'L', 'L', 'H'] 
+                            }  
+                            self.subarea_list_pattern.append(tempObj)
                         self.subarea_flag = True
                         return True
 
@@ -191,6 +207,12 @@ class Address(object):
                             print(subarea[1].lower())
                             self.matched[self.subareakey] = subarea[1].lower()
                             self.get_multiple_subarea.append(subarea[1].lower())
+                            tempObj = {
+                                'area': subarea[0].lower(),
+                                'subarea': subarea[1].lower(),
+                                'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            
+                            }  
+                            self.subarea_list_pattern.append(tempObj)
                             # matched_array.append(matched[subareakey])
                             self.subarea_flag = True
         
@@ -205,11 +227,15 @@ class Address(object):
 
                         self.get_multiple_subarea.append(subarea[1].lower())
                         self.get_multiple_area.append(subarea[0].lower())
+                        tempObj = {
+                            'area': subarea[0].lower(),
+                            'subarea': subarea[1].lower(),
+                            'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            
+                        }  
+                        self.subarea_list_pattern.append(tempObj)
                         # matched_array.append(matched[areakey])
                         # matched_array.append(matched[subareakey])
                         self.subarea_flag = True
-                        return True        
-
 
     def check_super_sub_area(self, token, idx):
         if ('block' in self.cleanAddressStr and 'mirpur' in self.cleanAddressStr.lower() and token == 'block'):
@@ -444,7 +470,7 @@ class Address(object):
         input_address = " "+input_address
         input_address = input_address.lower()
         
-        input_address = re.sub(',',' ', input_address)
+        input_address = re.sub(r',',' ', input_address)
         input_address = re.sub( r'#|"',' ', input_address )
         input_address=input_address.lower()+"  "
         input_address="  "+input_address.lower()
@@ -458,9 +484,11 @@ class Address(object):
                 if re.search('\d{5}',t):
                     temp_input_address[i]=""
             input_address = ' '.join(str(e) for e in temp_input_address)
-
-
-        #input_address=input_address.replace(".","")
+        '''
+        decimal_find=re.search(r'\d(.)\d',input_address)
+        if  not re.search(r'\d(.)\d',input_address):
+            input_address=input_address.replace("."," ")
+        '''
         input_address=input_address.replace("-"," ")
         input_address=input_address.replace(":"," ")
         input_address=input_address.replace(" no "," ")
@@ -472,7 +500,7 @@ class Address(object):
         if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:':
             input_address=input_address.replace(first_street," ")
         
-        input_address=re.sub(r'(behind|nearby|near by|near to|opposite|beside)[^)]*(building|house|hospital|university|city)', '', input_address)
+        input_address=re.sub(r'(behind|nearby|near|near by|near to|opposite|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centre|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station)', '', input_address)
         #delete flat no. or etc
         temp_input_address=input_address.split()
         if 'flat' in input_address:
@@ -534,12 +562,13 @@ class Address(object):
         x = input_address.split("*")
         input_address = " "
         spell_check=SpellCheck('area-list.txt')
-        print("before -----"+input_address)
+        #print("before -----"+input_address)
         for i in x:
             #print("before  spell -----"+i)
             i=i.strip()
-            print(len(i))
+            #print(len(i)+" ")
             if len(i)>5:
+                #print("before  spell -----"+i)
                 spell_check.check(i)
                 i=str(spell_check.correct())
                 #print("after  spell -----"+i)
@@ -617,6 +646,41 @@ class Address(object):
                     if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
                         self.matched_array.append(self.matched[self.unionkey])
                     continue
+        #print(self.subarea_list_pattern)
+        getsubarea=list(set(self.get_multiple_subarea))
+        #print("-----------------")
+        #print(getsubarea)
+        #print(len(getsubarea))
+        max_H=-1
+        min_H=5
+        if len(getsubarea)>=2:
+            for j, subarea in enumerate(self.subarea_list_pattern):
+                #print(subarea['subarea'])
+                #print(subarea['pattern'].count('H'))
+                if max_H<subarea['pattern'].count('H'):
+                    max_H=subarea['pattern'].count('H')
+                    subarea_high=subarea['subarea']
+                if min_H>subarea['pattern'].count('H'):
+                    min_H=subarea['pattern'].count('H')
+                    subarea_min=subarea['subarea']
+                    
+            #print("max  ---- "+subarea_high)
+            #print(subarea_min)
+            self.matched[self.subareakey]=subarea_high
+            for j, subarea in enumerate(self.subarea_list_pattern):
+                if  (subarea['subarea'].strip()==subarea_high.strip()) and (((subarea['pattern'][0])=='H' and self.matched[self.housekey]==None) or ((subarea['pattern'][0])=='H' and self.matched[self.housekey]=='') or ((subarea['pattern'][1])=='H' and self.matched[self.roadkey]==None) or ((subarea['pattern'][1])=='H' and self.matched[self.roadkey]=='') or ((subarea['pattern'][2])=='H' and self.matched[self.blockkey]==None) or ((subarea['pattern'][2])=='H' and self.matched[self.blockkey]=='') or ((subarea['pattern'][3])=='H' and self.matched[self.ssareakey]==None) or ((subarea['pattern'][3])=='H' and self.matched[self.ssareakey]=='')) :
+                    self.matched[self.subareakey]=subarea_min
+                    print("okkkk")
+                    break
+
+
+
+        '''
+        if len(getsubarea)>=2:
+            for subarea in getsubarea:
+                if subarea not in self.get_multiple_area:
+                    self.matched[self.subareakey]=subarea.lower()
+        '''
 
         getarea=list(set(self.get_multiple_area))
         if len(getarea)>=2:
@@ -632,8 +696,6 @@ class Address(object):
                             #print(subarea[0]+"----"+subarea[1])
                             break
 
-
-                        
 
             
 
