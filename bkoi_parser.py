@@ -394,7 +394,7 @@ class Address(object):
                     return True
         
     def check_address_status(self):
-        print self.matched
+        #print self.matched
         #print(self.get_multiple_subarea)
         #print(self.get_multiple_area)
         #self.get_multiple_subarea=list(set(self.get_multiple_subarea))
@@ -684,13 +684,22 @@ class Address(object):
 
         getarea=list(set(self.get_multiple_area))
         if len(getarea)>=2:
-            #print("-----------------")
+            print("-----------------")
+            #print(self.tempArray)
+            #print(getarea)
+            #print(self.matched)
+            chk=0
             for area in getarea:
                 with open('./subarea-list.csv','rt')as f:
                     subarea_list = csv.reader(f)
                     for j, subarea in enumerate(subarea_list):
+                        #print(area)
+                        if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey] and area in self.tempArray:
+                            self.matched[self.areakey]=area.lower()
+                            chk=1
+                            break
                         #print(subarea[0]+"----"+subarea[1])
-                        if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey]:
+                        if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey] and chk==0:
                             #area=area.rstrip(',')
                             self.matched[self.areakey]=area.lower()
                             #print(subarea[0]+"----"+subarea[1])
@@ -757,8 +766,8 @@ class Address(object):
             self.matched[self.unionkey] = ''
 
         try:
-            if (self.matched[self.areakey]==None or se1lf.matched[self.areakey]==''):
-                self.matched[self.sub_districtkey] = s1elf.matched[self.sub_districtkey]+", "
+            if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                self.matched[self.sub_districtkey] = self.matched[self.sub_districtkey]+", "
             else:
                 self.matched[self.sub_districtkey]= ''
         except Exception as e:

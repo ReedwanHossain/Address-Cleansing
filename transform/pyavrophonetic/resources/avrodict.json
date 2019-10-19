@@ -18,6 +18,10 @@
             "find": "র্"
         },
         {
+            "replace": "tr",
+            "find": "ত্র"
+        },
+        {
             "replace": "o",
             "find": "অ"
         },
