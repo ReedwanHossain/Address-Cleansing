@@ -1,4 +1,3 @@
-
 from flask_cors import CORS
 from json import dumps
 from flask import Flask, request, send_from_directory, make_response
@@ -7,6 +6,7 @@ import urllib
 import re
 import csv
 from bkoi_parser import Address
+from transform.bkoi_transformer import Transformer
 app = Flask(__name__)
 CORS(app)
 
@@ -48,7 +48,18 @@ def parse_it():
    addr = request.args.get('addr')
    # de_addr = urllib.unquote(addr)
    # print "address.........."+de_addr
-   return add_parse.parse_address(addr)["address"]
+   return add_parse.parse_address(addr)
+
+
+
+@app.route('/transform', methods = ['GET'])
+def transform_addr():
+   add_trans = None
+   add_trans = Transformer()
+   addr = request.args.get('addr')
+   # de_addr = urllib.unquote(addr)
+   # print "address.........."+de_addr
+   return add_trans.bangla_to_english(addr)
 
 
 if __name__ == '__main__':
