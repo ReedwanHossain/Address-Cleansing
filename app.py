@@ -48,7 +48,7 @@ def parse_it():
    addr = request.args.get('addr')
    # de_addr = urllib.unquote(addr)
    # print "address.........."+de_addr
-   return add_parse.parse_address(addr)["address"]
+   return add_parse.parse_address(addr)
 
 
 
