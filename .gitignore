@@ -1,4 +1,2 @@
 # Ignore all text files
-*.csv
-*.txt
 *.pyc
