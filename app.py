@@ -41,7 +41,7 @@ def upload_file():
     except FileNotFoundError:
         abort(404)
 
-@app.route('/', methods = ['GET'])
+@app.route('/parse', methods = ['GET'])
 def parse_it():
    add_parse = None
    add_parse = Address()
