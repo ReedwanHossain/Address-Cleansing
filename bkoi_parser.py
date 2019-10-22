@@ -675,12 +675,13 @@ class Address(object):
 
 
 
-        '''
+        
         if len(getsubarea)>=2:
             for subarea in getsubarea:
                 if subarea not in self.get_multiple_area:
                     self.matched[self.subareakey]=subarea.lower()
-        '''
+ 
+        
 
         getarea=list(set(self.get_multiple_area))
         if len(getarea)>=2:
