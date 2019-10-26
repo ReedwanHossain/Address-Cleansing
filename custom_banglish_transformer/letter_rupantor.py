@@ -1,33 +1,33 @@
 import csv
 import sys
+from bkoi_transformer import bangla_to_english
 reload(sys)
 sys.setdefaultencoding('utf8')
-vowel_list=[]
-with open('./bangla_vowel.csv','rt') as fv:
-	vowels= csv.reader(fv)
-	for i, vowel in enumerate(vowels):
-		#print(vowel[0])
-		vowel_list.append(vowel[0])
-#print(vowel_list)
-def bangla_rupantor(text):
+while True:
 
-    with open('./bangla_letter_list.csv','rt') as f:
-        key_list = csv.reader(f)
-        for j, keyword in enumerate(key_list):
-            keyword[0]=keyword[0].decode('utf-8') 
-            keyword[1]=keyword[1].decode('utf-8')
-            keyword[0]=keyword[0].strip()
-            keyword[1]=keyword[1].strip()
+    n=raw_input("Enter a adress or string : ")
+    print(bangla_to_english(n))
 
-            text=text.replace(keyword[0],keyword[1])
+'''
+with open('./bangla_address.csv','r')as f:
+    with open("output.csv", "w") as fp:
+        wr = csv.writer(fp)
+    #data_list = csv.reader(f)
+        for j, keyword in enumerate(csv.reader(f)):
+            mylist=[]
+            bangla_address=keyword[0]
+            try:
+            #print(str(bangla_to_english(keyword[0])))
+                final_address=str(bangla_to_english(bangla_address))
+                final_address=final_address.lower()
+            except:
+            #print('address error')
+                final_address='address error'
+            mylist.append(bangla_address)
+            mylist.append(final_address)
 
-    text=text.replace('`','')
-    return text.lower()
+            wr.writerow(mylist)
+    fp.close()
+print("Completed")
 
-
-while(True):
-	text=raw_input("Enter : ")
-	text=text.decode('utf-8')
-	for w in text:
-		print(w)
-	print(bangla_rupantor(text))
+'''

@@ -3,7 +3,18 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 vowel_list=[]
+font_list=[]
 jukto_borno_list=[]
+digit_lists=[u'\u09E6',u'\u09E7',u'\u09E8',u'\u09E9',u'\u09EA',u'\u09EB',u'\u09EC',u'\u09ED',u'\u09EE',u'\u09EF']
+
+with open('./bangla_letter_list.csv','rt') as fbl:
+	bangla_letter_list= csv.reader(fbl)
+	for k, letter in enumerate(bangla_letter_list):
+		#print(vowel[0])
+		letter[0]=letter[0].strip()
+		font_list.append(letter[0])
+
+
 with open('./bangla_vowel.csv','rt') as fv:
 	vowels= csv.reader(fv)
 	for i, vowel in enumerate(vowels):
@@ -62,12 +73,14 @@ def bangla_rupantor(text):
     return text.lower()
 
 
-while(True):
+def main(input_text):
 	st=""
-	input_text=raw_input("Enter : ")
+	#input_text=raw_input("Enter : ")
 	input_text=input_text.decode('utf-8')
 	#chandrobindu (u'\u0981') remove
 	input_text=input_text.replace(u'\u0981','')
+	input_text=input_text.replace(u'\u0983',':')
+	input_text=input_text.replace(u'\u0964','')
 	text=keyword_makelist(input_text)
 	count=1
 	#print(text)
@@ -75,9 +88,8 @@ while(True):
 	    result=bangla_rupantor(text[w])
 	    #print(text[w])
 	    if w<len(text)-1:
-	    	if (text[w+1] not in vowel_list and text[w] not in vowel_list):
+	    	if (text[w+1] not in vowel_list and text[w] not in vowel_list) and text[w] not in digit_lists and text[w] in font_list:
 	    		st+=result+'o'
-	    		#print(st)
 	    		if w<len(text)-2 and len(text)>3 :
 	    		    if (text[w+2] in vowel_list and st[-1]=='o' and w>0)  and text[w] not in jukto_borno_list:
 	    		    	st = st[:-1]
@@ -87,5 +99,8 @@ while(True):
 	    		st+=result
 	    if w==len(text)-1:
 	    	st+=result
+	    	if text[w] in jukto_borno_list:
+	    		st+='o'
+	    		break
 	    #print(text[w])
-	print(st)
+	return st
