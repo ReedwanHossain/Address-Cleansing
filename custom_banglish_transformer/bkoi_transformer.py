@@ -14,13 +14,16 @@ with open('./bangla_english_fonts.csv','r')as fbe:
 	    #word=word.replace(fonts[1],fonts[0])
 #print(house_fonts)
 def bangla_to_english(address):
-    #address=address.decode('utf-8')
+    address=address.replace('.',' ')
+    address=address.replace(u'\u0964',' ')
+    address=address.replace(u'\u0028',u' \u0028 ')
+    address=address.replace(u'\u0029',u' \u0029 ')
+
     with open('./digits.csv','rt')as df:
         digits=csv.reader(df)
         for i, digit in enumerate(digits):
             address=address.replace(digit[1],digit[0])
-    import re
-    address=re.sub(r'(,|#|-|:)',r' \1 ',address)
+    address=re.sub(r'(,|#|-|:|/)',r' \1 ',address)
     #print(address)
     address=re.sub(r'(\d+)',r' \1',address)
     #print(address)
@@ -64,6 +67,11 @@ def bangla_to_english(address):
 
     eng_address=eng_address.strip()
     eng_address=eng_address.lower()
+    eng_address=eng_address.replace(' - ','-')
+    eng_address=eng_address.replace(' / ','/')
+    eng_address=eng_address.replace(' : ',':')
+    eng_address=eng_address.replace(' # ','#')
+    #eng_address=eng_address.replace(' , ',',')
     return eng_address
 '''
 myaddress=raw_input("Enter a address : ")
