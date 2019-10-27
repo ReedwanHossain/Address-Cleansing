@@ -709,11 +709,11 @@ class Address(object):
             
 
         
-        status_checking= self.check_address_status()
+        #status_checking= self.check_address_status()
         final_address = self.bind_address()        
         #print(self.matched)
         obj = {
-            'status' : status_checking,
+            'status' : self.check_address_status(),
             'address' : final_address
         }
         return obj
@@ -781,8 +781,8 @@ class Address(object):
         except Exception as e:
             self.matched[self.districtkey] = ''
 
-        if self.matched[self.subareakey]==self.matched[self.areakey]:
-        	self.matched[self.subareakey]=""
+        # if self.matched[self.subareakey]==self.matched[self.areakey]:
+        # 	self.matched[self.subareakey]=""
         full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
