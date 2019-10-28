@@ -83,5 +83,15 @@ def transformer_addr():
    return add_trans.bangla_to_english(addr)
 
 
+@app.route('/transparse', methods = ['POST'])
+def transform_parse():
+   add_trans = None
+   add_parse = None
+   add_trans = Transformer()
+   add_parse = Address()
+   addr = request.form.get('addr')
+   return add_parse.parse_address(add_trans.bangla_to_english(addr))
+
+
 if __name__ == '__main__':
     app.run(debug=True, host = '127.0.0.1', port = 8010)

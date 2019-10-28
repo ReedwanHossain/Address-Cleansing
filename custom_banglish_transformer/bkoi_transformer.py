@@ -60,6 +60,6 @@ class Transformer(object):
         eng_address=eng_address.replace(' / ','/')
         eng_address=eng_address.replace(' : ',':')
         eng_address=eng_address.replace(' # ','#')
-        #eng_address=eng_address.replace(' , ',',')
+        eng_address=eng_address.replace(u'\u09BC','')
         return eng_address
    
