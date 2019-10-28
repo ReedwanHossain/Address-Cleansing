@@ -6,7 +6,7 @@ import urllib
 import re
 import csv
 from bkoi_parser import Address
-from transform.bkoi_transformer import Transformer
+from custom_banglish_transformer.bkoi_transformer import Transformer
 app = Flask(__name__)
 CORS(app)
 
@@ -41,8 +41,19 @@ def upload_file():
     except FileNotFoundError:
         abort(404)
 
-@app.route('/parse', methods = ['GET'])
+@app.route('/parse', methods = ['POST'])
 def parse_it():
+   add_parse = None
+   add_parse = Address()
+   addr = request.form.get('addr')
+   # de_addr = urllib.unquote(addr)
+   # print "address.........."+de_addr
+   return add_parse.parse_address(addr)
+
+
+
+@app.route('/parser', methods = ['GET'])
+def parser():
    add_parse = None
    add_parse = Address()
    addr = request.args.get('addr')
@@ -57,6 +68,16 @@ def transform_addr():
    add_trans = None
    add_trans = Transformer()
    addr = request.args.get('addr')
+   # de_addr = urllib.unquote(addr)
+   # print "address.........."+de_addr
+   return add_trans.bangla_to_english(addr)
+
+
+@app.route('/transformar', methods = ['POST'])
+def transformer_addr():
+   add_trans = None
+   add_trans = Transformer()
+   addr = request.form.get('addr')
    # de_addr = urllib.unquote(addr)
    # print "address.........."+de_addr
    return add_trans.bangla_to_english(addr)

@@ -675,12 +675,13 @@ class Address(object):
 
 
 
-        '''
+        
         if len(getsubarea)>=2:
             for subarea in getsubarea:
                 if subarea not in self.get_multiple_area:
                     self.matched[self.subareakey]=subarea.lower()
-        '''
+ 
+        
 
         getarea=list(set(self.get_multiple_area))
         if len(getarea)>=2:
@@ -705,11 +706,8 @@ class Address(object):
                             #print(subarea[0]+"----"+subarea[1])
                             break
 
+ 
 
-            
-
-        
-        #status_checking= self.check_address_status()
         final_address = self.bind_address()        
         #print(self.matched)
         obj = {
@@ -781,9 +779,11 @@ class Address(object):
         except Exception as e:
             self.matched[self.districtkey] = ''
 
-        # if self.matched[self.subareakey]==self.matched[self.areakey]:
-        # 	self.matched[self.subareakey]=""
-        full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
+        if self.matched[self.subareakey]==self.matched[self.areakey]:
+            full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
+        else:
+            full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
+
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
         return full_address

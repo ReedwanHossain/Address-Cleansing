@@ -7,7 +7,7 @@ font_list=[]
 jukto_borno_list=[]
 digit_lists=[u'\u09E6',u'\u09E7',u'\u09E8',u'\u09E9',u'\u09EA',u'\u09EB',u'\u09EC',u'\u09ED',u'\u09EE',u'\u09EF']
 
-with open('./bangla_letter_list.csv','rt') as fbl:
+with open('./custom_banglish_transformer/bangla_letter_list.csv','rt') as fbl:
 	bangla_letter_list= csv.reader(fbl)
 	for k, letter in enumerate(bangla_letter_list):
 		#print(vowel[0])
@@ -15,7 +15,7 @@ with open('./bangla_letter_list.csv','rt') as fbl:
 		font_list.append(letter[0])
 
 
-with open('./bangla_vowel.csv','rt') as fv:
+with open('./custom_banglish_transformer/bangla_vowel.csv','rt') as fv:
 	vowels= csv.reader(fv)
 	for i, vowel in enumerate(vowels):
 		#print(vowel[0])
@@ -23,7 +23,7 @@ with open('./bangla_vowel.csv','rt') as fv:
 		vowel_list.append(vowel[0])
 #print(vowel_list)
 #jb=jukto borno
-with open('./bangla_jukto_borno_list.csv','rt') as fjb:
+with open('./custom_banglish_transformer/bangla_jukto_borno_list.csv','rt') as fjb:
 	jbs= csv.reader(fjb)
 	for i, jb in enumerate(jbs):
 		#print(jb[0])
@@ -57,7 +57,7 @@ def keyword_makelist(keyword):
 	return mylist
 
 def bangla_rupantor(text):
-    with open('./bangla_letter_list.csv','rt') as f:
+    with open('./custom_banglish_transformer/bangla_letter_list.csv','rt') as f:
         key_list = csv.reader(f)
         for j, keyword in enumerate(key_list):
             keyword[0]=keyword[0].decode('utf-8') 
