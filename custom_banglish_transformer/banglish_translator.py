@@ -81,6 +81,10 @@ def main(input_text):
 	input_text=input_text.replace(u'\u0981','')
 	input_text=input_text.replace(u'\u0983',':')
 	input_text=input_text.replace(u'\u0964','')
+	input_text=input_text.replace(u'\u09AC\u09BC', u'\u09B0')
+	input_text=input_text.replace(u'\u09AF\u09BC', u'\u09DF')
+	input_text=input_text.replace(u'\u09A1\u09BC', u'\u09B0')
+	input_text=input_text.replace(u'\u09A2\u09BC', u'\u09B0')
 	text=keyword_makelist(input_text)
 	count=1
 	#print(text)
