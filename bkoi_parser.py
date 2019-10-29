@@ -236,6 +236,7 @@ class Address(object):
                         # matched_array.append(matched[areakey])
                         # matched_array.append(matched[subareakey])
                         self.subarea_flag = True
+                        break
 
     def check_super_sub_area(self, token, idx):
         if ('block' in self.cleanAddressStr and 'mirpur' in self.cleanAddressStr.lower() and token == 'block'):
@@ -651,35 +652,38 @@ class Address(object):
         #print("-----------------")
         #print(getsubarea)
         #print(len(getsubarea))
+        subarea_min = ''
+        subarea_high = ''
         max_H=-1
         min_H=5
+        print "...............659"
+        print self.get_multiple_area
         if len(getsubarea)>=2:
             for j, subarea in enumerate(self.subarea_list_pattern):
                 #print(subarea['subarea'])
                 #print(subarea['pattern'].count('H'))
-                if max_H<subarea['pattern'].count('H'):
+                if max_H<subarea['pattern'].count('H') and subarea['subarea'].strip() not in self.get_multiple_area:
                     max_H=subarea['pattern'].count('H')
                     subarea_high=subarea['subarea']
-                if min_H>subarea['pattern'].count('H'):
+                if min_H>subarea['pattern'].count('H') and subarea['subarea'].strip() not in self.get_multiple_area:
                     min_H=subarea['pattern'].count('H')
                     subarea_min=subarea['subarea']
                     
-            #print("max  ---- "+subarea_high)
-            #print(subarea_min)
             self.matched[self.subareakey]=subarea_high
             for j, subarea in enumerate(self.subarea_list_pattern):
-                if  (subarea['subarea'].strip()==subarea_high.strip()) and (((subarea['pattern'][0])=='H' and self.matched[self.housekey]==None) or ((subarea['pattern'][0])=='H' and self.matched[self.housekey]=='') or ((subarea['pattern'][1])=='H' and self.matched[self.roadkey]==None) or ((subarea['pattern'][1])=='H' and self.matched[self.roadkey]=='') or ((subarea['pattern'][2])=='H' and self.matched[self.blockkey]==None) or ((subarea['pattern'][2])=='H' and self.matched[self.blockkey]=='') or ((subarea['pattern'][3])=='H' and self.matched[self.ssareakey]==None) or ((subarea['pattern'][3])=='H' and self.matched[self.ssareakey]=='')) :
+                if  (subarea['subarea'].strip()==subarea_high.strip()) and (((subarea['pattern'][0])=='H' and self.matched[self.housekey]==None) or ((subarea['pattern'][0])=='H' and self.matched[self.housekey]=='') or ((subarea['pattern'][1])=='H' and self.matched[self.roadkey]==None) or ((subarea['pattern'][1])=='H' and self.matched[self.roadkey]=='') or ((subarea['pattern'][2])=='H' and self.matched[self.blockkey]==None) or ((subarea['pattern'][2])=='H' and self.matched[self.blockkey]=='') or ((subarea['pattern'][3])=='H' and self.matched[self.ssareakey]==None) or ((subarea['pattern'][3])=='H' and self.matched[self.ssareakey]=='')):
                     self.matched[self.subareakey]=subarea_min
                     print("okkkk")
                     break
-
+        print getsubarea
+        print self.matched
 
 
         
-        if len(getsubarea)>=2:
-            for subarea in getsubarea:
-                if subarea not in self.get_multiple_area:
-                    self.matched[self.subareakey]=subarea.lower()
+        # if len(getsubarea)>=2:
+        #     for subarea in getsubarea:
+        #         if subarea not in self.get_multiple_area:
+        #             self.matched[self.subareakey]=subarea.lower()
  
         
 
