@@ -1,31 +1,54 @@
+Uttara,Sector 18,H,H,L,L,H
+Uttara,Sector 17,H,H,L,L,H
+Uttara,Sector 16,H,H,L,L,H
+Uttara,Sector 15,H,H,L,L,H
+Uttara,Sector 14,H,H,L,L,H
+Uttara,Sector 13,H,H,L,L,H
 Uttara,Sector 12,H,H,L,L,H
+Uttara,Sector 11,H,H,L,L,H
+Uttara,Sector 10,H,H,L,L,H
+Uttara,Sector 9,H,H,L,L,H
+Uttara,Sector 8,H,H,L,L,H
+Uttara,Sector 7,H,H,L,L,H
+Uttara,Sector 6,H,H,L,L,H
+Uttara,Sector 5,H,H,L,L,H
+Uttara,Sector 4,H,H,L,L,H
+Uttara,Sector 3,H,H,L,L,H
+Uttara,Sector 2,H,H,L,L,H
+Uttara,Sector 1,H,H,L,L,H
 Dhaka Cantonment,Dhaka Cantonment,H,M,L,L,H
+Mirpur,Section 16,H,H,M,L,H
+Mirpur,Section 15,H,H,M,L,H
+Mirpur,Section 14,H,M,M,L,H
+Mirpur,Section 13,H,H,M,L,H
+Mirpur,Section 12,H,H,H,L,H
+Mirpur,Section 11.5,H,M,L,L,H
+Mirpur,Section 11,H,H,L,L,H
+Mirpur,Section 10,H,H,L,L,H
+Mirpur,Section 1,H,H,H,L,H
 Mirpur,Section 2,H,H,H,L,H
-Mirpur,Section 11,H,H,H,L,H
+Mirpur,Section 3,H,H,H,L,H
+Mirpur,Section 4,H,H,H,L,H
+Mirpur,Section 5,H,H,H,L,H
+Mirpur,Section 6,H,H,H,L,H
+Mirpur,Section 7,H,H,L,L,H
+Mirpur,Section 8,H,H,L,L,H
+Mirpur,Section 9,H,H,L,L,H
+Mirpur,Eastern Housing,H,H,L,L,H
+Mirpur,Extension Pallabi,H,H,L,L,H
 lalmatia,lalmatia,H,M,H,L,H
 Tejgaon,East Tejturi Bazar,H,L,L,L,H
-Uttara,Sector 13,H,H,L,L,H
-Uttara,Sector 7,H,H,L,L,H
-Mirpur,Section 7,H,H,L,L,H
 Mirpur,Mirpur Dohs,H,H,L,L,H
 Nikunja,Nikunja,H,H,L,L,H
 Mohammadpur,Dhaka Real estate,H,H,M,L,H
-Mirpur,Section 10,H,H,H,L,H
 Uttar Khan,Mollapara,H,L,L,L,H
 Mohammadpur,Mohammadia Housing Limited,H,H,L,L,H
 Mohammadpur,Mohammadpur,H,H,M,L,H
-Uttara,Sector 6,H,H,L,L,H
-Uttara,Sector 8,H,H,L,L,H
-Mirpur,Section 10,H,H,H,L,H
-Uttara,Sector 14,H,H,L,L,H
-Uttara,Sector 3,H,H,L,L,H
 Dhanmondi,Kalabagan,H,H,L,M,H
-Uttara,Sector 10,H,H,L,L,H
 Khilgaon,Khilgaon,H,M,M,L,H
 Tejgaon,Kawran Bazar,H,M,L,L,H
 Mirpur,Doaripara,H,H,L,L,H
 Sirajdikhan,Sirajdikhan,H,M,L,L,H
-Mirpur,Section 6,H,H,H,L,H
 Rampura,Banasree,H,H,H,L,H
 Mirpur,East Shewrapara,H,M,L,L,H
 Rampura,West Rampura,H,H,L,L,H
@@ -35,12 +58,8 @@ Matikata,Matikata,H,L,L,L,H
 Lalbagh,Palashi,H,H,L,L,H
 Mirpur,Middle Pirerbagh,H,M,L,L,H
 Bashabo,Goran,H,H,L,L,H
-Uttara,Sector 5,H,H,L,L,H
 Azimpur,Lalbagh,H,M,L,L,H
-Mirpur,Section 14,H,L,L,L,H
 Mirpur,Kazipara,H,M,L,L,H
-Mirpur,Section 13,H,L,H,L,H
-Mirpur,Section - 13,H,L,H,L,H
 Mirpur,Shewrapara,H,L,L,L,H
 Mirpur,East Monipur,H,L,L,L,H
 Sher E Bangla Nagar,Sher-E-Bangla nagar,H,L,L,L,H
@@ -49,32 +68,29 @@ Banani,Chairmanbari,H,H,H,L,H
 Rampura,Mohanagar Project,H,H,H,L,H
 Mirpur,Senpara Parbata,H,L,L,L,H
 Agargaon,shyamoli,H,M,L,L,H
-New Market,Dhanmondi,H,M,L,L,H
 Mohakhali,Mohakhali Wirelessgate,H,L,L,L,H
 Tejgaon,Farmgate,H,L,L,L,H
 Tejgaon,Panthapath,H,L,L,L,H
+Dhanmondi,Dhanmondi,H,H,L,L,H
 Dhanmondi,Dhanmondi 27,H,H,L,L,H
 Malibagh,Chowdhury Para,H,L,L,L,H
 Dhanmondi,Dhanmondi R/A,H,H,L,L,H
 Panthapath,West Panthapath,H,L,L,L,H
-Mirpur,Section 1,H,H,H,L,H
 Malibagh,Malibagh Mor,H,M,L,L,H
-Uttara,Sector 11,H,H,L,L,H
-Uttara,Sector 4,H,H,L,L,H
 Badda,North Badda,H,M,L,L,H
 Dayaganj,Sutrapur,H,H,L,L,H
 Savar,Dhaka Aricha Highway,H,L,L,L,H
 Badda,Middle Badda,H,M,L,L,H
 Rampura,East Rampura,H,M,L,L,H
-Mirpur,Section 12,H,H,H,L,H
 Mohammadpur,Pc Housing Society,H,H,H,L,H
 Mohammadpur,Pisciculture Housing Society,H,H,H,L,H
 Mohammadpur,Shekhertek,H,H,L,L,H
 Dhanmondi,Shankar Bus Stand,H,H,L,L,H
+Dhanmondi,Sankar,H,M,L,L,H
+Dhanmondi,Shankar,H,M,L,L,H
 Dhanmondi,Jigatola,H,H,L,L,H
 Moghbazar,Wireless,H,M,L,L,H
 Siddik Bazar,Fulbaria,H,H,L,L,H
-Mirpur,Section-10,H,H,H,L,H
 Islampur,Kumartoli,H,M,L,L,H
 Rampura,East Hazipara,H,L,L,L,H
 Wari,Tikatuli,H,H,L,L,H
@@ -121,7 +137,6 @@ Tejgaon,Nabisco,H,L,L,L,H
 Tejgaon,Colony Bazar,H,L,L,L,H
 Gulshan,Kalachadput,H,L,L,L,H
 Mirpur,Rupnagar,H,H,L,L,H
-Mirpur,Section 3,H,H,L,L,H
 Mirpur,Rupali Housing,H,H,L,L,H
 Mohakhali,Mohakhali C/A,H,L,L,L,H
 Mirpur,Rupnagar Housing stage,H,H,L,L,H
@@ -130,9 +145,7 @@ Mirpur,Shial Bari,H,H,L,L,H
 Moghbazar,Aambagan,H,H,L,L,H
 Mirpur,Rayhan Market,H,H,L,L,H
 Mohakhali,Wireless,H,L,L,L,H
-Uttara,Sector 9,H,H,L,L,H
 Mohakhali,TB Gate,H,H,L,L,H
-Mirpur,Section 5,H,H,L,L,H
 Mirpur,Rupnagar Tin Shade,H,H,L,L,H
 Mirpur,Rupnagar I/A,H,H,L,L,H
 Mirpur,Rupnagar R/A,H,H,L,L,H
@@ -161,7 +174,6 @@ Mirpur,Priyangon 2nd Colony,H,H,L,L,H
 Mirpur,Priyangon R/A,H,H,L,L,H
 Mirpur,Sewrapara,H,H,L,L,H
 Mirpur,Kalshi,H,H,M,L,H
-Mirpur,Section 11.5,H,M,M,L,H
 Mirpur,West Kafrul (Taltola),H,L,L,L,H
 Basundhara,Solmaid,H,L,L,L,H
 Basundhara,Basundhara RA,H,L,L,L,H
@@ -169,7 +181,6 @@ Mirpur,Ahmed Nagar,H,L,L,L,H
 Mirpur,Shah Ali Bagh,H,H,H,L,H
 Mirpur,Kachukhet,H,H,L,L,H
 Shanir Akhra,Kadamtali,H,M,L,L,H
-Uttara,Sector 1,H,H,L,L,H
 Mirpur,North Ibrahimpur,H,L,L,L,H
 Mirpur,Palashnagar,H,H,H,L,H
 Mirpur,Shangbadik R/A,H,H,H,L,H
@@ -231,7 +242,7 @@ Mirpur,West Kazipara,H,M,L,L,H
 Kallyanpur,Kallyanpur Sharak,H,L,L,L,H
 Khilgaon,Shantipur,H,H,L,L,H
 Siddheshwari,Baily Road,H,L,L,L,H
-Mirpur,South Monipur West Shewrapara,H,M,L,L,H
+Mirpur,West Shewrapara,H,M,L,L,H
 Dhanmondi,Sabanoom Tower,H,H,L,L,H
 Dhanmondi,Gazi Tower,H,H,L,L,H
 Mirpur,Poschim Shewrapara,H,H,L,L,H
@@ -313,6 +324,7 @@ Mohammadpur,Navodoy,H,M,M,L,H
 Tejgaon,Rajabazar,H,L,L,L,H
 Tejgaon,East Rajabazar,H,L,L,L,H
 Adabor,Noboday Housing,H,M,M,L,H
+Adabor,Nobodoy Housing,H,M,M,L,H
 Shantibagh,Shantibagh,H,M,L,L,HBadda
 Vatara,Notun Bazar,H,M,L,L,H
 Manikdi,Namapara,H,M,L,L,H
@@ -452,6 +464,7 @@ Mohammadpur,Jafrabad,H,M,L,L,H
 New Market,Science Laboratory,H,H,L,L,H
 Kolabagan,Poribagh,H,H,L,L,H
 Kolabagan,Hatirpul,H,H,L,L,H
+Dhanmondi,Hatirpool,H,H,L,L,H
 Mohammadpur,Katasur,H,H,H,L,H
 Moghbazar,Mirbagh Modhubagh,H,M,L,L,H
 Moghbazar,Modhubagh Jheelpar,H,H,L,L,H

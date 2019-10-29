@@ -6,6 +6,7 @@ vowel_list=[]
 font_list=[]
 jukto_borno_list=[]
 digit_lists=[u'\u09E6',u'\u09E7',u'\u09E8',u'\u09E9',u'\u09EA',u'\u09EB',u'\u09EC',u'\u09ED',u'\u09EE',u'\u09EF']
+sorborno_list=[u'\u0987',u'\u0988',u'\u0989',u'\u098A',u'\u098F',u'\u0990',u'\u0993',u'\u0994']
 
 with open('./custom_banglish_transformer/bangla_letter_list.csv','rt') as fbl:
 	bangla_letter_list= csv.reader(fbl)
@@ -81,14 +82,18 @@ def main(input_text):
 	input_text=input_text.replace(u'\u0981','')
 	input_text=input_text.replace(u'\u0983',':')
 	input_text=input_text.replace(u'\u0964','')
+	input_text=input_text.replace(u'\u09AC\u09BC', u'\u09B0')
+	input_text=input_text.replace(u'\u09AF\u09BC', u'\u09DF')
+	input_text=input_text.replace(u'\u09A1\u09BC', u'\u09B0')
+	input_text=input_text.replace(u'\u09A2\u09BC', u'\u09B0')
 	text=keyword_makelist(input_text)
 	count=1
 	#print(text)
 	for w in range(len(text)):
 	    result=bangla_rupantor(text[w])
-	    #print(text[w])
+	    print(text[w])
 	    if w<len(text)-1:
-	    	if (text[w+1] not in vowel_list and text[w] not in vowel_list) and text[w] not in digit_lists and text[w] in font_list:
+	    	if (text[w+1] not in vowel_list and text[w] not in vowel_list) and text[w] not in digit_lists and text[w] in font_list and text[w] not in sorborno_list:
 	    		st+=result+'o'
 	    		if w<len(text)-2 and len(text)>3 :
 	    		    if (text[w+2] in vowel_list and st[-1]=='o' and w>0)  and text[w] not in jukto_borno_list:
