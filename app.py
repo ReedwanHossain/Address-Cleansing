@@ -73,7 +73,7 @@ def transform_addr():
    return add_trans.bangla_to_english(addr)
 
 
-@app.route('/transformar', methods = ['POST'])
+@app.route('/transformer', methods = ['POST'])
 def transformer_addr():
    add_trans = None
    add_trans = Transformer()
