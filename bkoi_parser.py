@@ -72,7 +72,7 @@ class Address(object):
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
-        "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' section ', ' sec ':' section ', 'sec#': ' section ', 'sec:': ' section ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
+        "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road': ' road ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ',
@@ -227,6 +227,9 @@ class Address(object):
 
                         self.get_multiple_subarea.append(subarea[1].lower())
                         self.get_multiple_area.append(subarea[0].lower())
+                        print "..................akhane bhejal ..............."
+                        print self.matched[self.subareakey]
+                        print self.matched[self.areakey]
                         tempObj = {
                             'area': subarea[0].lower(),
                             'subarea': subarea[1].lower(),
@@ -355,6 +358,9 @@ class Address(object):
     def check_road(self, road, idx):
         tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
         if 'road' in road or 'ave' in road or 'lane' in road or 'sarani' in road or 'soroni' in road or 'rd#' in road or 'sarak' in road or 'sharak' in road or 'shorok' in road or 'sharani' in road or 'highway' in road or 'path' in road or 'poth' in road or 'chowrasta' in road or 'sarak' in road or 'rasta' in road or 'sorok' in road or 'goli' in road or 'street' in road or 'line' in road :
+            if 'ave' in road:
+                road = 'avenue'
+
             if idx != len(self.tempArray)-1:
                 if (any(char.isdigit() for char in self.tempArray[idx+1])):
                     num=re.findall(r'\d+', self.tempArray[idx+1])
@@ -555,6 +561,7 @@ class Address(object):
         expand = self.multiple_replace(self.area_dict, expand.lower())
         #unknown char remove
         expand = re.sub( r'#|"',' ', expand )
+
         #print("after prune -----"+expand)
 
         #spell_checker
@@ -599,6 +606,14 @@ class Address(object):
                 # print comp.rstrip('[!@#$-]')
         self.cleanAddressStr = ' '.join(self.tempArray)
         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
+        print '.......................befor parsing'
+        print self.cleanAddressStr
+        if 'mirpur' in self.cleanAddressStr and 'sector' in self.cleanAddressStr:
+            self.cleanAddressStr = self.cleanAddressStr.replace("sector","section")
+            print('.....................mirpur ...................................')
+        if 'uttara' in self.cleanAddressStr and 'section' in self.cleanAddressStr:
+            self.cleanAddressStr = self.cleanAddressStr.replace("section","sector")
+            print('.....................uttara ...................................')
         #print(self.cleanAddressStr)
         #self.tempArray = word_tokenize(self.cleanAddressStr)
 
