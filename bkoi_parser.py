@@ -582,7 +582,8 @@ class Address(object):
                 #print("after  spell -----"+i)
             input_address+=i
         expand=input_address
-        
+        self.clone_input_address = input_address
+
         #print("before -----"+input_address)
 
         
@@ -808,6 +809,11 @@ class Address(object):
             
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
+        print('812...............................')
+        print(len(self.clone_input_address.strip()))
+        if len(self.clone_input_address.split())<2:
+            full_address = self.clone_input_address
+        
         return full_address
 
 
