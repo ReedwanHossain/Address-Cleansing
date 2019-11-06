@@ -729,6 +729,8 @@ class Address(object):
                             #print(subarea[0]+"----"+subarea[1])
                             break
 
+ 
+
 
             
 
@@ -736,6 +738,7 @@ class Address(object):
         # status_checking= self.check_address_status()
         final_address = self.bind_address()     
         self.search_addr_bkoi(final_address)   
+
         #print(self.matched)
         obj = {
             'status' : self.check_address_status(),
@@ -866,7 +869,7 @@ class Address(object):
             full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         else:
             full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
-            
+
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
         print('812...............................')
