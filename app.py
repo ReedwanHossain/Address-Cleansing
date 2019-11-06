@@ -10,6 +10,7 @@ from custom_banglish_transformer.bkoi_transformer import Transformer
 app = Flask(__name__)
 CORS(app)
 
+add_parse = Address()
 
 @app.route('/uploader', methods = ['POST'])
 def upload_file():
@@ -43,8 +44,6 @@ def upload_file():
 
 @app.route('/parse', methods = ['POST'])
 def parse_it():
-   add_parse = None
-   add_parse = Address()
    addr = request.form.get('addr')
    # de_addr = urllib.unquote(addr)
    # print "address.........."+de_addr
@@ -54,8 +53,6 @@ def parse_it():
 
 @app.route('/parser', methods = ['GET'])
 def parser():
-   add_parse = None
-   add_parse = Address()
    addr = request.args.get('addr')
    # de_addr = urllib.unquote(addr)
    # print "address.........."+de_addr

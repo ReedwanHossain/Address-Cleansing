@@ -1,9 +1,14 @@
 import csv
 import re
-from banglish_translator import *
+#from banglish_translator import *
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+try:
+    import imp
+    imp.reload(sys)
+    sys.setdefaultencoding('utf8')
+except:
+    import importlib
+    importlib.reload(sys)
 #import bangla
 
 class Transformer(object):

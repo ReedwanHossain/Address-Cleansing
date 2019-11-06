@@ -113,6 +113,7 @@ Mirpur,West Shewrapara,H,H,L,L,H
 bashundhara,bashundhara,H,H,H,L,H
 Tejgaon,Khamarbari,H,L,L,L,H
 Gulshan,Shahjadpur,H,H,L,L,H
+Gulshan,Niketon,H,H,H,L,H
 Nikunja,Nikunja 2,H,H,L,L,H
 Badda,Merul Badda,H,M,L,L,H
 Kafrul,Agargaon,H,M,L,L,H
@@ -212,7 +213,6 @@ Bashabo,Kadamtala,H,L,L,L,H
 Kafrul,Dhaka Canotonment,H,M,L,L,H
 Mirpur,South Agargaon,H,M,L,L,H
 Mirpur,West Agargaon,H,M,L,L,H
-Mirpur,North Shyamoli,H,M,L,L,H
 Shyamoli,North Shaymoli,H,M,L,L,H
 Shyamoli,Khalpar,H,H,L,L,H
 Mirpur,Kallyanpur,H,H,M,L,H
@@ -281,11 +281,10 @@ Motijheel,North Kamlapur,H,H,L,L,H
 Vatara,West Nurarchala,H,L,L,L,H
 Mirpur,South Monipur North Pirerbagh,H,L,L,L,H
 Mohammadpur,Tikkapara,H,M,M,L,H
-Kafrul,Mohakhali New DOHS,H,H,L,L,H
 Motijheel,Kamlapur Box Culvert,H,L,L,L,H
 Dhanmondi,West Dhanmondi,H,H,L,L,H
 Malibagh,Mouchak,H,M,L,L,H
-Vatara,Kholbarirtek,H,L,L,L,H
+Vatara,Khilbarirtek,H,L,L,L,H
 Mohammadpur,Mohammadia Housing,H,H,L,L,H
 Pallabi,Extension Pallabi,H,H,L,L,H
 Mirpur,East Ahmed Nagar,H,M,L,L,H

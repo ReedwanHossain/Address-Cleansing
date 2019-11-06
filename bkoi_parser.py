@@ -1,7 +1,9 @@
 from flask_cors import CORS
+import requests
 from json import dumps
 from flask import Flask, request, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
+from fuzzywuzzy import fuzz
 import urllib
 import re
 import re
@@ -12,6 +14,7 @@ import csv
 #nltk.download('all')
 #nltk.download('punkt')
 
+from miniparser import MiniParser
 from spellcheck import SpellCheck
 class Address(object):
        
@@ -227,9 +230,6 @@ class Address(object):
 
                         self.get_multiple_subarea.append(subarea[1].lower())
                         self.get_multiple_area.append(subarea[0].lower())
-                        print "..................akhane bhejal ..............."
-                        print self.matched[self.subareakey]
-                        print self.matched[self.areakey]
                         tempObj = {
                             'area': subarea[0].lower(),
                             'subarea': subarea[1].lower(),
@@ -249,10 +249,11 @@ class Address(object):
 
 
     def check_holding(self, token, idx):
-        tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
-        if (any(char.isdigit() for char in token) or token in tempList) and idx < len(self.tempArray)-1 and self.matched[self.housekey]==None:
+        tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp','rrrr']
+        if (any(char.isdigit() for char in token) or token in tempList or re.match(r'^[a-z]$',token)) and idx < len(self.tempArray)-1 and self.matched[self.housekey]==None:
             if idx == 0 and self.tempArray[idx+1].lower()!='floor':
                 self.matched[self.housekey] = token
+                print(token+"---------------256 paise")
                 # matched_array.append(token)
                 if ((any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList)) and idx < len(self.tempArray)-2 :
                     self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+1] 
@@ -286,7 +287,7 @@ class Address(object):
         elif ((token.lower() == 'house' or token.lower() == 'plot') and idx < len(self.tempArray)-1):
             #print(self.tempArray)
             tempList=set(tempList)
-            if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList) or (re.match(r'^[a-z]/[a-z]$', self.tempArray[idx+1])):
+            if (any(char.isdigit() for char in self.tempArray[idx+1])) or (self.tempArray[idx+1] in tempList) or (re.match(r'^[a-z]$', self.tempArray[idx+1])) or (re.match(r'^[a-z]/[a-z]$', self.tempArray[idx+1])):
             #chk_house_no=re.search(r'\w', self.tempArray[idx+1].strip(","))
             #if chk_house_no:
 
@@ -522,12 +523,24 @@ class Address(object):
             input_address = ' '.join(str(e) for e in temp_input_address)
             #print("after delete flat  "+input_address)
 
+        input_address=re.sub(r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d+)(\s*)','',input_address)
 
         input_address=re.sub(r'((\s*)(floor|room|flat|level|flr)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr))(\s*)|(((\s*)(floor|flat|level|room|flr)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
         input_address=input_address.replace(',',' ')
         #print("before -----"+input_address)
-        
+        all_num_list=re.findall(r'\d+', input_address)
+        if len(all_num_list)>0:
+            max_num_in_string = max(map(int, all_num_list))
+            if max_num_in_string>2000:
+                max_num_in_string=str(max_num_in_string)
+                input_address=input_address.replace(max_num_in_string,'')
 
+        cut_hbrs=re.search(r'(house(\s+)(-|/|:)*(\s*))((h|b|r|s)(\s+))',input_address)
+        check_hbrs=0
+        if(cut_hbrs):
+            check_hbrs=1
+            cut_hbrs=cut_hbrs.group(5)
+            input_address=re.sub(r'(house(\s+)(-|/|:)*(\s*))((h|b|r|s)(\s+))',r'\1rrrr ',input_address)
 
         input_address=re.sub('(h|b|r|s)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
         block_h=re.search('block(\s*)(no)*(:)*(-)*(\s*)(h)',input_address)
@@ -563,6 +576,8 @@ class Address(object):
         expand = re.sub( r'#|"',' ', expand )
 
         #print("after prune -----"+expand)
+        if(check_hbrs==1):
+            expand=expand.replace('rrrr',cut_hbrs.strip())
 
         #spell_checker
         input_address=expand
@@ -607,8 +622,6 @@ class Address(object):
                 # print comp.rstrip('[!@#$-]')
         self.cleanAddressStr = ' '.join(self.tempArray)
         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
-        print '.......................befor parsing'
-        print self.cleanAddressStr
         if 'mirpur' in self.cleanAddressStr and 'sector' in self.cleanAddressStr:
             self.cleanAddressStr = self.cleanAddressStr.replace("sector","section")
             print('.....................mirpur ...................................')
@@ -672,8 +685,7 @@ class Address(object):
         subarea_high = ''
         max_H=-1
         min_H=5
-        print "...............659"
-        print self.get_multiple_area
+        #print self.get_multiple_area
         if len(getsubarea)>=2:
             for j, subarea in enumerate(self.subarea_list_pattern):
                 #print(subarea['subarea'])
@@ -691,8 +703,8 @@ class Address(object):
                     self.matched[self.subareakey]=subarea_min
                     print("okkkk")
                     break
-        print getsubarea
-        print self.matched
+        #print getsubarea
+        #print self.matched
 
 
         
@@ -726,18 +738,79 @@ class Address(object):
                             #print(subarea[0]+"----"+subarea[1])
                             break
 
+ 
+
 
             
 
         
         # status_checking= self.check_address_status()
-        final_address = self.bind_address()        
-        #print(self.matched)
+        final_address = self.bind_address()     
+        #self.search_addr_bkoi(final_address)   
+
+        print(self.matched)
         obj = {
             'status' : self.check_address_status(),
-            'address' : final_address
+            'address' : final_address,
+            #'geocoded' : self.search_addr_bkoi(final_address)
         }
+        self.__init__()
         return obj
+
+
+
+
+
+    def search_addr_bkoi(self, qstring):
+        url="http://54.254.209.206/api/search/autocomplete/exact"
+        r = requests.post(url, params={'q': qstring})
+
+        if r.status_code != 200:
+          print ("Error:", r.status_code)
+
+        data = r.json()
+        match_counter_max = 0
+        match_address_max = ''
+        match_obj_max = {}
+        print('before count....................')
+        for i in data:
+            geocoded_area = i['area']
+            print(qstring+"..............."+i['address'])
+            match_counter = 0
+            geo_addr_comp = i['address'].split(',')
+            i['address'] = i['address'].strip()
+            i['address'] = i['address'].strip(',')
+            if geocoded_area.strip().lower() in qstring or self.matched[self.subareakey] in i['address'] or self.matched[self.areakey] in i['address']:
+                for j, addr_comp in enumerate(geo_addr_comp):
+                    print(qstring+"............772......matching"+addr_comp)
+                    if addr_comp.strip().lower() in qstring or any(match.strip() in addr_comp.strip().lower() for match in qstring.split(',')):
+                        match_counter = match_counter +1
+                if match_counter_max < match_counter:
+                    match_counter_max = match_counter
+                    print('.....match count............')
+                    print(str(match_counter)+'.........'+i['address'])
+                    match_address_max = i['address'].lower()
+                    match_obj_max = i
+                break
+            else :
+                for j, addr_comp in enumerate(geo_addr_comp):
+                    if addr_comp.strip().lower() in qstring:
+                        match_counter = match_counter +1
+                if match_counter_max < match_counter:
+                    print('............match count in else')
+                    print(str(match_counter)+'.........'+i['address'])
+                    match_counter_max = match_counter
+                    match_address_max = i['address'].lower()
+                    match_obj_max = i
+            print(match_address_max)
+
+            print('.........Max Match......................')
+        return match_obj_max
+
+            # result=fuzz.ratio(qstring.lower(), i['Address'].lower())
+            # print(qstring.lower()+"                   "+i['Address'].lower()+"                "+str(result))
+
+
 
     def bind_address(self):
 
@@ -806,7 +879,7 @@ class Address(object):
             full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         else:
             full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
-            
+
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
         print('812...............................')
