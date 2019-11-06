@@ -752,7 +752,7 @@ class Address(object):
         obj = {
             'status' : self.check_address_status(),
             'address' : final_address,
-            #'geocoded' : self.search_addr_bkoi(final_address)
+            'geocoded' : self.search_addr_bkoi(final_address)
         }
         self.__init__()
         return obj
