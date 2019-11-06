@@ -761,17 +761,34 @@ class Address(object):
         match_obj_max = {}
         print('before count....................')
         for i in data:
+            geocoded_area = i['area']
             print(qstring+"..............."+i['address'])
             match_counter = 0
             geo_addr_comp = i['address'].split(',')
-            mp = MiniParser()
-            for j, addr_comp in enumerate(geo_addr_comp):
-                if addr_comp.strip().lower() in qstring:
-                    match_counter = match_counter +1
-            if match_counter_max < match_counter:
-                match_counter_max = match_counter
-                match_address_max = i['address'].lower()
-                match_obj_max = i
+            i['address'] = i['address'].strip()
+            i['address'] = i['address'].strip(',')
+            if geocoded_area.strip().lower() in qstring or self.matched[self.subareakey] in i['address'] or self.matched[self.areakey] in i['address']:
+                for j, addr_comp in enumerate(geo_addr_comp):
+                    print(qstring+"............772......matching"+addr_comp)
+                    if addr_comp.strip().lower() in qstring or any(match.strip() in addr_comp.strip().lower() for match in qstring.split(',')):
+                        match_counter = match_counter +1
+                if match_counter_max < match_counter:
+                    match_counter_max = match_counter
+                    print('.....match count............')
+                    print(str(match_counter)+'.........'+i['address'])
+                    match_address_max = i['address'].lower()
+                    match_obj_max = i
+                break
+            else :
+                for j, addr_comp in enumerate(geo_addr_comp):
+                    if addr_comp.strip().lower() in qstring:
+                        match_counter = match_counter +1
+                if match_counter_max < match_counter:
+                    print('............match count in else')
+                    print(str(match_counter)+'.........'+i['address'])
+                    match_counter_max = match_counter
+                    match_address_max = i['address'].lower()
+                    match_obj_max = i
             print(match_address_max)
 
             print('.........Max Match......................')
