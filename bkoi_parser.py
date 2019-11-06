@@ -1,7 +1,9 @@
 from flask_cors import CORS
+import requests
 from json import dumps
 from flask import Flask, request, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
+from fuzzywuzzy import fuzz
 import urllib
 import re
 import re
@@ -12,6 +14,7 @@ import csv
 #nltk.download('all')
 #nltk.download('punkt')
 
+from miniparser import MiniParser
 from spellcheck import SpellCheck
 class Address(object):
        
@@ -728,13 +731,76 @@ class Address(object):
 
  
 
-        final_address = self.bind_address()        
+
+            
+
+        
+        # status_checking= self.check_address_status()
+        final_address = self.bind_address()     
+        self.search_addr_bkoi(final_address)   
+
         #print(self.matched)
         obj = {
             'status' : self.check_address_status(),
-            'address' : final_address
+            'address' : final_address,
+            'geocoded' : self.search_addr_bkoi(final_address)
         }
         return obj
+
+
+
+
+
+    def search_addr_bkoi(self, qstring):
+        url="http://54.254.209.206/api/search/autocomplete/exact"
+        r = requests.post(url, params={'q': qstring})
+
+        if r.status_code != 200:
+          print "Error:", r.status_code
+
+        data = r.json()
+        match_counter_max = 0
+        match_address_max = ''
+        match_obj_max = {}
+        print('before count....................')
+        for i in data:
+            geocoded_area = i['area']
+            print(qstring+"..............."+i['address'])
+            match_counter = 0
+            geo_addr_comp = i['address'].split(',')
+            i['address'] = i['address'].strip()
+            i['address'] = i['address'].strip(',')
+            if geocoded_area.strip().lower() in qstring or self.matched[self.subareakey] in i['address'] or self.matched[self.areakey] in i['address']:
+                for j, addr_comp in enumerate(geo_addr_comp):
+                    print(qstring+"............772......matching"+addr_comp)
+                    if addr_comp.strip().lower() in qstring or any(match.strip() in addr_comp.strip().lower() for match in qstring.split(',')):
+                        match_counter = match_counter +1
+                if match_counter_max < match_counter:
+                    match_counter_max = match_counter
+                    print('.....match count............')
+                    print(str(match_counter)+'.........'+i['address'])
+                    match_address_max = i['address'].lower()
+                    match_obj_max = i
+                break
+            else :
+                for j, addr_comp in enumerate(geo_addr_comp):
+                    if addr_comp.strip().lower() in qstring:
+                        match_counter = match_counter +1
+                if match_counter_max < match_counter:
+                    print('............match count in else')
+                    print(str(match_counter)+'.........'+i['address'])
+                    match_counter_max = match_counter
+                    match_address_max = i['address'].lower()
+                    match_obj_max = i
+            print(match_address_max)
+
+            print('.........Max Match......................')
+        return match_obj_max
+
+            # result=fuzz.ratio(qstring.lower(), i['Address'].lower())
+            # print(qstring.lower()+"                   "+i['Address'].lower()+"                "+str(result))
+
+
 
     def bind_address(self):
 
