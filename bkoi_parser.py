@@ -752,7 +752,7 @@ class Address(object):
         obj = {
             'status' : self.check_address_status(),
             'address' : final_address,
-            #'geocoded' : self.search_addr_bkoi(final_address)
+            'geocoded' : self.search_addr_bkoi(final_address)
         }
         self.__init__()
         return obj
@@ -791,7 +791,7 @@ class Address(object):
                     print(str(match_counter)+'.........'+i['address'])
                     match_address_max = i['address'].lower()
                     match_obj_max = i
-                break
+                    
             else :
                 for j, addr_comp in enumerate(geo_addr_comp):
                     if addr_comp.strip().lower() in qstring:
