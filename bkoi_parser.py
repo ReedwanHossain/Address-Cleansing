@@ -702,7 +702,7 @@ class Address(object):
             i['address'] = i['address'].strip(',')
             if geocoded_area.strip().lower() in qstring or self.matched[self.subareakey] in i['address'] or self.matched[self.areakey] in i['address']:
                 for j, addr_comp in enumerate(geo_addr_comp):
-                    if addr_comp.strip().lower() in qstring or any(match.strip() in addr_comp.strip().lower() for match in qstring.split(',')):
+                    if (match.strip() in addr_comp.strip().lower() for match in qstring.split(',')) or addr_comp.strip().lower() in qstring :
                         match_counter = match_counter +1
                 if match_counter_max < match_counter:
                     match_counter_max = match_counter

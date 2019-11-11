@@ -1,7 +1,5 @@
 import csv
 import sys
-from importlib import reload
-reload(sys)
 vowel_list=[]
 font_list=[]
 jukto_borno_list=[]
