@@ -1,7 +1,5 @@
 import csv
 import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
 vowel_list=[]
 font_list=[]
 jukto_borno_list=[]
@@ -61,8 +59,8 @@ def bangla_rupantor(text):
     with open('./custom_banglish_transformer/bangla_letter_list.csv','rt') as f:
         key_list = csv.reader(f)
         for j, keyword in enumerate(key_list):
-            keyword[0]=keyword[0].decode('utf-8') 
-            keyword[1]=keyword[1].decode('utf-8')
+            keyword[0]=keyword[0] 
+            keyword[1]=keyword[1]
             keyword[0]=keyword[0].strip()
             keyword[1]=keyword[1].strip()
 
@@ -77,7 +75,7 @@ def bangla_rupantor(text):
 def main(input_text):
 	st=""
 	#input_text=raw_input("Enter : ")
-	input_text=input_text.decode('utf-8')
+	input_text=input_text
 	#chandrobindu (u'\u0981') remove
 	input_text=input_text.replace(u'\u0981','')
 	input_text=input_text.replace(u'\u0983',':')

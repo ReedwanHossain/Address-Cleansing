@@ -1,6 +1,6 @@
 import csv
 import re
-#from banglish_translator import *
+from custom_banglish_transformer.banglish_translator import *
 import sys
 try:
     import imp
@@ -16,7 +16,6 @@ class Transformer(object):
     def __init__(self):
         super(Transformer, self).__init__()
         
-
     def bangla_to_english(self, address):
         address=address.replace('.',' ')
         address=address.replace(u'\u0964',' ')
