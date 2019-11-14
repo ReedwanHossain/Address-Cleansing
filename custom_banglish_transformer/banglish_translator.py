@@ -1,33 +1,37 @@
 import csv
 import sys
+from dbconf.initdb import DBINIT
+dbinit = DBINIT()
+dbinit.load_bv()
+dbinit.load_bl()
+dbinit.load_jbl()
+dbinit.load_ebl()
+
+
 vowel_list=[]
 font_list=[]
 jukto_borno_list=[]
 digit_lists=[u'\u09E6',u'\u09E7',u'\u09E8',u'\u09E9',u'\u09EA',u'\u09EB',u'\u09EC',u'\u09ED',u'\u09EE',u'\u09EF']
 sorborno_list=[u'\u0987',u'\u0988',u'\u0989',u'\u098A',u'\u098F',u'\u0990',u'\u0993',u'\u0994']
 
-with open('./custom_banglish_transformer/bangla_letter_list.csv','rt') as fbl:
-	bangla_letter_list= csv.reader(fbl)
-	for k, letter in enumerate(bangla_letter_list):
-		#print(vowel[0])
-		letter[0]=letter[0].strip()
-		font_list.append(letter[0])
+bangla_letter_list= dbinit.get_bl()
+for k, letter in enumerate(bangla_letter_list):
+	# letter[0]=letter[0].strip()
+	font_list.append(letter[0].strip())
 
 
-with open('./custom_banglish_transformer/bangla_vowel.csv','rt') as fv:
-	vowels= csv.reader(fv)
-	for i, vowel in enumerate(vowels):
-		#print(vowel[0])
-		vowel[0]=vowel[0].strip()
-		vowel_list.append(vowel[0])
+vowels= dbinit.get_bv()
+for i, vowel in enumerate(vowels):
+	#print(vowel[0])
+	# vowel[0]=vowel[0].strip()
+	vowel_list.append(vowel.strip())
 #print(vowel_list)
 #jb=jukto borno
-with open('./custom_banglish_transformer/bangla_jukto_borno_list.csv','rt') as fjb:
-	jbs= csv.reader(fjb)
-	for i, jb in enumerate(jbs):
-		#print(jb[0])
-		jb[0]=jb[0].strip()
-		jukto_borno_list.append(jb[0])
+jbs= dbinit.get_jbl()
+for i, jb in enumerate(jbs):
+	# print(jb[0])
+	# jb[0]=jb[0].strip()
+	jukto_borno_list.append(jb[0].strip())
 #print(jukto_borno_list)
 
 def keyword_makelist(keyword):
@@ -56,15 +60,9 @@ def keyword_makelist(keyword):
 	return mylist
 
 def bangla_rupantor(text):
-    with open('./custom_banglish_transformer/bangla_letter_list.csv','rt') as f:
-        key_list = csv.reader(f)
-        for j, keyword in enumerate(key_list):
-            keyword[0]=keyword[0] 
-            keyword[1]=keyword[1]
-            keyword[0]=keyword[0].strip()
-            keyword[1]=keyword[1].strip()
-
-            text=text.replace(keyword[0],keyword[1])
+    key_list = dbinit.get_bl()
+    for j, keyword in enumerate(key_list):
+    	text=text.replace(keyword[0].strip(),keyword[1].strip())
 
     text=text.replace('`','')
     text=text.replace(u'\u09CD','')
