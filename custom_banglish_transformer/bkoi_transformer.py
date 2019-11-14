@@ -2,6 +2,10 @@ import csv
 import re
 from custom_banglish_transformer.banglish_translator import *
 import sys
+from dbconf.initdb import DBINIT
+dbinit = DBINIT()
+dbinit.load_digit()
+dbinit.load_keyword_map()
 try:
     import imp
     imp.reload(sys)
@@ -22,10 +26,9 @@ class Transformer(object):
         address=address.replace(u'\u0028',u' \u0028 ')
         address=address.replace(u'\u0029',u' \u0029 ')
 
-        with open('./custom_banglish_transformer/digits.csv','rt')as df:
-            digits=csv.reader(df)
-            for i, digit in enumerate(digits):
-                address=address.replace(digit[1],digit[0])
+        digits= dbinit.get_digit()
+        for i, digit in enumerate(digits):
+            address=address.replace(digit[1],digit[0])
         address=re.sub(r'(,|#|-|:|/)',r' \1 ',address)
         #print(address)
         address=re.sub(r'(\d+)',r' \1',address)
@@ -37,19 +40,17 @@ class Transformer(object):
             getmylist=0
             #word=word.decode('utf-8')
             word=word.strip()
-            with open('./custom_banglish_transformer/keyword_maplist.csv','r')as f:
-                data_list = csv.reader(f)
-                for j, keyword in enumerate(data_list):
-                    #keyword[0]=keyword[0].decode('utf-8') #english
-                    #keyword[1]=keyword[1].decode('utf-8') #bangla
-                    keyword[1]=keyword[1].strip()
-                    if word==keyword[1]:
-                        #print("matched")  
-                        #eng_address.append(keyword[0])
-                        eng_address=eng_address+' '+keyword[0]
-                        getmylist=1
-                        #print(keyword[1]+'   paise')
-                        break
+            data_list = dbinit.get_keyword_map()
+            for j, keyword in enumerate(data_list):
+                #keyword[0]=keyword[0].decode('utf-8') #english
+                #keyword[1]=keyword[1].decode('utf-8') #bangla
+                if word==keyword[1].strip():
+                    #print("matched")  
+                    #eng_address.append(keyword[0])
+                    eng_address=eng_address+' '+keyword[0]
+                    getmylist=1
+                    #print(keyword[1]+'   paise')
+                    break
             if getmylist==0:
                 custom_address=main(word)
                 custom_address=custom_address.replace('`','')
