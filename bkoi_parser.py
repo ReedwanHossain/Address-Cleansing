@@ -6,13 +6,14 @@ from flask_restful import reqparse, abort, Api, Resource
 from fuzzywuzzy import fuzz
 import urllib
 import re
-import re
-#import nltk
 import csv
-#from nltk.tokenize import sent_tokenize, word_tokenize
-#from gevent.pywsgi import WSGIServer
-#nltk.download('all')
-#nltk.download('punkt')
+
+
+from dbconf.initdb import DBINIT
+dbinit = DBINIT()
+dbinit.load_area()
+dbinit.load_subarea()
+dbinit.load_dsu()
 
 from miniparser import MiniParser
 from spellcheck import SpellCheck
@@ -70,7 +71,7 @@ class Address(object):
 
     address_component = ['','sarani','sarak','rasta','goli','lane','code','street','floor','level', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
     
-    building_name_key = ['building','plaza' , 'market', 'bazar' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'monjil' , 'manjil' , 'building' , 'headquarter' , 'bhaban', 'mosque', 'masjid', 'mosjid','hospital','university','school','mandir','mondir','police station', 'club', 'garage', 'office', 'restaurent', 'cafe', 'hotel', 'garments', 'park', 'field', 'garden', 'studio', 'stadium', 'meusium', 'institute', 'store', 'college', 'varsity', 'coaching', 'library', 'tution', 'bank', 'atm', 'agent', 'Ministry', 'workshop', 'saloon', 'tailors', 'pharmacy', 'textile', 'laundry', 'hall']
+    building_name_key = ['building','plaza' , 'market', 'bazar' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'square', 'monjil' , 'manjil' , 'building' , 'headquarter' , 'bhaban', 'mosque', 'masjid', 'mosjid','hospital','university','school','mandir','mondir','police station', 'club', 'garage', 'office', 'restaurent', 'cafe', 'hotel', 'garments', 'park', 'field', 'garden', 'studio', 'stadium', 'meusium', 'institute', 'store', 'college', 'varsity', 'coaching', 'library', 'tution', 'bank', 'atm', 'agent', 'Ministry', 'workshop', 'saloon', 'tailors', 'pharmacy', 'textile', 'laundry', 'hall']
     tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
@@ -94,9 +95,9 @@ class Address(object):
         dist_token = self.multiple_replace(self.area_dict, token.lower())
         #dist_token = word_tokenize(dist_token)
         dist_token = dist_token.split()
-        with open('./dsu.csv','rt')as f:
-          district_list = csv.reader(f)
-          for j, district in enumerate(district_list):
+
+        district_list = dbinit.get_dsu()
+        for j, district in enumerate(district_list):
                 if (dist_token[0].lower() == district[2].lower() and dist_token[0].lower() in self.cleanAddressStr.lower()):
                     self.matched[self.districtkey] = district[2].lower()
                     return True
@@ -132,16 +133,16 @@ class Address(object):
         area_token = self.multiple_replace(self.area_dict, token.lower())
         #area_token = word_tokenize(area_token)
         area_token = area_token.split()
-        with open('./area-list.csv','rt')as f:
-          area_list = csv.reader(f)
-          for j, area in enumerate(area_list):
-                if (area_token[0].lower() == area[0].lower() and area_token[0].lower() in self.cleanAddressStr.lower()):
-                    self.matched[self.areakey] = area[0].lower()
-                    # matched_array.append(area[0].lower())
-                    self.area_flag = True 
-                    self.area_pos = idx
-                    self.get_multiple_area.append(area[0].lower())
-                    return True
+        
+        area_list = dbinit.get_area()
+        for j, area in enumerate(area_list):
+            if (area_token[0].lower() == area.lower() and area_token[0].lower() in self.cleanAddressStr.lower()):
+                self.matched[self.areakey] = area.lower()
+                # matched_array.append(area[0].lower())
+                self.area_flag = True 
+                self.area_pos = idx
+                self.get_multiple_area.append(area.lower())
+                return True
 
 
     def check_sub_area(self, token, idx):
@@ -153,19 +154,19 @@ class Address(object):
                     token = 'section '+ self.tempArray[idx]
                 elif(area.lower() == 'uttara'):
                     token = 'sector '+ self.tempArray[idx]
-                with open('./subarea-list.csv','rt')as f:
-                    subarea_list = csv.reader(f)
-                    for j, subarea in enumerate(subarea_list):
-                        if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
-                            self.matched[self.subareakey] = token.lower()
-                            self.subarea_flag = True
-                            self.get_multiple_subarea.append(token.lower())
-                            tempObj = {
-                                'area': subarea[0].lower(),
-                                'subarea': subarea[1].lower(),
-                                'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            }
-                            self.subarea_list_pattern.append(tempObj)
-                            return True
+                
+                subarea_list = dbinit.get_subarea()
+                for j, subarea in enumerate(subarea_list):
+                    if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
+                        self.matched[self.subareakey] = token.lower()
+                        self.subarea_flag = True
+                        self.get_multiple_subarea.append(token.lower())
+                        tempObj = {
+                            'area': subarea[0].strip().lower(),
+                            'subarea': subarea[1].lower(),
+                            'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            }
+                        self.subarea_list_pattern.append(tempObj)
+                        return True
 
             elif(abs(idx-self.area_pos) > 1 or abs(idx-self.area_pos) == 1 and not any(char.isdigit() for char in self.tempArray[idx])):
                 token = token.lstrip('[0:!@#$-=+.]')
@@ -194,43 +195,42 @@ class Address(object):
                         self.subarea_flag = True
                         return True
 
-                with open('./subarea-list.csv','rt')as f:
-                    subarea_list = csv.reader(f)
-                    for j, subarea in enumerate(subarea_list):
-                        subarea[0]=subarea[0].strip()
-                        if ( (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
-                            self.matched[self.subareakey] = subarea[1].lower()
-                            self.get_multiple_subarea.append(subarea[1].lower())
-                            tempObj = {
-                                'area': subarea[0].lower(),
-                                'subarea': subarea[1].lower(),
-                                'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            
-                            }  
-                            self.subarea_list_pattern.append(tempObj)
-                            # matched_array.append(matched[subareakey])
-                            self.subarea_flag = True
-        
-
-        elif self.area_flag == False:
-            with open('./subarea-list.csv','rt')as f:
-                subarea_list = csv.reader(f)
+                subarea_list = dbinit.get_subarea()
                 for j, subarea in enumerate(subarea_list):
-                    if (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower()):
-                        self.matched[self.subareakey] = subarea[1].lower()
-                        self.matched[self.areakey] = subarea[0].lower()
+                    # subarea[0] = subarea[0].strip()
 
+                    if ( (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
+                        self.matched[self.subareakey] = subarea[1].lower()
                         self.get_multiple_subarea.append(subarea[1].lower())
-                        self.get_multiple_area.append(subarea[0].lower())
                         tempObj = {
-                            'area': subarea[0].lower(),
+                            'area': subarea[0].strip().lower(),
                             'subarea': subarea[1].lower(),
                             'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            
                         }  
                         self.subarea_list_pattern.append(tempObj)
-                        # matched_array.append(matched[areakey])
                         # matched_array.append(matched[subareakey])
                         self.subarea_flag = True
-                        break
+        
+
+        elif self.area_flag == False:
+            subarea_list = dbinit.get_subarea()
+            for j, subarea in enumerate(subarea_list):
+                if (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower()):
+                    self.matched[self.subareakey] = subarea[1].lower()
+                    self.matched[self.areakey] = subarea[0].lower()
+
+                    self.get_multiple_subarea.append(subarea[1].lower())
+                    self.get_multiple_area.append(subarea[0].lower())
+                    tempObj = {
+                        'area': subarea[0].strip().lower(),
+                        'subarea': subarea[1].lower(),
+                        'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]                            
+                    }  
+                    self.subarea_list_pattern.append(tempObj)
+                    # matched_array.append(matched[areakey])
+                    # matched_array.append(matched[subareakey])
+                    self.subarea_flag = True
+                    break
 
     def check_super_sub_area(self, token, idx):
         if ('block' in self.cleanAddressStr and 'mirpur' in self.cleanAddressStr.lower() and token == 'block'):
@@ -254,12 +254,12 @@ class Address(object):
 
             if self.tempArray[idx-1].lower() not in self.address_component :
                 check_match=0
-                with open('./subarea-list.csv','rt')as f:
-                    area_list = csv.reader(f)
-                    for j, area in enumerate(area_list):
-                        if area[0].lower()==self.tempArray[idx-1].lower():
-                            check_match=1
-                            break
+
+                area_list = dbinit.get_subarea()
+                for j, area in enumerate(area_list):
+                    if area[0].lower()==self.tempArray[idx-1].lower():
+                        check_match=1
+                        break
                 if self.matched[self.housekey]==None:
                     self.matched[self.housekey]=""
                 if check_match==0 and token not in self.matched[self.housekey]:
@@ -380,59 +380,58 @@ class Address(object):
                     return True
         
     def check_address_status(self):
-        with open('./subarea-list.csv','rt')as f:
-            area_pattern = csv.reader(f)
-            checkst=0
-            getarea=0
+        area_pattern = dbinit.get_subarea()
+        checkst=0
+        getarea=0
+        
+        assignaddress=1
+        self.matched[self.areakey]=self.matched[self.areakey].replace(',','')
+        if self.matched[self.areakey] not in self.cleanAddressStr:
+            same_sub_area_count=1
+        self.matched[self.areakey]=self.matched[self.areakey].strip()
+        if self.matched[self.areakey] in self.tempArray:
+            assignaddress=0
+        for j, status in enumerate(area_pattern):
+
+            area_name=status[0].lower()
+            sub_area_name=status[1].lower()
+            house_st=status[2]
+            road_st=status[3]
+            block_st=status[4]
+            ssarea_st=status[5]
+            subarea_st=status[6]
             
-            assignaddress=1
-            self.matched[self.areakey]=self.matched[self.areakey].replace(',','')
-            if self.matched[self.areakey] not in self.cleanAddressStr:
-                same_sub_area_count=1
-            self.matched[self.areakey]=self.matched[self.areakey].strip()
-            if self.matched[self.areakey] in self.tempArray:
-                assignaddress=0
-            for j, status in enumerate(area_pattern):
+            dict_areakey=self.matched[self.areakey].replace(',','')
+            dict_sub_areakey=self.matched[self.subareakey].replace(',','')
 
-                area_name=status[0].lower()
-                sub_area_name=status[1].lower()
-                house_st=status[2]
-                road_st=status[3]
-                block_st=status[4]
-                ssarea_st=status[5]
-                subarea_st=status[6]
-                
-                dict_areakey=self.matched[self.areakey].replace(',','')
-                dict_sub_areakey=self.matched[self.subareakey].replace(',','')
-
-                if self.matched[self.areakey]=='':
+            if self.matched[self.areakey]=='':
+                checkst=1
+                break
+            if dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()!=dict_areakey.strip() and assignaddress==1:
+                same_sub_area_count+=1
+                if same_sub_area_count>=2:
                     checkst=1
                     break
-                if dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()!=dict_areakey.strip() and assignaddress==1:
-                    same_sub_area_count+=1
-                    if same_sub_area_count>=2:
-                        checkst=1
-                        break
 
-                elif dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()==dict_areakey.strip():
-                    getarea=1
-                    if house_st=='H' and self.matched[self.housekey]=='':
-                        checkst=1
-                    if road_st=='H' and self.matched[self.roadkey]=='':
-                        checkst=1
-                    if block_st=='H' and self.matched[self.blockkey]=='':
-                        checkst=1
-                    if ssarea_st=='H' and self.matched[self.ssareakey]=='':
-                        checkst=1
-                    if subarea_st=='H' and self.matched[self.subareakey]=='':
-                        checkst=1
-            
-            if checkst==1 or getarea==0:
-                return "incomplete"
-            elif getarea==1 and checkst==0:
-                return "complete"
-            else:
-                return "incomplete"
+            elif dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip()==dict_areakey.strip():
+                getarea=1
+                if house_st=='H' and self.matched[self.housekey]=='':
+                    checkst=1
+                if road_st=='H' and self.matched[self.roadkey]=='':
+                    checkst=1
+                if block_st=='H' and self.matched[self.blockkey]=='':
+                    checkst=1
+                if ssarea_st=='H' and self.matched[self.ssareakey]=='':
+                    checkst=1
+                if subarea_st=='H' and self.matched[self.subareakey]=='':
+                    checkst=1
+        
+        if checkst==1 or getarea==0:
+            return "incomplete"
+        elif getarea==1 and checkst==0:
+            return "complete"
+        else:
+            return "incomplete"
 
 
 
@@ -466,7 +465,7 @@ class Address(object):
             first_street=re.match(r'\W*(\w[^,. !?"]*)', input_address).groups()[0]
         except:
             first_street=""
-        if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:':
+        if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:' or first_street=='office:' or first_street=='address:':
             input_address=input_address.replace(first_street," ")
         
         input_address=re.sub(r'(behind|nearby|near|near by|near to|opposite|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station)', '', input_address)
@@ -645,17 +644,16 @@ class Address(object):
         if len(getarea)>=2:
             chk=0
             for area in getarea:
-                with open('./subarea-list.csv','rt')as f:
-                    subarea_list = csv.reader(f)
-                    for j, subarea in enumerate(subarea_list):
-                        if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey] and area in self.tempArray:
-                            self.matched[self.areakey]=area.lower()
-                            chk=1
-                            break
-                        if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey] and chk==0:
-                            #area=area.rstrip(',')
-                            self.matched[self.areakey]=area.lower()
-                            break
+                subarea_list = dbinit.get_subarea()
+                for j, subarea in enumerate(subarea_list):
+                    if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey] and area in self.tempArray:
+                        self.matched[self.areakey]=area.lower()
+                        chk=1
+                        break
+                    if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey] and chk==0:
+                        #area=area.rstrip(',')
+                        self.matched[self.areakey]=area.lower()
+                        break
 
  
 
@@ -670,7 +668,7 @@ class Address(object):
         obj = {
             'status' : self.check_address_status(),
             'address' : final_address,
-            'geocoded' : self.search_addr_bkoi(final_address)
+            'geocoded' : self.search_addr_bkoi2(final_address)
         }
         self.__init__()
         return obj
@@ -679,17 +677,17 @@ class Address(object):
 
 
 
-    def search_addr_bkoi(self, qstring):
+    def search_addr_bkoi(self, data,qstring):
         print('.....at search..........')
-        print(qstring)
-        url="http://54.254.209.206/api/search/autocomplete/exact"
-        r = requests.post(url, params={'q': qstring})
+        # print(qstring)
+        # url="http://54.254.209.206/api/search/autocomplete/exact"
+        # r = requests.post(url, params={'q': qstring})
 
-        try:
-            data = r.json()
-            pass
-        except Exception as e:
-            return {}
+        # try:
+        #     data = r.json()
+        #     pass
+        # except Exception as e:
+        #     return {}
          
         match_counter_max = 0
         match_address_max = ''
@@ -697,16 +695,16 @@ class Address(object):
         for i in data:
             geocoded_area = i['area']
             match_counter = 0
-            geo_addr_comp = i['address'].split(',')
-            i['address'] = i['address'].strip()
-            i['address'] = i['address'].strip(',')
-            if geocoded_area.strip().lower() in qstring or self.matched[self.subareakey] in i['address'] or self.matched[self.areakey] in i['address']:
+            geo_addr_comp = i['new_address'].split(',')
+            i['new_address'] = i['new_address'].strip()
+            i['new_address'] = i['new_address'].strip(',')
+            if geocoded_area.strip().lower() in qstring or self.matched[self.subareakey] in i['new_address'] or self.matched[self.areakey] in i['new_address']:
                 for j, addr_comp in enumerate(geo_addr_comp):
                     if (match.strip() in addr_comp.strip().lower() for match in qstring.split(',')) or addr_comp.strip().lower() in qstring :
                         match_counter = match_counter +1
                 if match_counter_max < match_counter:
                     match_counter_max = match_counter
-                    match_address_max = i['address'].lower()
+                    match_address_max = i['new_address'].lower()
                     match_obj_max = i
                     
             else :
@@ -715,12 +713,110 @@ class Address(object):
                         match_counter = match_counter +1
                 if match_counter_max < match_counter:
                     match_counter_max = match_counter
-                    match_address_max = i['address'].lower()
+                    match_address_max = i['new_address'].lower()
                     match_obj_max = i
 
         return match_obj_max
 
             # result=fuzz.ratio(qstring.lower(), i['Address'].lower())
+
+    def search_addr_bkoi2(self, qstring):
+        obj=MiniParser()
+        print(self.matched)
+        print('.....at search..........')
+        #print(qstring)
+        url="https://barikoi.xyz/v1/search/autocomplete/web"
+        r = requests.post(url, params={'search': qstring})
+        try:
+            datas = r.json()
+            print("got it")
+            data=datas['places']
+            pass
+        except Exception as e:
+            print("Failed to get data...................")
+            return {}
+        
+        geocoded_addr_comp=""
+        geocoded_holding=None
+        geocoded_floor=None
+        geocoded_block=""
+        geocoded_subarea=""
+        geocoded_area=""
+        final_addr=""
+        maximum=-1
+        geocoded_address_with_area=""
+        similarity=0
+        mp=MiniParser()
+        for i in data:
+            geocoded_area = i['area']
+            geocoded_area=geocoded_area.strip().lower()
+            #geocoded_address_with_area=i['address']+", "+geocoded_area
+            geocoded_address_with_area=i['new_address']
+            geocoded_addr_comp=mp.parse(geocoded_address_with_area)
+            #print(geocoded_addr_comp)
+            #print(geocoded_area)
+            geocoded_holding=geocoded_addr_comp['holding']
+            geocoded_house=geocoded_addr_comp['house']
+            geocoded_floor=geocoded_addr_comp['floor']
+            geocoded_road=geocoded_addr_comp['road']
+            geocoded_block=geocoded_addr_comp['block']
+            geocoded_subarea=geocoded_addr_comp['subarea']
+            print(i['new_address'])
+            #print(geocoded_holding)
+            #print("matching.................")
+            #print(geocoded_subarea)
+            #print(self.matched[self.subareakey].strip().strip(',').strip())
+
+            if (geocoded_area==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() ) :
+                #print(geocoded_addr_comp)
+                if self.matched[self.blockkey]!="":
+                    if self.matched[self.blockkey].strip().strip(',').strip() ==geocoded_block:
+                        if self.matched[self.roadkey].strip().strip(',').strip() ==geocoded_road:
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>maximum:
+                                final_addr=i
+                                maximum=similarity
+                        elif self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip() and geocoded_road!="":
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>maximum:
+                                final_addr=i
+                                maximum=similarity
+                        elif fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>90 and geocoded_road!="":
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>maximum:
+                                final_addr=i
+                                maximum=similarity
+                if self.matched[self.blockkey]=="":
+                    #print("paisere.........................................")
+                    #print(geocoded_road)
+                    if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road:
+                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity>=maximum:
+                            final_addr=i
+                            maximum=similarity
+                            print("797...............")
+                    elif self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip() and geocoded_road!="":
+                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity>maximum:
+                            final_addr=i
+                            maximum=similarity
+                            print("803...............")
+                            print(geocoded_road)
+                            print(self.matched[self.roadkey].strip().strip(',').strip())
+
+                    elif fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>90 and geocoded_road!="":
+                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity>maximum:
+                            final_addr=i
+                            maximum=similarity
+                            print("812...............")
+                print("for data : "+i['new_address'])
+                print(similarity)
+        if final_addr=="":
+            print("from prev 1")
+            final_addr=self.search_addr_bkoi(data,qstring)
+
+        return final_addr
 
 
 
