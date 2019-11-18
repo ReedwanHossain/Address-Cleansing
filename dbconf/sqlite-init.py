@@ -5,19 +5,18 @@ from pandas import DataFrame
 conn = sqlite3.connect('TestDB.db')  
 c = conn.cursor()
 
-read_clients = pd.read_csv (r'../custom_banglish_transformer/bangla_letter_list.csv')
-read_clients.to_sql('BANGLA_KEYMAP', conn, if_exists='replace', index = False) 
-
+# read_clients = pd.read_csv (r'../subarea-list.csv')
+# read_clients.to_sql('SUBAREA', conn, if_exists='replace', index = False) 
 
 # c.execute('''
 # SELECT DISTINCT *
 # FROM AREA
 # ''')
 
-# c.execute('''
-# SELECT DISTINCT *
-# FROM SUBAREA
-# ''')
+c.execute('''
+SELECT DISTINCT *
+FROM SUBAREA
+''')
 
 # c.execute('''
 # SELECT DISTINCT *
@@ -30,10 +29,10 @@ read_clients.to_sql('BANGLA_KEYMAP', conn, if_exists='replace', index = False)
 # FROM JUKTOBRONO_MAP 
 # ''')
 
-c.execute('''
-SELECT DISTINCT *
-FROM BANGLA_KEYMAP 
-''')
+# c.execute('''
+# SELECT DISTINCT *
+# FROM BANGLA_KEYMAP 
+# ''')
 
 # c.execute('''
 # SELECT DISTINCT *

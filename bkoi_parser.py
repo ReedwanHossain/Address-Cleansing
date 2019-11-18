@@ -52,6 +52,7 @@ class Address(object):
         self.matched[self.unionkey] = None
         self.matched[self.blockkey] = None
         self.tempArray = []
+        self.usedToken= []
         self.matched_array = []
         self.area_pattern = None
         self.get_multiple_subarea=[]
@@ -294,7 +295,7 @@ class Address(object):
 
 
     def check_holding_name(self, token,idx):
-        if any( char in token for char in self.building_name_key):
+        if any( char in token for char in self.building_name_key) and self.matched[self.buildingkey]==None:
             if idx != len(self.tempArray)-1 and idx != 0 :
                 i=idx-1
                 building_str = ''
@@ -483,7 +484,8 @@ class Address(object):
 
         input_address=re.sub(r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d+)(\s*)','',input_address)
 
-        input_address=re.sub(r'((\s*)(floor|room|flat|level|flr)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr))(\s*)|(((\s*)(floor|flat|level|room|flr)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
+        input_address=re.sub(r'((\s*)(floor|room|flat|level|flr|suite|suit)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr|suite|suit))(\s*)|(((\s*)(floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
+        input_address=re.sub(r'(\s+[1-9]+|\d+)(th|rd|st|nd)\s+',' ',input_address)
         input_address=input_address.replace(',',' ')
         all_num_list=re.findall(r'\d+', input_address)
         if len(all_num_list)>0:
@@ -725,7 +727,7 @@ class Address(object):
         print(self.matched)
         print('.....at search..........')
         #print(qstring)
-        url="https://barikoi.xyz/v1/search/autocomplete/web"
+        url="https://admin.barikoi.xyz/v1/search/autocomplete/web"
         r = requests.post(url, params={'search': qstring})
         try:
             datas = r.json()
@@ -791,7 +793,7 @@ class Address(object):
                     #print(geocoded_road)
                     if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road:
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
-                        if similarity>=maximum:
+                        if similarity>maximum:
                             final_addr=i
                             maximum=similarity
                             print("797...............")
@@ -882,7 +884,14 @@ class Address(object):
                 self.matched[self.districtkey]= ''
         except Exception as e:
             self.matched[self.districtkey] = ''
-
+        print(self.matched)
+        print('887-------------------------------------'+ self.matched[self.buildingkey].strip().replace(',','').strip()+'-----------'+self.matched[self.roadkey].strip(','))
+        # if self.matched[self.roadkey].strip().replace('road','').replace(',','').strip() in self.matched[self.buildingkey] and self.matched[self.buildingkey]!= '' and self.matched[self.roadkey]!='':
+        #     self.matched[self.buildingkey]=self.matched[self.buildingkey].replace(self.matched[self.roadkey].strip().replace('road','').replace(',','').strip(),'')
+        if self.matched[self.buildingkey].strip().replace(',','').strip() in self.matched[self.roadkey].strip(',').strip() and self.matched[self.buildingkey]!= '' and self.matched[self.roadkey]!='' :
+            self.matched[self.buildingkey]=''
+        #     print("893-------------------------")
+        # self.matched[self.buildingkey]=self.matched[self.buildingkey].strip()
         if self.matched[self.subareakey]==self.matched[self.areakey]:
             full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         else:
