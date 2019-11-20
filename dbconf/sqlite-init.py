@@ -5,8 +5,8 @@ from pandas import DataFrame
 conn = sqlite3.connect('TestDB.db')  
 c = conn.cursor()
 
-# read_clients = pd.read_csv (r'../subarea-list.csv')
-# read_clients.to_sql('SUBAREA', conn, if_exists='replace', index = False) 
+read_clients = pd.read_csv (r'../subarea-list.csv')
+read_clients.to_sql('SUBAREA', conn, if_exists='replace', index = False) 
 
 # c.execute('''
 # SELECT DISTINCT *
