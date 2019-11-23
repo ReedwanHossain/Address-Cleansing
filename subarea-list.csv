@@ -102,7 +102,6 @@ Agargaon,Shahid Shahabuddin Sharak,H,L,L,L,H
 Sher e Bangla Nagar,Zia Uddyan,H,L,L,L,H
 Mirpur,Paikpara,H,M,L,L,H
 Mirpur,Paik para,H,M,L,L,H
-Ramna,New Baily Road,H,L,L,L,H
 Rayerbagh,Mujahidnagar,H,M,L,L,H
 Kamrangirchar,Nurbagh,H,L,L,L,H
 Agargaon,Agargaon Administrative Area,H,L,L,L,H
@@ -228,7 +227,6 @@ Mirpur,Monipur,H,M,L,L,H
 Mirpur,Ahmad Nagar Paikpara,H,L,L,L,H
 Panthapath,Kathalbagan,H,H,L,L,H
 Panthapath,Kaoran Bazar,H,M,L,L,H
-Panthapath,Free School Street,H,H,L,L,H
 Mirpur,Middle Monipur,H,L,L,L,H
 Moghbazar,Boro Moghbazar,H,M,L,L,H
 Gulshan,Shajadpur,H,H,L,L,H
@@ -241,7 +239,6 @@ Mirpur,South Monipur,H,L,L,L,H
 Mirpur,West Kazipara,H,M,L,L,H
 Kallyanpur,Kallyanpur Sharak,H,L,L,L,H
 Khilgaon,Shantipur,H,H,L,L,H
-Siddheshwari,Baily Road,H,L,L,L,H
 Mirpur,West Shewrapara,H,M,L,L,H
 Dhanmondi,Sabanoom Tower,H,H,L,L,H
 Dhanmondi,Gazi Tower,H,H,L,L,H
@@ -308,7 +305,6 @@ Mohakhali,Amtoli,H,M,M,L,H
 Merul Badda,Gudaraghat,H,H,L,L,H
 Mirpur,Purbo Monipur,H,L,L,L,H
 Badda,North Badda,H,M,L,L,H
-Gopibagh,Abhay Das Lane,H,M,L,L,H
 Mirpur,West Shewrapara South Monipur,H,M,L,L,H
 Mirpur,West Shewrapara North Pirerbagh,H,M,L,L,H
 Banglamotor,New Eskaton,H,L,L,L,H
@@ -440,6 +436,7 @@ Tejgaon,Shaheenbagh,H,H,L,L,H
 Mohakhali,Rasulbagh,H,M,L,L,H
 Tejgaon,Purbo Nakhalpara,H,M,L,L,H
 Karwan Bazar,West Tejturibazar,H,M,L,L,H
+Karwan Bazar,West Tejturi bazar,H,M,L,L,H
 Mohammadpur,Ajij Moholla,H,H,M,L,H
 Farmgate,West Tejturi Bazar,H,M,L,L,H
 Moghbazar,Wireless Railgate,H,M,L,L,H
