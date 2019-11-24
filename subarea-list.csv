@@ -25,7 +25,7 @@ Mirpur,Section 13,H,H,M,L,H
 Mirpur,Section 12,H,H,H,L,H
 Mirpur,Section 11.5,H,M,L,L,H
 Mirpur,Section 11,H,H,H,L,H
-Mirpur,Section 10,H,H,L,L,H
+Mirpur,Section 10,H,H,H,L,H
 Mirpur,Section 1,H,H,H,L,H
 Mirpur,Section 2,H,H,H,L,H
 Mirpur,Section 3,H,H,H,L,H
@@ -216,7 +216,6 @@ Shyamoli,North Shaymoli,H,M,L,L,H
 Shyamoli,Khalpar,H,H,L,L,H
 Mirpur,Kallyanpur,H,H,M,L,H
 Mohammadpur,Mohammadpur Housing Limited,H,H,L,L,H
-Hazaribagh,19 Old Dhanmondi,H,L,L,L,H
 Adabor,Baitul Aman Housing,H,H,L,L,H
 Mohammadpur,Nobodoy Housing,H,M,M,L,H
 Mirpur,Popular Housing 2,H,L,L,L,H
@@ -375,14 +374,14 @@ Shahjahanpur,Momenbagh,H,M,L,L,H
 Mohammadpur,Nobinagar Housing,H,H,L,L,H
 Dhaka Cantonment,West Matikata,H,M,L,L,H
 Dhaka Cantonment,West Matikata (Dewan Para),H,M,L,L,H
-Dhaka Cantonment,(Dewan Para),H,M,L,L,H
+Dhaka Cantonment,Dewan Para,H,M,L,L,H
 Dhaka Cantonment,Vasantek,H,M,L,L,H
 Dhaka Cantonment,West Vasantek (Tonartek),H,M,L,L,H
 Rajarbagh,Shahidbagh,H,M,L,L,H
 Shahjahanpur,South Shajahanpur,H,M,L,L,H
 Dhaka Cantonment,Dewanpara,H,H,L,L,H
 Dhaka Cantonment,North Vasantek,H,L,L,L,H
-Dhaka Cantonment,North Vasantek (Baganbari),H,L,L,L,H
+Dhaka Cantonment,North Vasantek,H,L,L,L,H
 Mohammadpur,Chandrima Housing,H,H,L,L,H
 Mohammadpur,Dhaka Uddyan,H,H,H,L,H
 Vatara,Noyanagar,H,M,L,L,H
@@ -494,4 +493,4 @@ Rampura,Shobujhbagh,H,M,L,L,H
 Khilgaon,Sipahibagh,H,H,L,L,H 
 Motijheel,Arambagh,H,L,L,L,H 
 Banasree,Banasree,H,H,H,L,H
-Aftabnagar, Jahurul Islam City,H,H,H,L,H
+Aftabnagar,Jahurul Islam City,H,H,H,L,H
