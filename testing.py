@@ -38,6 +38,7 @@ class TestAddress(unittest.TestCase):
         self.assertNotEqual(parse.parse_address('13,shah ali bag.northern ahmed lodge.mirpur-1.')['address'], 'house 13, shah ali bagh, mirpur')
         self.assertNotEqual(parse.parse_address('House# 45 ,  Haider Garden , Mirpur road (near to the  Elephant road bridge)  , Sukonna tower er goli (or Basundhora goli) , Dhanmondi , Dhaka-1205')['address'], 'sukonna tower, house 45, mirpur road, dhanmondi')
         self.assertNotEqual(parse.parse_address('roof360 89 rokeya aveneu mrpur 11')['address'], 'roof360, house 89, rokeya avenue, section 11, mirpur')
+        self.assertNotEqual(parse.parse_address('5/1 kallaynpur')['address'], 'House 5/1, Kallyanpur Main Road, Kallyanpur')
 
 if __name__ == '__main__':
     unittest.main()
