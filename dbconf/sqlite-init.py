@@ -13,10 +13,10 @@ read_clients.to_sql('SUBAREA', conn, if_exists='replace', index = False)
 # FROM AREA
 # ''')
 
-# c.execute('''
-# SELECT DISTINCT *
-# FROM SUBAREA
-# ''')
+c.execute('''
+SELECT DISTINCT *
+FROM SUBAREA WHERE `subarea` = 'Moghbazar'
+''')
 
 # c.execute('''
 # SELECT DISTINCT *
@@ -50,4 +50,4 @@ read_clients.to_sql('SUBAREA', conn, if_exists='replace', index = False)
 # ''')
 
 # c.execute('SELECT name from sqlite_master where type= "table"')   
-# print(c.fetchall())
+print(c.fetchall())

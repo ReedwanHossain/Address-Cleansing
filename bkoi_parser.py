@@ -79,7 +79,7 @@ class Address(object):
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
-        "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
+        "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ',
@@ -799,7 +799,7 @@ class Address(object):
             ## print(self.matched[self.subareakey].strip().strip(',').strip())
 
             if (geocoded_area==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() ) and self.matched[self.subareakey].strip().strip(',').strip()!='':
-                ## print(geocoded_addr_comp)
+                print(geocoded_addr_comp)
                 if self.matched[self.blockkey]!="":
                     if self.matched[self.blockkey].strip().strip(',').strip() ==geocoded_block:
                         if self.matched[self.roadkey].strip().strip(',').strip() ==geocoded_road:
@@ -825,26 +825,27 @@ class Address(object):
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-                            # print("797...............")
+                            print("797...............")
                     elif self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip() and geocoded_road!="":
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-                            # print("803...............")
-                            # print(geocoded_road)
-                            # print(self.matched[self.roadkey].strip().strip(',').strip())
+                            print("803...............")
+                            print(geocoded_road)
+                            print(self.matched[self.roadkey].strip().strip(',').strip())
 
                     elif fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>90 and geocoded_road!="":
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-                            # print("812...............")
-                # print("for data : "+i['new_address'])
-                # print(similarity)
+                            print("812...............")
+                print("for data : "+i['new_address'])
+                print(similarity)
         if final_addr=="":
-            # print("from prev 1")
+            print("from prev 1")
+            print(self.matched)
             final_addr=self.search_addr_bkoi(data,qstring)
 
         prop_filter = {
