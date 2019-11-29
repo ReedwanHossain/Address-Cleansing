@@ -15,7 +15,7 @@ read_clients.to_sql('SUBAREA', conn, if_exists='replace', index = False)
 
 c.execute('''
 SELECT DISTINCT *
-FROM SUBAREA WHERE `subarea` = 'Moghbazar'
+FROM SUBAREA WHERE `subarea` = 'Gulshan'
 ''')
 
 # c.execute('''
