@@ -40,7 +40,7 @@ Mirpur,Extension Pallabi,H,H,L,L,H
 lalmatia,lalmatia,H,M,H,L,H
 Tejgaon,East Tejturi Bazar,H,L,L,L,H
 Mirpur,Mirpur Dohs,H,H,L,L,H
-Nikunja,Nikunja,H,H,L,L,H
+Nikunja,Nikunja,H,H,L,H,H
 Mohammadpur,Dhaka Real estate,H,H,M,L,H
 Uttar Khan,Mollapara,H,L,L,L,H
 Mohammadpur,Mohammadia Housing Limited,H,H,L,L,H
@@ -192,7 +192,7 @@ Mirpur,South Paikapara,H,L,L,L,H
 Shyamoli,Adabor,H,H,L,L,H
 Mirpur,Ahmednagar,H,L,L,L,H
 Mirpur,East Ahmednagar,H,L,L,L,H
-Nikunja,Nikunja 1,H,H,L,L,H
+Nikunja 1,Nikunja 1,H,H,L,L,H
 Baridhara,Baridhara,H,H,L,L,H
 Mirpur,North Pirerbagh,H,L,L,L,H
 Mirpur,Ahmed Nagar Paikpara,H,M,L,L,H
@@ -453,8 +453,9 @@ Moghbazar,Modhubagh,H,M,L,L,H
 Moghbazar,Mirbagh,H,M,L,L,H
 Moghbazar,West Hazipara,H,M,L,L,H
 Moghbazar,Jafranbagh,H,L,L,L,H
-Gulshan,Gulshan 2,H,H,L,L,H
-Gulshan,Gulshan 1,H,H,L,L,H
+Gulshan 2,Gulshan 2,H,H,L,L,H
+Gulshan 1,Gulshan 1,H,H,L,L,H
+Gulshan,Gulshan,H,H,L,H,H
 Gulshan,Kalachandpur,H,M,L,L,H
 kalachandpur,Kalachandpur,H,M,L,L,H
 Mohammadpur,Jafrabad,H,M,L,L,H

@@ -488,7 +488,7 @@ class Address(object):
 
         input_address=re.sub(r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d+)(\s*)','',input_address)
 
-        input_address=re.sub(r'((\s*)(floor|room|flat|level|flr|suite|suit)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr|suite|suit))(\s*)|(((\s*)(floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
+        input_address=re.sub(r'((\s*)(floor|room|flat|level|flr|suite|suit)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr|suite|suit))(\s*)|(((\s*)(floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', '  ', input_address)
         input_address=re.sub(r'(\s+[1-9]+|\d+)(th|rd|st|nd)\s+',' ',input_address)
         input_address=input_address.replace(',',' ')
         all_num_list=re.findall(r'\d+', input_address)
@@ -530,6 +530,9 @@ class Address(object):
         # pre-processing...........................................................
 
         #input_address = re.sub( r'h\s+tower','h* tower', input_address)
+        print('////////////////////')
+        print(input_address)
+        input_address = "  "+input_address
         expand = self.multiple_replace(self.rep2, input_address.lower())
         expand = self.multiple_replace(self.area_dict, expand.lower())
         #unknown char remove
@@ -942,7 +945,7 @@ class Address(object):
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
         # print("909--------------------")
-        # print(self.matched_array)
+        print(self.tempArray)
         # print(len(self.matched_array))
         if len(self.matched_array)<1:
             # print("913...........................")
