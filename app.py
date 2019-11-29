@@ -15,6 +15,9 @@ from custom_banglish_transformer.bkoi_transformer import Transformer
 import logging
 import traceback
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 CORS(app)
 
