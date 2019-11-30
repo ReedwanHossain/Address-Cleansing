@@ -7,16 +7,8 @@ import re
 # import io
 import codecs
 import csv
-from logging.handlers import RotatingFileHandler
-from time import strftime
 from bkoi_parser import Address
 from custom_banglish_transformer.bkoi_transformer import Transformer
-
-import logging
-import traceback
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
@@ -110,46 +102,5 @@ def transform_parse():
 
 
 
-@app.after_request
-def after_request(response):
-    """ Logging after every request. """
-    # This avoids the duplication of registry in the log,
-    # since that 500 is already logged via @app.errorhandler.
-    if response.status_code != 500:
-        ts = strftime('[%Y-%b-%d %H:%M]')
-        logger.error('%s %s %s\n%s\n%s\n=================',
-                      ts,
-                      request.remote_addr,
-                      request.full_path,
-                      request.form.to_dict(),
-                      json.loads(response.data)
-                      )
-    return response
-
-
-@app.errorhandler(Exception)
-def exceptions(e):
-    """ Logging after every Exception. """
-    ts = strftime('[%Y-%b-%d %H:%M]')
-    tb = traceback.format_exc()
-    logger.error('%s %s %s %s\n%s\n5xx INTERNAL SERVER ERROR\n%s\n===============',
-                  ts,
-                  request.remote_addr,
-                  request.method,
-                  request.full_path,
-                  request.form.to_dict(),
-                  tb)
-    return "Internal Server Error", 500
-
-
-
-
 if __name__ == '__main__':
-    # maxBytes to small number, in order to demonstrate the generation of multiple log files (backupCount).
-    handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=50)
-    # getLogger(__name__):   decorators loggers to file + werkzeug loggers to stdout
-    # getLogger('werkzeug'): decorators loggers to file + nothing to stdout
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.ERROR)
-    logger.addHandler(handler)
     app.run(debug=True, host = '127.0.0.1', port = 8010)
