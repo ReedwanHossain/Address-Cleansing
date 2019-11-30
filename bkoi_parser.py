@@ -74,7 +74,7 @@ class Address(object):
 
     address_component = ['','sarani','sarak','rasta','goli','lane','code','street','floor','level', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
     
-    building_name_key = ['building','plaza' , 'market', 'bazar' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'square', 'monjil' , 'manjil' , 'building' , 'headquarter' , 'bhaban', 'mosque', 'masjid', 'mosjid','hospital','university','school','mandir','mondir','police station', 'club', 'garage', 'office', 'restaurent', 'cafe', 'hotel', 'garments', 'park', 'field', 'garden', 'studio', 'stadium', 'meusium', 'institute', 'store', 'college', 'varsity', 'coaching', 'library', 'tution', 'bank', 'atm', 'agent', 'Ministry', 'workshop', 'saloon', 'tailors', 'pharmacy', 'textile', 'laundry', 'hall']
+    building_name_key = ['building','plaza' , 'market', 'bazar' , 'villa' , 'cottage' , 'mansion', 'mension', 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'square', 'monjil' , 'manjil' , 'palace' , 'headquarter' , 'bhaban', 'mosque', 'masjid', 'mosjid','hospital','university','school','mandir','mondir','police station', 'club', 'garage', 'office', 'restaurent', 'cafe', 'hotel', 'garments', 'park', 'field', 'garden', 'studio', 'stadium', 'meusium', 'institute', 'store', 'college', 'varsity', 'coaching', 'library', 'tution', 'bank', 'atm', 'agent', 'Ministry', 'workshop', 'saloon', 'tailors', 'pharmacy', 'textile', 'laundry', 'hall', 'enterprise', 'shop', 'court', 'parliament', 'showroom', 'warehouse', 'electronics', 'optics', 'dokan', 'bitan', 'senitary', 'square', 'sports', 'motors', 'automobile', 'builders', 'service', 'developers', 'firm', 'limited', 'private', 'tech', 'company', 'incorporation', 'hardware', 'soft', 'software', 'solutions', 'bistro', 'printings', 'ghor', 'farm', 'fashions', 'style', 'pharma', 'medicine', 'church', 'girja', 'medical', 'clinic', 'somity', 'association', 'foundation', 'madrasa']
     tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
@@ -82,7 +82,7 @@ class Address(object):
         "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ',
+        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
     } 
     
     area_dict = {"nikunjo": " nikunja ", "nikunja": " nikunja ", "mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
@@ -581,8 +581,8 @@ class Address(object):
                 if comp == "," or comp == "":
                     continue
                
-                temp = comp.lstrip('[0:!@#$-=+.]')
-                temp = temp.rstrip('[:!@#$-]=+.')
+                temp = comp.lstrip('[0:|!@#$-=+.]')
+                temp = temp.rstrip('[:|!@#$-]=+.')
                 temp = temp.strip(" ")
                 if(temp != ""):
                     self.tempArray.append(temp)
