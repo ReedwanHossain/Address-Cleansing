@@ -34,8 +34,12 @@ def upload_file():
             input_address = td['address']
             print(input_address)
             result = add_parse.parse_address(input_address)
-            result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  result['geocoded']['Address']})
-           
+            try:
+              result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  result['geocoded']['Address']})
+            except Exception as e:
+              result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  'Failed to GeoCode'})
+
+                       
         csv_columns = ['input-address' ,'clean-address', 'status', 'geocoded-address']
         csv_file = "parsed.csv"
 

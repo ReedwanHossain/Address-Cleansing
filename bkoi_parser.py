@@ -297,15 +297,19 @@ class Address(object):
 
 
     def check_holding_name(self, token,idx):
+        tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp','rrrr']
+        print('300.........token '+token)
         if any( char in token for char in self.building_name_key) and self.matched[self.buildingkey]==None:
-            if idx != len(self.tempArray)-1 and idx != 0 :
+            print('.302............paisere')
+            if idx != len(self.tempArray) and idx != 0 :
+                print('304.........paisere')
                 i=idx-1
                 building_str = ''
                 self.matched[self.buildingkey]=building_str
                 while i>=0:
                     if any(char.isdigit() for char in self.tempArray[i]):
                         break
-                    if not i==0 and (self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in self.tempList):
+                    if not i==0 and (self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in tempList):
                         if not any(char.isdigit() for char in self.tempArray[i]):
                             building_str = self.tempArray[i]+ " " + building_str
                             break
@@ -543,6 +547,7 @@ class Address(object):
         #spell_checker
         input_address=expand
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
+        input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
         x = input_address.split("*")
         input_address = " "
 
@@ -598,42 +603,58 @@ class Address(object):
 
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
-                comp=comp.strip()
+            comp=comp.strip()
+            print(comp)
 
-                if (self.check_sub_area(comp, i)):
-                    self.matched_array.append(self.matched[self.subareakey])
-                    continue
-                if (self.check_area(comp, i)):
-                    self.matched_array.append(self.matched[self.areakey])
-                    continue
-                # if (self.check_super_sub_area(comp, i)):
-                #     self.matched_array.append(self.matched[self.ssareakey])
-                #     continue
-                if (self.check_road(comp, i)):
-                    self.matched_array.append(self.matched[self.roadkey])
-                    continue
-                if  (self.check_block(comp, i)):
-                    self.matched_array.append(self.matched[self.blockkey])
-                    continue
-                if (self.check_holding(comp, i)):
-                    self.matched_array.append(self.matched[self.housekey])
-                    continue
-                if (self.check_holding_name(comp, i)):
-                    self.matched_array.append(self.matched[self.buildingkey])
-                    continue            
-                if (self.check_district(comp, i)) :
-                    if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
-                        self.matched_array.append(self.matched[self.districtkey])
-                        
-                    continue
-                if (self.check_sub_district(comp, i)) :
-                    if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
-                        self.matched_array.append(self.matched[self.sub_districtkey])
-                    continue
-                if (self.check_union(comp, i)) :
-                    if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
-                        self.matched_array.append(self.matched[self.unionkey])
-                    continue
+            if (self.check_sub_area(comp, i)):
+                print('in check sub area')
+                print(comp)
+                self.matched_array.append(self.matched[self.subareakey])
+                continue
+            if (self.check_area(comp, i)):
+                print('in check area')
+                print(comp)
+                self.matched_array.append(self.matched[self.areakey])
+                continue
+            # if (self.check_super_sub_area(comp, i)):
+            #     self.matched_array.append(self.matched[self.ssareakey])
+            #     continue
+            if (self.check_road(comp, i)):
+                print('in check road')
+                print(comp)
+                self.matched_array.append(self.matched[self.roadkey])
+                continue
+            if  (self.check_block(comp, i)):
+                print('in check block')
+                print(comp)
+                self.matched_array.append(self.matched[self.blockkey])
+                continue
+            if (self.check_holding(comp, i)):
+                print('in check holding')
+                print(comp)
+                self.matched_array.append(self.matched[self.housekey])
+                continue
+            if (self.check_holding_name(comp, i)):
+                print('in check holding name')
+                print(comp)
+                self.matched_array.append(self.matched[self.buildingkey])
+                continue            
+            if (self.check_district(comp, i)) :
+                if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                    self.matched_array.append(self.matched[self.districtkey])
+                    
+                continue
+            if (self.check_sub_district(comp, i)) :
+                if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                    self.matched_array.append(self.matched[self.sub_districtkey])
+                continue
+            if (self.check_union(comp, i)) :
+                if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                    self.matched_array.append(self.matched[self.unionkey])
+                continue
+
+            print(self.matched)
+
         getsubarea=list(set(self.get_multiple_subarea))
         subarea_min = ''
         subarea_high = ''
@@ -851,7 +872,8 @@ class Address(object):
             print(self.matched)
             final_addr=self.search_addr_bkoi(data,qstring)
 
-        prop_filter = {
+        try:
+            prop_filter = {
             'Address': final_addr['Address'],
             'latitude': final_addr['latitude'],
             'longitude': final_addr['longitude'],
@@ -861,6 +883,14 @@ class Address(object):
             'pType': final_addr['pType'],
             'uCode': final_addr['uCode']
         }
+        except Exception as e:
+            prop_filter = {
+            'Address': 'Failed to GeoCode',
+            'latitude': 'Failed to GeoCode',
+            'longitude': 'Failed to GeoCode'
+            
+        }
+
 
         return prop_filter
 
@@ -896,7 +926,11 @@ class Address(object):
         #     self.matched[self.ssareakey] = ''
 
         try:
+            if self.matched[self.subareakey].lstrip(' ,').rstrip(' , ') == '':
+                self.matched[self.subareakey] = None
+
             self.matched[self.subareakey] = self.matched[self.subareakey]+", "
+            print(self.matched[self.subareakey])
         except Exception as e:
             self.matched[self.subareakey] = ''
 
@@ -933,7 +967,8 @@ class Address(object):
         # if self.matched[self.roadkey].strip().replace('road','').replace(',','').strip() in self.matched[self.buildingkey] and self.matched[self.buildingkey]!= '' and self.matched[self.roadkey]!='':
         #     self.matched[self.buildingkey]=self.matched[self.buildingkey].replace(self.matched[self.roadkey].strip().replace('road','').replace(',','').strip(),'')
         # print(self.matched[self.subareakey].strip().replace(',','').strip())
-        if (self.matched[self.buildingkey].strip().replace(',','').strip() in self.matched[self.roadkey].strip(',').strip()  and self.matched[self.buildingkey]!= '' and self.matched[self.roadkey]!='') or( self.matched[self.subareakey].strip().replace(',','').strip() in self.matched[self.buildingkey] and self.matched[self.subareakey]!='' and self.matched[self.buildingkey]!= '') :
+
+        if (self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ') in self.matched[self.roadkey].lstrip(' ,').rstrip(' , ')  and self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ') != '' and self.matched[self.roadkey].lstrip(' ,').rstrip(' , ')!='') or( self.matched[self.subareakey].lstrip(' ,').rstrip(' , ') in self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ') and self.matched[self.subareakey].lstrip(' ,').rstrip(' , ')!='' and self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ')!= '') :
             self.matched[self.buildingkey]=''
             # print("905-------------------------")
         # self.matched[self.buildingkey]=self.matched[self.buildingkey].strip()
@@ -944,8 +979,10 @@ class Address(object):
 
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
-        # print("909--------------------")
-        print(self.tempArray)
+        print("949--------------------")
+        print(self.matched)
+        print(self.get_multiple_area)
+        print(self.get_multiple_subarea)
         # print(len(self.matched_array))
         if len(self.matched_array)<1:
             # print("913...........................")
