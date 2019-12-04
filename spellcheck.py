@@ -70,22 +70,23 @@ class SpellCheck:
             for name in self.dictionary:
                 
                 # calulcate the match probability
-                percent = fuzz.ratio(string_words[i].lower(), name.lower())
-                # if the fuzzywuzzy returns the matched value greater than 80
-                if percent >= 80:
+                if name[0] == string_words[i][0]:
+                    percent = fuzz.ratio(string_words[i].lower(), name.lower())
+                    # if the fuzzywuzzy returns the matched value greater than 80
+                    if percent >= 80:
 
-                    #print string_words[i]+" : "+name+" : "+str(percent)
-                    #string_words[i] = name
-                    Dic.update( {name : percent} )
-                    
-                    # if the matched probability is
-                    if percent > max_percent:
-                        max_percent = percent
+                        #print string_words[i]+" : "+name+" : "+str(percent)
+                        #string_words[i] = name
+                        Dic.update( {name : percent} )
                         
-                        # change the original value with the corrected matched value
+                        # if the matched probability is
+                        if percent > max_percent:
+                            max_percent = percent
+                            
+                            # change the original value with the corrected matched value
 
-                    
-                    # change the max percent to the current matched percent
+                        
+                        # change the max percent to the current matched percent
             try:
                 string_words[i] = max(Dic.keys(), key=(lambda k: Dic[k]))
             except:

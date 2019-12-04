@@ -5,18 +5,18 @@ from pandas import DataFrame
 conn = sqlite3.connect('TestDB.db')  
 c = conn.cursor()
 
-read_clients = pd.read_csv (r'../subarea-list.csv')
-read_clients.to_sql('SUBAREA', conn, if_exists='replace', index = False) 
+read_clients = pd.read_csv (r'../area-list.csv')
+read_clients.to_sql('AREA', conn, if_exists='replace', index = False) 
 
 # c.execute('''
 # SELECT DISTINCT *
 # FROM AREA
 # ''')
 
-c.execute('''
-SELECT DISTINCT *
-FROM SUBAREA WHERE `subarea` = 'Gulshan'
-''')
+# c.execute('''
+# SELECT DISTINCT *
+# FROM SUBAREA WHERE `subarea` = 'Gulshan'
+# ''')
 
 # c.execute('''
 # SELECT DISTINCT *
@@ -50,4 +50,4 @@ FROM SUBAREA WHERE `subarea` = 'Gulshan'
 # ''')
 
 # c.execute('SELECT name from sqlite_master where type= "table"')   
-print(c.fetchall())
+# print(c.fetchall())
