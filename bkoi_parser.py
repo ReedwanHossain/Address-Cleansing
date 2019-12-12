@@ -558,8 +558,11 @@ class Address(object):
 
         #spell_checker
         input_address=expand
+        if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu', input_address) == None):
+            input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
-        input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
+        # input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
+        
         x = input_address.split("*")
         input_address = " "
 
