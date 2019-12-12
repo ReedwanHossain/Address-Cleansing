@@ -21,7 +21,9 @@ class Transformer(object):
         super(Transformer, self).__init__()
         
     def bangla_to_english(self, address):
-        address=address.replace('.',' ')
+        if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu', address) == None):
+            address=address.replace('.',' ')
+        # address=address.replace('.',' ')
         address=address.replace(u'\u0964',' ')
         address=address.replace(u'\u0028',u' \u0028 ')
         address=address.replace(u'\u0029',u' \u0029 ')
