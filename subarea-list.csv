@@ -53,7 +53,6 @@ Sirajdikhan,Sirajdikhan,H,M,L,L,H
 Rampura,Banasree,H,H,H,L,H
 Mirpur,East Shewrapara,H,M,L,L,H
 Rampura,West Rampura,H,H,L,L,H
-Dhanmondi,Plaza AR,H,H,L,L,H
 Adabor,Baitul Aman Housing Society,H,H,L,L,H
 Matikata,Matikata,H,L,L,L,H
 Lalbagh,Palashi,H,H,L,L,H
@@ -216,6 +215,7 @@ Kafrul,Dhaka Canotonment,H,M,L,L,H
 Mirpur,South Agargaon,H,M,L,L,H
 Mirpur,West Agargaon,H,M,L,L,H
 Shyamoli,North Shaymoli,H,M,L,L,H
+Shyamoli,Shaymoli,H,M,L,L,H
 Shyamoli,Khalpar,H,H,L,L,H
 Mirpur,Kallyanpur,H,H,M,L,H
 Mohammadpur,Mohammadpur Housing Limited,H,H,L,L,H
@@ -335,7 +335,7 @@ Mohammadpur,Katashur,H,M,L,L,H
 Dhanmondi,Sukrabad,H,H,L,L,H
 Bangshal,Nayabazar,H,M,L,L,H
 Kafrul,Moddho Ibrahimpur,H,M,L,L,H
-Dhanmondi,Z R Plaza,H,H,L,L,H
+New Market,New Market,H,M,L,L,H
 New Market,Nilkhet,H,M,L,L,H
 Kafrul,West Ibrahimpur,H,M,L,L,H
 New Market,Kataban,H,H,L,L,H
@@ -457,9 +457,8 @@ Moghbazar,Modhubagh,H,M,L,L,H
 Moghbazar,Mirbagh,H,M,L,L,H
 Moghbazar,West Hazipara,H,M,L,L,H
 Moghbazar,Jafranbagh,H,L,L,L,H
-Gulshan 2,Gulshan 2,H,H,L,L,H
-Gulshan 1,Gulshan 1,H,H,L,L,H
-Gulshan,Gulshan,H,H,L,H,H
+Gulshan,Gulshan 2,H,H,L,L,H
+Gulshan,Gulshan 1,H,H,L,L,H
 Gulshan,Kalachandpur,H,M,L,L,H
 kalachandpur,Kalachandpur,H,M,L,L,H
 Mohammadpur,Jafrabad,H,M,L,L,H

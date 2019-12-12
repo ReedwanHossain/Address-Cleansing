@@ -19,12 +19,12 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(parse.parse_address('67/2, GP Ja, Gajnabi Road 2, behind BRAC University (by a CNG Garage) Mohakhali Wirelessgate, Dhaka-1213')['address'], 'house 67/2-gp-ja, road 2, mohakhali wirelessgate, mohakhali')
         self.assertEqual(parse.parse_address('barikoi office b-F 32 mirpur')['address'], 'barikoi office, house 32, block f, mirpur')
     
-    def test_geocoded_address(self):
-    	#self.assertEqual(parse.parse_address('anything')['geocoded']['Address'], 'anything')
-    	with open('./testfile.csv','rt') as f:
-            addresses = csv.reader(f)
-            for i , address in enumerate(addresses):
-            	self.assertEqual(parse.parse_address(address[0])['geocoded']['Address'], address[1])
+    # def test_geocoded_address(self):
+    # 	#self.assertEqual(parse.parse_address('anything')['geocoded']['Address'], 'anything')
+    # 	with open('./testfile.csv','rt') as f:
+    #         addresses = csv.reader(f)
+    #         for i , address in enumerate(addresses):
+    #         	self.assertEqual(parse.parse_address(address[0])['geocoded']['Address'], address[1])
 
 
     	#self.assertEqual(parse.parse_address('h3 r4 mirpur 2')['geocoded']['Address'], 'House 3, Road 4, Block G, Section 2')
