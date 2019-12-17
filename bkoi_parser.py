@@ -486,7 +486,7 @@ class Address(object):
             first_street=re.match(r'\W*(\w[^,. !?"]*)', input_address).groups()[0]
         except:
             first_street=""
-        if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:' or first_street=='office:' or first_street=='address:':
+        if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:' or first_street=='office:' or first_street=='address:' or first_street=='address':
             input_address=input_address.replace(first_street," ")
         
         input_address=re.sub(r'(behind|nearby|near|near by|near to|opposite|opposite of|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station)', '', input_address)
