@@ -19,12 +19,12 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(parse.parse_address('67/2, GP Ja, Gajnabi Road 2, behind BRAC University (by a CNG Garage) Mohakhali Wirelessgate, Dhaka-1213')['address'], 'house 67/2-gp-ja, road 2, mohakhali wirelessgate, mohakhali')
         self.assertEqual(parse.parse_address('barikoi office b-F 32 mirpur')['address'], 'barikoi office, house 32, block f, mirpur')
     
-    def test_geocoded_address(self):
-    	#self.assertEqual(parse.parse_address('anything')['geocoded']['Address'], 'anything')
-    	with open('./testfile.csv','rt') as f:
-            addresses = csv.reader(f)
-            for i , address in enumerate(addresses):
-            	self.assertEqual(parse.parse_address(address[0])['geocoded']['Address'], address[1])
+    # def test_geocoded_address(self):
+    # 	#self.assertEqual(parse.parse_address('anything')['geocoded']['Address'], 'anything')
+    # 	with open('./testfile.csv','rt') as f:
+    #         addresses = csv.reader(f)
+    #         for i , address in enumerate(addresses):
+    #         	self.assertEqual(parse.parse_address(address[0])['geocoded']['Address'], address[1])
 
 
     	#self.assertEqual(parse.parse_address('h3 r4 mirpur 2')['geocoded']['Address'], 'House 3, Road 4, Block G, Section 2')
@@ -38,6 +38,7 @@ class TestAddress(unittest.TestCase):
         self.assertNotEqual(parse.parse_address('13,shah ali bag.northern ahmed lodge.mirpur-1.')['address'], 'house 13, shah ali bagh, mirpur')
         self.assertNotEqual(parse.parse_address('House# 45 ,  Haider Garden , Mirpur road (near to the  Elephant road bridge)  , Sukonna tower er goli (or Basundhora goli) , Dhanmondi , Dhaka-1205')['address'], 'sukonna tower, house 45, mirpur road, dhanmondi')
         self.assertNotEqual(parse.parse_address('roof360 89 rokeya aveneu mrpur 11')['address'], 'roof360, house 89, rokeya avenue, section 11, mirpur')
+        self.assertNotEqual(parse.parse_address('5/1 kallaynpur')['address'], 'House 5/1, Kallyanpur Main Road, Kallyanpur')
 
 if __name__ == '__main__':
     unittest.main()

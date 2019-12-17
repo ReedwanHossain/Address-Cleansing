@@ -7,6 +7,8 @@ from fuzzywuzzy import fuzz
 import urllib
 import re
 import csv
+import enchant
+
 
 
 from dbconf.initdb import DBINIT
@@ -72,15 +74,15 @@ class Address(object):
 
     address_component = ['','sarani','sarak','rasta','goli','lane','code','street','floor','level', 'house', 'plot', 'road', 'block', 'section', 'sector', 'avenue']
     
-    building_name_key = ['building','plaza' , 'market', 'bazar' , 'villa' , 'cottage' , 'mansion' , 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'square', 'monjil' , 'manjil' , 'building' , 'headquarter' , 'bhaban', 'mosque', 'masjid', 'mosjid','hospital','university','school','mandir','mondir','police station', 'club', 'garage', 'office', 'restaurent', 'cafe', 'hotel', 'garments', 'park', 'field', 'garden', 'studio', 'stadium', 'meusium', 'institute', 'store', 'college', 'varsity', 'coaching', 'library', 'tution', 'bank', 'atm', 'agent', 'Ministry', 'workshop', 'saloon', 'tailors', 'pharmacy', 'textile', 'laundry', 'hall']
+    building_name_key = ['building','plaza' , 'market', 'bazar' , 'villa' , 'cottage' , 'mansion', 'mension', 'vila' , 'tower' , 'place' , 'complex' , 'center' , 'centre' , 'mall' , 'square', 'monjil' , 'manjil' , 'palace' , 'headquarter' , 'bhaban', 'mosque', 'masjid', 'mosjid','hospital','university','school','mandir','mondir','police station', 'club', 'garage', 'office', 'restaurent', 'cafe', 'hotel', 'garments', 'park', 'field', 'garden', 'studio', 'stadium', 'meusium', 'institute', 'store', 'college', 'varsity', 'coaching', 'library', 'tution', 'bank', 'atm', 'agent', 'Ministry', 'workshop', 'saloon', 'tailors', 'pharmacy', 'textile', 'laundry', 'hall', 'enterprise', 'shop', 'court', 'parliament', 'showroom', 'warehouse', 'electronics', 'optics', 'dokan', 'bitan', 'senitary', 'square', 'sports', 'motors', 'automobile', 'builders', 'service', 'developers', 'firm', 'limited', 'private', 'tech', 'company', 'incorporation', 'hardware', 'soft', 'software', 'solutions', 'bistro', 'printings', 'ghor', 'farm', 'fashions', 'style', 'pharma', 'medicine', 'church', 'girja', 'medical', 'clinic', 'somity', 'association', 'foundation', 'madrasa', 'kithcen', 'restora', 'stand', 'terminal', 'stop', 'care', 'dresser', 'tank', 'pump', 'corner', 'stationoery', 'kutir']
     tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
-        "bl-":" block ","bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
+        "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ',
+        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ',' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
     } 
     
     area_dict = {"nikunjo": " nikunja ", "nikunja": " nikunja ", "mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
@@ -295,15 +297,16 @@ class Address(object):
 
 
     def check_holding_name(self, token,idx):
+        tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp','rrrr']
         if any( char in token for char in self.building_name_key) and self.matched[self.buildingkey]==None:
-            if idx != len(self.tempArray)-1 and idx != 0 :
+            if idx != len(self.tempArray) and idx != 0 :
                 i=idx-1
                 building_str = ''
                 self.matched[self.buildingkey]=building_str
                 while i>=0:
                     if any(char.isdigit() for char in self.tempArray[i]):
                         break
-                    if not i==0 and (self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in self.tempList):
+                    if not i==0 and (self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in tempList):
                         if not any(char.isdigit() for char in self.tempArray[i]):
                             building_str = self.tempArray[i]+ " " + building_str
                             break
@@ -323,6 +326,7 @@ class Address(object):
     def check_block(self, token, idx):
         tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
         tempList=set(tempList)
+        p=0
         if (token.lower() == 'block' and idx < len(self.tempArray)-1):
             p=re.match(r'^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$', self.tempArray[idx+1])
             p1=re.match(r'[0-9]+', self.tempArray[idx+1])
@@ -332,11 +336,26 @@ class Address(object):
             p_hi=re.match(r'(^[a-z])-[0-9]+$',self.tempArray[idx+1])
             if p or p1 or p2 or p3 or p_slash or p_hi or (self.tempArray[idx+1] in tempList):
                 self.matched[self.blockkey] = self.tempArray[idx+1]
+                p=1
+                return True
+            else:
+                p=0
+
+        if (token.lower() == 'block' and idx <= len(self.tempArray) and p==0):
+            p=re.match(r'^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$', self.tempArray[idx-1])
+            p1=re.match(r'[0-9]+', self.tempArray[idx-1])
+            p2=re.match(r'^[a-z]$', self.tempArray[idx-1])
+            p3=re.match(r'^[A-Z]$', self.tempArray[idx-1])
+            p_slash=re.match(r'(^[a-z])/[0-9]+$',self.tempArray[idx-1])
+            p_hi=re.match(r'(^[a-z])-[0-9]+$',self.tempArray[idx-1])
+            if p or p1 or p2 or p3 or p_slash or p_hi or (self.tempArray[idx-1] in tempList) or(self.tempArray[idx-1] not in self.matched_array):
+                self.matched[self.blockkey] = self.tempArray[idx-1]
             return True
 
 
 
     def check_road(self, road, idx):
+       
         tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
         if 'road' == road or 'avenue'==road or 'ave' == road or 'lane' == road or 'sarani' == road or 'soroni' == road or 'rd#' == road or 'sarak' == road or 'sharak' == road or 'shorok' == road or 'sharani' == road or 'highway' == road or 'path' == road or 'poth' == road or 'chowrasta' == road or 'sarak' == road or 'rasta' == road or 'sorok' == road or 'goli' == road or 'street' == road or 'line' == road :
             if 'ave' == road:
@@ -380,6 +399,7 @@ class Address(object):
                     # matched_array.append(matched[roadkey])
                     return True
         
+
     def check_address_status(self):
         area_pattern = dbinit.get_subarea()
         checkst=0
@@ -469,7 +489,7 @@ class Address(object):
         if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:' or first_street=='office:' or first_street=='address:':
             input_address=input_address.replace(first_street," ")
         
-        input_address=re.sub(r'(behind|nearby|near|near by|near to|opposite|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station)', '', input_address)
+        input_address=re.sub(r'(behind|nearby|near|near by|near to|opposite|opposite of|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station)', '', input_address)
         #delete flat no. or etc
         temp_input_address=input_address.split()
         if 'flat' in input_address:
@@ -484,7 +504,7 @@ class Address(object):
 
         input_address=re.sub(r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d+)(\s*)','',input_address)
 
-        input_address=re.sub(r'((\s*)(floor|room|flat|level|flr|suite|suit)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr|suite|suit))(\s*)|(((\s*)(floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', ' ', input_address)
+        input_address=re.sub(r'((\s*)(floor|room|flat|level|flr|suite|suit)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level|room|flr|suite|suit))(\s*)|(((\s*)(floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', '  ', input_address)
         input_address=re.sub(r'(\s+[1-9]+|\d+)(th|rd|st|nd)\s+',' ',input_address)
         input_address=input_address.replace(',',' ')
         all_num_list=re.findall(r'\d+', input_address)
@@ -502,30 +522,33 @@ class Address(object):
             input_address=re.sub(r'(house(\s+)(-|/|:)*(\s*))((h|b|r|s)(\s+))',r'\1rrrr ',input_address)
 
         input_address=re.sub('(h|b|r|s)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))',r'\1. \2',input_address)
-        block_h=re.search('block(\s*)(no)*(:)*(-)*(\s*)(h)',input_address)
+        block_h=re.search('block(\s*)(no)*(:)*(-)*(\s*)(h )',input_address)
         if block_h:
             self.matched[self.blockkey] = 'h'
-            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(h)',' ', input_address)
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(h )',' ', input_address)
 
-        block_b=re.search('block(\s*)(no)*(:)*(-)*(\s*)(b)',input_address)
+        block_b=re.search('block(\s*)(no)*(:)*(-)*(\s*)(b )',input_address)
         if block_b:
             self.matched[self.blockkey] = 'b'
-            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(b)',' ', input_address)
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(b )',' ', input_address)
         
-        block_r=re.search('block(\s*)(no)*(:)*(-)*(\s*)(r)',input_address)
+        block_r=re.search('block(\s*)(no)*(:)*(-)*(\s*)(r )',input_address)
         if block_r:
             self.matched[self.blockkey] = 'r'
-            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(r)',' ', input_address)
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(r )',' ', input_address)
         
-        block_s=re.search('block(\s*)(no)*(:)*(-)*(\s*)(s)',input_address)
+        block_s=re.search('block(\s*)(no)*(:)*(-)*(\s*)(s )',input_address)
         if block_s:
             self.matched[self.blockkey] = 's'
-            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(s)',' ', input_address)
+            input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(s )',' ', input_address)
         input_address = re.sub( r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         input_address = re.sub( r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         # pre-processing...........................................................
 
         #input_address = re.sub( r'h\s+tower','h* tower', input_address)
+        print('////////////////////')
+        print(input_address)
+        input_address = "  "+input_address
         expand = self.multiple_replace(self.rep2, input_address.lower())
         expand = self.multiple_replace(self.area_dict, expand.lower())
         #unknown char remove
@@ -535,9 +558,15 @@ class Address(object):
 
         #spell_checker
         input_address=expand
+        if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu', input_address) == None):
+            input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
+        # input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
+        
         x = input_address.split("*")
         input_address = " "
+
+        # print('before spellcheck '+expand)
         spell_check=SpellCheck('area-list.txt')
         for i in x:
             i=i.strip()
@@ -546,20 +575,34 @@ class Address(object):
                 i=str(spell_check.correct())
             input_address+=i
         expand=input_address
+        # print('after spellcheck '+expand)
         self.clone_input_address = input_address
                 
         expand=expand.lower()+"  "
         #expand=re.sub(r'((\s*)(floor|flat|level)(\s*(:)*\s*(-)*\s*)([0-9]+((th|rd|st|nd)))) | ((\s*)([0-9]+(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level)(\s*))  | ((floor|flat|level)[0-9]+(th|rd|st|nd)*[a-z]+) ', ' ', expand)
         #addresscomponents = word_tokenize(expand)
         addresscomponents = expand.split()
+        # print(addresscomponents)
+        temp_str_address = ''
+        for i, comp in enumerate(addresscomponents):
+            # print(comp)
+            # print(enchant.Dict("en_US").check(comp))
+
+            if 'road' in comp and enchant.Dict("en_US").check(comp) == False and comp != 'road':
+                comp = comp.replace('road', ' road')
+            temp_str_address += " "+comp
+
+        # print('....................................................')
+        # print(temp_str_address)
+        addresscomponents = temp_str_address.split()
 
         for i, comp in enumerate(addresscomponents):
                 comp=comp.strip()
                 if comp == "," or comp == "":
                     continue
                
-                temp = comp.lstrip('[0:!@#$-=+.]')
-                temp = temp.rstrip('[:!@#$-]=+.')
+                temp = comp.lstrip('[0:|!@#$-=+.]')
+                temp = temp.rstrip('[:|!@#$-]=+.')
                 temp = temp.strip(" ")
                 if(temp != ""):
                     self.tempArray.append(temp)
@@ -575,42 +618,57 @@ class Address(object):
 
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
-                comp=comp.strip()
+            comp=comp.strip()
+            # print(comp)
 
-                if (self.check_sub_area(comp, i)):
-                    self.matched_array.append(self.matched[self.subareakey])
-                    continue
-                if (self.check_area(comp, i)):
-                    self.matched_array.append(self.matched[self.areakey])
-                    continue
-                # if (self.check_super_sub_area(comp, i)):
-                #     self.matched_array.append(self.matched[self.ssareakey])
-                #     continue
-                if (self.check_road(comp, i)):
-                    self.matched_array.append(self.matched[self.roadkey])
-                    continue
-                if  (self.check_block(comp, i)):
-                    self.matched_array.append(self.matched[self.blockkey])
-                    continue
-                if (self.check_holding(comp, i)):
-                    self.matched_array.append(self.matched[self.housekey])
-                    continue
-                if (self.check_holding_name(comp, i)):
-                    self.matched_array.append(self.matched[self.buildingkey])
-                    continue            
-                if (self.check_district(comp, i)) :
-                    if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
-                        self.matched_array.append(self.matched[self.districtkey])
-                        
-                    continue
-                if (self.check_sub_district(comp, i)) :
-                    if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
-                        self.matched_array.append(self.matched[self.sub_districtkey])
-                    continue
-                if (self.check_union(comp, i)) :
-                    if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
-                        self.matched_array.append(self.matched[self.unionkey])
-                    continue
+            if (self.check_sub_area(comp, i)):
+                # print('in check sub area')
+                # print(comp)
+                self.matched_array.append(self.matched[self.subareakey])
+                continue
+            if (self.check_area(comp, i)):
+                self.matched_array.append(self.matched[self.areakey])
+                continue
+            # if (self.check_super_sub_area(comp, i)):
+            #     self.matched_array.append(self.matched[self.ssareakey])
+            #     continue
+            if (self.check_road(comp, i)):
+                # print('in check road')
+                # print(comp)
+                self.matched_array.append(self.matched[self.roadkey])
+                continue
+            if  (self.check_block(comp, i)):
+                # print('in check block')
+                # print(comp)
+                self.matched_array.append(self.matched[self.blockkey])
+                continue
+            if (self.check_holding(comp, i)):
+                # print('in check holding')
+                # print(comp)
+                self.matched_array.append(self.matched[self.housekey])
+                continue
+            if (self.check_holding_name(comp, i)):
+                # print('in check holding name'+ comp)
+                self.matched_array.append(self.matched[self.buildingkey])
+                continue            
+            if (self.check_district(comp, i)) :
+                if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                    self.matched_array.append(self.matched[self.districtkey])
+                    
+                continue
+            if (self.check_sub_district(comp, i)) :
+                if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                    self.matched_array.append(self.matched[self.sub_districtkey])
+                continue
+            if (self.check_union(comp, i)) :
+                if (self.matched[self.areakey]==None or self.matched[self.areakey]==''):
+                    self.matched_array.append(self.matched[self.unionkey])
+                continue
+
+            # print(self.matched)
+
+
+
         getsubarea=list(set(self.get_multiple_subarea))
         subarea_min = ''
         subarea_high = ''
@@ -640,14 +698,32 @@ class Address(object):
         #         if subarea not in self.get_multiple_area:
         #             self.matched[self.subareakey]=subarea.lower()
  
-        subarea_list = dbinit.get_subarea()
-        print(subarea_list)
+        # subarea_list = dbinit.get_subarea()
+        try:
+            pass
+        except Exception as e:
+            raise
+        else:
+            pass
+        finally:
+            pass
 
         getarea=list(set(self.get_multiple_area))
         if len(getarea)>=2:
             chk=0
             for area in getarea:
                 subarea_list = dbinit.get_subarea()
+                try:
+                    if self.matched[self.subareakey] in self.matched[self.roadkey]:
+                        self.matched[self.subareakey] = ""
+                except Exception as e:
+                    print('Subarea key marked safe from road name')
+
+                try:
+                    if self.matched[self.subareakey]in self.matched[self.buildingkey]:
+                        self.matched[self.subareakey] = ""
+                except Exception as e:
+                    print('Subarea key marked safe from building name')
                 for j, subarea in enumerate(subarea_list):
                     if subarea[0].lower()==area and subarea[1].lower()==self.matched[self.subareakey] and area in self.tempArray:
                         self.matched[self.areakey]=area.lower()
@@ -681,8 +757,8 @@ class Address(object):
 
 
     def search_addr_bkoi(self, data,qstring):
-        print('.....at search..........')
-        # print(qstring)
+        # print('.....at search..........')
+        # # print(qstring)
         # url="http://54.254.209.206/api/search/autocomplete/exact"
         # r = requests.post(url, params={'q': qstring})
 
@@ -691,11 +767,11 @@ class Address(object):
         #     pass
         # except Exception as e:
         #     return {}
-        print(qstring+"693.......................")
+        # print(qstring+"693.......................")
         match_counter_max = -1
         match_address_max = ''
         match_obj_max = {}
-        print(self.matched)
+        # print(self.matched)
         for i in data:
             geocoded_area = i['area']
             match_counter = 0
@@ -704,22 +780,22 @@ class Address(object):
             i['new_address'] = i['new_address'].strip()
             i['new_address'] = i['new_address'].strip(',')
             if geocoded_area.strip().lower() in qstring or self.matched[self.subareakey] in i['new_address'] or self.matched[self.areakey] in i['new_address']:
-                print("704..................")
+                # print("704..................")
                 for j, addr_comp in enumerate(geo_addr_comp):
-                    print(addr_comp)
+                    # print(addr_comp)
                     if any(match.strip() in addr_comp.strip().lower() for match in qstring.split(',')) or (addr_comp.strip().lower() in qstring and addr_comp.strip().lower()!=''):
                         match_counter = match_counter +1
-                        print(match_counter)
+                        # print(match_counter)
                 if match_counter_max < match_counter:
                     match_counter_max = match_counter
                     match_address_max = i['new_address'].lower()
                     match_obj_max = i
-                print(match_counter_max)
-                print(match_address_max)
+                # print(match_counter_max)
+                # print(match_address_max)
 
                     
             else :
-                print("714..................")
+                # print("714..................")
                 for j, addr_comp in enumerate(geo_addr_comp):
                     if addr_comp.strip().lower() in qstring:
                         match_counter = match_counter +1
@@ -734,18 +810,18 @@ class Address(object):
 
     def search_addr_bkoi2(self, qstring):
         obj=MiniParser()
-        print(self.matched)
-        print('.....at search..........')
-        #print(qstring)
-        url="https://admin.barikoi.xyz/v1/search/autocomplete/web"
-        r = requests.post(url, params={'search': qstring})
+        # print(self.matched)
+        # print('.....at search..........')
+        ## print(qstring)
+        url="http://elastic.barikoi.com/api/search/autocomplete/exact"
+        r = requests.post(url, params={'q': qstring})
         try:
             datas = r.json()
-            print("got it")
-            data=datas['places']
+            # print("got it")
+            data=datas
             pass
         except Exception as e:
-            print("Failed to get data...................")
+            # print("Failed to get data...................")
             return {}
         
         geocoded_addr_comp=""
@@ -756,87 +832,175 @@ class Address(object):
         geocoded_area=""
         final_addr=""
         maximum=-1
+        maximum_exact=-1
+        maximum_exact_b=-1
         geocoded_address_with_area=""
         similarity=0
         mp=MiniParser()
+        matched_road_flag = 0
+        exact_addr=''
         for i in data:
             geocoded_area = i['area']
             geocoded_area=geocoded_area.strip().lower()
             #geocoded_address_with_area=i['address']+", "+geocoded_area
             geocoded_address_with_area=i['new_address']
-            geocoded_addr_comp=mp.parse(geocoded_address_with_area)
-            #print(geocoded_addr_comp)
-            #print(geocoded_area)
-            geocoded_holding=geocoded_addr_comp['holding']
-            geocoded_house=geocoded_addr_comp['house']
-            geocoded_floor=geocoded_addr_comp['floor']
-            geocoded_road=geocoded_addr_comp['road']
-            geocoded_block=geocoded_addr_comp['block']
-            geocoded_subarea=geocoded_addr_comp['subarea']
-            print(i['new_address'])
-            #print(geocoded_holding)
-            #print("matching.................")
-            #print(geocoded_subarea)
-            #print(self.matched[self.subareakey].strip().strip(',').strip())
+            geocoded_addr_comp=mp.parse(geocoded_address_with_area.lower())
+            ## print(geocoded_addr_comp)
+            ## print(geocoded_area)
+            geocoded_holding=geocoded_addr_comp['holding'].strip()
+            geocoded_house=geocoded_addr_comp['house'].strip()
+            geocoded_floor=geocoded_addr_comp['floor'].strip()
+            geocoded_road=geocoded_addr_comp['road'].strip()
+            geocoded_block=geocoded_addr_comp['block'].strip()
+            geocoded_subarea=geocoded_addr_comp['subarea'].strip()
+            print('=============================================================================')
+            print(geocoded_address_with_area)
+            print(geocoded_area+'    '+self.matched[self.areakey].strip().strip(',').strip())
+            print(geocoded_subarea+'    '+self.matched[self.subareakey].strip().strip(',').strip())
 
-            if (geocoded_area==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() ) and self.matched[self.subareakey].strip().strip(',').strip()!='':
-                #print(geocoded_addr_comp)
-                print("dhukli kmne............................")
+            if (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip()==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea.strip()==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() ) and self.matched[self.subareakey].strip().strip(',').strip()!='':
+                print('when subarea provided................................. '+self.matched[self.subareakey].strip().strip(',').strip()+' vs '+geocoded_subarea)
                 if self.matched[self.blockkey]!="":
                     if self.matched[self.blockkey].strip().strip(',').strip() ==geocoded_block:
+                        print('when block provided....... '+self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
                         if self.matched[self.roadkey].strip().strip(',').strip() ==geocoded_road:
+                            print('when road provided.............. '+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+geocoded_road)
+                            matched_road_flag=1
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>maximum_exact_b:
+                                final_addr=i
+                                exact_addr = i
+                                maximum_exact_b=similarity
+                        elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and geocoded_road!="" and matched_road_flag == 0:
+                            print('when road not exact.........'+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
                             similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                             if similarity>maximum:
                                 final_addr=i
                                 maximum=similarity
-                        elif self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip() and geocoded_road!="":
-                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
-                            if similarity>maximum:
-                                final_addr=i
-                                maximum=similarity
-                        elif fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>90 and geocoded_road!="":
+                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and geocoded_road!="" and matched_road_flag==0:
+                            print('road match in fuzzy')
                             similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                             if similarity>maximum:
                                 final_addr=i
                                 maximum=similarity
                 if self.matched[self.blockkey]=="":
-                    #print("paisere.........................................")
-                    #print(geocoded_road)
+                    print('when block is empty .............. '+self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
                     if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road:
+                        print('when road provided ............. '+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
+                        matched_road_flag = 1
+                        similarity_exact=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity_exact>maximum_exact:
+                            final_addr=i
+                            exact_addr=i
+                            maximum_exact=similarity_exact
+                            # print("797...............")
+                    elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and geocoded_road!="" and matched_road_flag == 0:
+                        print('when road not exact.............. '+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-                            print("797...............")
-                    elif self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip() and geocoded_road!="":
-                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
-                        if similarity>maximum:
-                            final_addr=i
-                            maximum=similarity
-                            print("803...............")
-                            print(geocoded_road)
-                            print(self.matched[self.roadkey].strip().strip(',').strip())
+                            # print("803...............")
+                            # print(geocoded_road)
+                            # print(self.matched[self.roadkey].strip().strip(',').strip())
 
-                    elif fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>90 and geocoded_road!="":
+                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and geocoded_road!="" and matched_road_flag == 0:
+                        print('road match in fuzzy............'+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-                            print("812...............")
-                print("for data : "+i['new_address'])
-                print(similarity)
+                
+
+            elif (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() and self.matched[self.subareakey].strip().strip(',').strip()==''):
+                print('subarea missing.....................')
+                if self.matched[self.blockkey]!="":
+                    if self.matched[self.blockkey].strip().strip(',').strip() ==geocoded_block:
+                        print("got block............ "+self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
+                        if self.matched[self.roadkey].strip().strip(',').strip() ==geocoded_road:
+                            print("got road.................... "+ self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
+                            matched_road_flag=1
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>maximum_exact_b:
+                                final_addr=i
+                                exact_addr = i
+                                maximum_exact_b=similarity
+                        elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and geocoded_road!="" and matched_road_flag == 0:
+                            print('didnt got road exact............'+ self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>maximum:
+                                final_addr=i
+                                maximum=similarity
+                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and geocoded_road!="" and matched_road_flag==0:
+                            print('road match in fuzzy............'+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>maximum:
+                                final_addr=i
+                                maximum=similarity
+                if self.matched[self.blockkey]=="":
+                    print("when block is empty.......... " +self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
+                    print(geocoded_road)
+                    if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road:
+                        print('got road............'+ self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
+                        matched_road_flag = 1
+                        similarity_exact=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity_exact>maximum_exact:
+                            final_addr=i
+                            exact_addr=i
+                            maximum_exact=similarity_exact
+                            # print("797...............")
+                    elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and geocoded_road!="" and matched_road_flag == 0:
+                        print('didnt got road exact................ '+ self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
+                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity>maximum:
+                            final_addr=i
+                            maximum=similarity
+                            # print("803...............")
+                            # print(geocoded_road)
+                            # print(self.matched[self.roadkey].strip().strip(',').strip())
+
+                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and geocoded_road!="" and matched_road_flag == 0:
+                        print('road match in fuzzy............'+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
+                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity>maximum:
+                            final_addr=i
+                            maximum=similarity
+
+        if matched_road_flag==1:
+            final_addr=exact_addr
         if final_addr=="":
             print("from prev 1")
+            print(self.matched)
             final_addr=self.search_addr_bkoi(data,qstring)
 
-        return final_addr
+        try:
+            prop_filter = {
+            'Address': final_addr['new_address'],
+            'latitude': final_addr['latitude'],
+            'longitude': final_addr['longitude'],
+            'city': final_addr['city'],
+            'area': final_addr['area'],
+            'postCode': final_addr['postCode'],
+            'pType': final_addr['pType'],
+            'uCode': final_addr['uCode']
+        }
+        except Exception as e:
+            prop_filter = {}
+
+
+        return prop_filter
 
 
 
     def bind_address(self):
 
+        # print('900..............in  bind ')
+        # print(self.matched)
         try:
+            # print('903..............in buildingkey check ')
+            # print(self.matched)
             self.matched[self.buildingkey] = self.matched[self.buildingkey]+", "
+
         except Exception as e:
             self.matched[self.buildingkey] = '' 
         try:
@@ -863,7 +1027,12 @@ class Address(object):
         #     self.matched[self.ssareakey] = ''
 
         try:
+            # print('928----------------- '+self.matched[self.subareakey])
+            if self.matched[self.subareakey].lstrip(' ,').rstrip(' , ') == '':
+                self.matched[self.subareakey] = None
+
             self.matched[self.subareakey] = self.matched[self.subareakey]+", "
+            
         except Exception as e:
             self.matched[self.subareakey] = ''
 
@@ -895,28 +1064,37 @@ class Address(object):
                 self.matched[self.districtkey]= ''
         except Exception as e:
             self.matched[self.districtkey] = ''
-        print(self.matched)
-        print('887-------------------------------------'+ self.matched[self.buildingkey].strip().replace(',','').strip()+'-----------'+self.matched[self.roadkey].strip(','))
+        # print(self.matched)
+        # print('887-------------------------------------'+ self.matched[self.buildingkey].strip().replace(',','').strip()+'-----------'+self.matched[self.roadkey].strip(','))
         # if self.matched[self.roadkey].strip().replace('road','').replace(',','').strip() in self.matched[self.buildingkey] and self.matched[self.buildingkey]!= '' and self.matched[self.roadkey]!='':
         #     self.matched[self.buildingkey]=self.matched[self.buildingkey].replace(self.matched[self.roadkey].strip().replace('road','').replace(',','').strip(),'')
-        print(self.matched[self.subareakey].strip().replace(',','').strip())
-        if (self.matched[self.buildingkey].strip().replace(',','').strip() in self.matched[self.roadkey].strip(',').strip()  and self.matched[self.buildingkey]!= '' and self.matched[self.roadkey]!='') or( self.matched[self.subareakey].strip().replace(',','').strip() in self.matched[self.buildingkey] and self.matched[self.subareakey]!='' and self.matched[self.buildingkey]!= '') :
+        # print(self.matched[self.subareakey].strip().replace(',','').strip())
+
+        if (self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ') in self.matched[self.roadkey].lstrip(' ,').rstrip(' , ')  and self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ') != '' and self.matched[self.roadkey].lstrip(' ,').rstrip(' , ')!='') or( self.matched[self.subareakey].lstrip(' ,').rstrip(' , ') == self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ') and self.matched[self.subareakey].lstrip(' ,').rstrip(' , ')!='' and self.matched[self.buildingkey].lstrip(' ,').rstrip(' , ')!= '') :
+            # print('977 =------------ ')
             self.matched[self.buildingkey]=''
-            print("905-------------------------")
+            # print("905-------------------------")
         # self.matched[self.buildingkey]=self.matched[self.buildingkey].strip()
         if self.matched[self.subareakey]==self.matched[self.areakey]:
+            # print('982......same AS')
+            print(self.matched)
             full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
         else:
             full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + self.matched[self.sub_districtkey] + self.matched[self.districtkey]
 
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')
-        print("909--------------------")
-        print(self.matched_array)
-        print(len(self.matched_array))
+        # print("990--------------------")
+        # print(self.matched)
+        # print(self.get_multiple_area)
+        # print(self.get_multiple_subarea)
+        # print(len(self.matched_array))
         if len(self.matched_array)<1:
-            print("913...........................")
+            # print("913...........................")
             full_address = self.clone_input_address.lstrip().rstrip()
+        print('......................................1090')
+        print(self.tempArray)
+        print(self.matched)
         
         return full_address
 

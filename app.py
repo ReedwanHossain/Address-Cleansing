@@ -1,12 +1,15 @@
 from flask_cors import CORS
-from json import dumps
+import json
 from flask import Flask, request, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
 import urllib
 import re
+# import io
+import codecs
 import csv
 from bkoi_parser import Address
 from custom_banglish_transformer.bkoi_transformer import Transformer
+
 app = Flask(__name__)
 CORS(app)
 
@@ -16,16 +19,28 @@ add_parse = Address()
 def upload_file():
     if request.method == 'POST':
         result_array = []
+        # f = request.files['file']
+        # stream = io.StringIO(f.stream.read().decode("UTF8"), newline=None)
+        # csv_input = csv.reader(stream)
+        # print(csv_input)
+        # fstring = csv.DictReader(request.files['file'])
 
-        fstring = csv.DictReader(request.files['file'])
-        for t, td in enumerate(fstring):
-            add_parse = None
-            add_parse = Address()
+        flask_file = request.files['file']
+        if not flask_file:
+            return 'Upload a CSV file'
+        
+        stream = codecs.iterdecode(flask_file.stream, 'utf-8')
+        for td in csv.DictReader(stream, dialect=csv.excel):
             input_address = td['address']
+            print(input_address)
             result = add_parse.parse_address(input_address)
-            result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status']})
-           
-        csv_columns = ['input-address' ,'clean-address', 'status']
+            try:
+              result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  result['geocoded']['Address']})
+            except Exception as e:
+              result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  'Failed to GeoCode'})
+
+                       
+        csv_columns = ['input-address' ,'clean-address', 'status', 'geocoded-address']
         csv_file = "parsed.csv"
 
         try:
@@ -88,6 +103,7 @@ def transform_parse():
    add_parse = Address()
    addr = request.form.get('addr')
    return add_parse.parse_address(add_trans.bangla_to_english(addr))
+
 
 
 if __name__ == '__main__':
