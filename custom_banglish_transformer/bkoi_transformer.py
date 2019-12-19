@@ -21,9 +21,12 @@ class Transformer(object):
         super(Transformer, self).__init__()
         
     def bangla_to_english(self, address):
-        if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu', address) == None):
-            address=address.replace('.',' ')
-        # address=address.replace('.',' ')
+        # if (re.sub('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu|.\u0995\u09AE', address) == None):
+        #     address=address.replace('.','')
+        address=address.replace('.\u0995\u09AE',' .com')
+        address=address.replace('.\u09A8\u09C7\u099F',' .net')
+        address=address.replace('.\u09AC\u09BF\u09A1\u09BF',' .bd')
+        address=address.replace('.\u0995\u09CB',' .co')
         address=address.replace(u'\u0964',' ')
         address=address.replace(u'\u0028',u' \u0028 ')
         address=address.replace(u'\u0029',u' \u0029 ')
@@ -67,6 +70,11 @@ class Transformer(object):
         eng_address=eng_address.replace(' / ','/')
         eng_address=eng_address.replace(' : ',':')
         eng_address=eng_address.replace(' # ','#')
+        eng_address=re.sub('(\.) (\d+)',r'\1\2', eng_address)
         eng_address=eng_address.replace(u'\u09BC','')
+        eng_address=eng_address.replace(' .com','.com')
+        eng_address=eng_address.replace(' .net','.net')
+        eng_address=eng_address.replace(' .bd',' .bd')
+        eng_address=eng_address.replace(' .co',' .co')
         return eng_address
    
