@@ -139,7 +139,7 @@ Agargaon,Agargaon Administrative Area,H,L,L,L,H
 Nikunja,Khilkhet Bus Stop,H,L,L,L,H
 Khilkhet,Namapara,H,L,L,L,H
 Khilkhet,Nama para,H,L,L,L,H
-Mirpur,West Shewrapara,H,H,L,L,H
+Mirpur,West Shewrapara,H,M,L,L,H
 bashundhara,bashundhara,H,H,H,L,H
 Tejgaon,Khamarbari,H,L,L,L,H
 Gulshan,Shahjadpur,H,H,L,L,H
@@ -341,8 +341,6 @@ Mohakhali,Amtoli,H,M,M,L,H
 Merul Badda,Gudaraghat,H,H,L,L,H
 Mirpur,Purbo Monipur,H,L,L,L,H
 Badda,North Badda,H,M,L,L,H
-Mirpur,West Shewrapara South Monipur,H,M,L,L,H
-Mirpur,West Shewrapara North Pirerbagh,H,M,L,L,H
 Banglamotor,New Eskaton,H,L,L,L,H
 Mirpur,Molla Para,H,L,L,L,H
 Shantinagar,Chamelibag,H,L,L,L,H
@@ -359,7 +357,6 @@ Adabor,Nobodoy Housing,H,M,M,L,H
 Shantibagh,Shantibagh,H,M,L,L,H
 Vatara,Notun Bazar,H,M,L,L,H
 Manikdi,Namapara,H,M,L,L,H
-Mirpur,Shouth West Shewrapara,H,M,L,L,H
 Badda,South Badda,H,M,L,L,H
 Tejgaon,West Rajabazar,H,M,L,L,H
 Tejgaon,West Razabazar,H,M,L,L,H

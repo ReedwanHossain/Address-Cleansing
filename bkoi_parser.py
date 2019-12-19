@@ -561,8 +561,9 @@ class Address(object):
         if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu', input_address) == None):
             input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
-        # input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
-        
+        print('INPUT ADDRESS............')
+        print(input_address)
+        print(input_address)
         x = input_address.split("*")
         input_address = " "
 
@@ -736,8 +737,9 @@ class Address(object):
 
  
 
-
-            
+        print('------------------------------------------=====================================')
+        print(self.get_multiple_area)
+        print(self.get_multiple_subarea)
 
         
         # status_checking= self.check_address_status()
@@ -839,6 +841,11 @@ class Address(object):
         mp=MiniParser()
         matched_road_flag = 0
         exact_addr=''
+        matched_house_key = self.matched[self.housekey]
+        if any(char.isdigit() for char in self.matched[self.housekey]):
+            self.matched[self.housekey] = re.findall('\d+',self.matched[self.housekey])[0]
+        print('H O U S E Number..........')
+        print(self.matched[self.housekey])
         for i in data:
             geocoded_area = i['area']
             geocoded_area=geocoded_area.strip().lower()
@@ -857,13 +864,14 @@ class Address(object):
             print(geocoded_address_with_area)
             print(geocoded_area+'    '+self.matched[self.areakey].strip().strip(',').strip())
             print(geocoded_subarea+'    '+self.matched[self.subareakey].strip().strip(',').strip())
-
+            if any(char.isdigit() for char in geocoded_house):
+                geocoded_house = re.findall('\d+',geocoded_house)[0]
             if (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip()==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea.strip()==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() ) and self.matched[self.subareakey].strip().strip(',').strip()!='':
                 print('when subarea provided................................. '+self.matched[self.subareakey].strip().strip(',').strip()+' vs '+geocoded_subarea)
                 if self.matched[self.blockkey]!="":
                     if self.matched[self.blockkey].strip().strip(',').strip() ==geocoded_block:
                         print('when block provided....... '+self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
-                        if self.matched[self.roadkey].strip().strip(',').strip() ==geocoded_road:
+                        if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road and self.matched[self.roadkey].strip().strip(',').strip()!='':
                             print('when road provided.............. '+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+geocoded_road)
                             matched_road_flag=1
                             similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
@@ -871,13 +879,13 @@ class Address(object):
                                 final_addr=i
                                 exact_addr = i
                                 maximum_exact_b=similarity
-                        elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and geocoded_road!="" and matched_road_flag == 0:
+                        elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag == 0:
                             print('when road not exact.........'+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
                             similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                             if similarity>maximum:
                                 final_addr=i
                                 maximum=similarity
-                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and geocoded_road!="" and matched_road_flag==0:
+                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
                             print('road match in fuzzy')
                             similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                             if similarity>maximum:
@@ -885,7 +893,7 @@ class Address(object):
                                 maximum=similarity
                 if self.matched[self.blockkey]=="":
                     print('when block is empty .............. '+self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
-                    if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road:
+                    if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road and self.matched[self.roadkey].strip().strip(',').strip()!='':
                         print('when road provided ............. '+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
                         matched_road_flag = 1
                         similarity_exact=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
@@ -894,7 +902,7 @@ class Address(object):
                             exact_addr=i
                             maximum_exact=similarity_exact
                             # print("797...............")
-                    elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and geocoded_road!="" and matched_road_flag == 0:
+                    elif (self.matched[self.roadkey].strip().strip(',').strip() in geocoded_road or geocoded_road in self.matched[self.roadkey].strip().strip(',').strip()) and self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag == 0:
                         print('when road not exact.............. '+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>maximum:
@@ -904,7 +912,7 @@ class Address(object):
                             # print(geocoded_road)
                             # print(self.matched[self.roadkey].strip().strip(',').strip())
 
-                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and geocoded_road!="" and matched_road_flag == 0:
+                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip() ,geocoded_road)>80) and self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag == 0:
                         print('road match in fuzzy............'+self.matched[self.roadkey].strip().strip(',').strip()+' vs '+ geocoded_road)
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>maximum:
@@ -965,7 +973,7 @@ class Address(object):
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-
+        self.matched[self.housekey] = matched_house_key
         if matched_road_flag==1:
             final_addr=exact_addr
         if final_addr=="":
