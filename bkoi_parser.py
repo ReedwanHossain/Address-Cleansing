@@ -840,6 +840,7 @@ class Address(object):
         similarity=0
         mp=MiniParser()
         matched_road_flag = 0
+        without_road_maximum=0
         exact_addr=''
         matched_house_key = self.matched[self.housekey]
         if any(char.isdigit() for char in self.matched[self.housekey]):
@@ -891,6 +892,12 @@ class Address(object):
                             if similarity>maximum:
                                 final_addr=i
                                 maximum=similarity
+                        elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                            print('road empty')
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>without_road_maximum:
+                                final_addr=i
+                                without_road_maximum=similarity
                 if self.matched[self.blockkey]=="":
                     print('when block is empty .............. '+self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
                     if self.matched[self.roadkey].strip().strip(',').strip() == geocoded_road and self.matched[self.roadkey].strip().strip(',').strip()!='':
@@ -918,6 +925,12 @@ class Address(object):
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
+                    elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                        print('road empty')
+                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity>without_road_maximum:
+                            final_addr=i
+                            without_road_maximum=similarity                    
                 
 
             elif (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() and self.matched[self.subareakey].strip().strip(',').strip()==''):
@@ -945,6 +958,12 @@ class Address(object):
                             if similarity>maximum:
                                 final_addr=i
                                 maximum=similarity
+                        elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                            print('road empty')
+                            similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                            if similarity>without_road_maximum:
+                                final_addr=i
+                                without_road_maximum=similarity
                 if self.matched[self.blockkey]=="":
                     print("when block is empty.......... " +self.matched[self.blockkey].strip().strip(',').strip()+' vs '+geocoded_block)
                     print(geocoded_road)
@@ -973,6 +992,12 @@ class Address(object):
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
+                    elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                        print('road empty')
+                        similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
+                        if similarity>without_road_maximum:
+                            final_addr=i
+                            without_road_maximum=similarity
         self.matched[self.housekey] = matched_house_key
         if matched_road_flag==1:
             final_addr=exact_addr

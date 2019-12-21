@@ -30,7 +30,6 @@ Uttara,Uttarkh,H,L,L,L,H
 Uttara,Azampur,H,L,L,L,H
 Uttara,Azompur,H,L,L,L,H
 Dhaka Cantonment,Dhaka Cantonment,H,M,L,L,H
-Dhaka Cantonment,H,M,L,L,H
 Dhaka Cantonment,M E S,H,M,L,L,H
 Dhaka Cantonment,Aziz Polli,H,L,L,L,H
 Mirpur,Section 16,H,H,M,L,H
@@ -397,12 +396,15 @@ Vatara,Moddho Nayanagar,H,M,L,L,H
 Shahjahanpur,North Shahjahanpur,H,M,L,L,H
 Ramna,Moghbazar Wireless,H,M,L,L,H
 Mohammadpur,Kaderabad Housing,H,H,M,L,H
+Mohammadpur,Kaderabad Housing estate,H,H,M,L,H
+Mohammadpur,Kedarabad Housing Society,H,H,M,L,H
 Mohammadpur,Satmasjid Housing,H,H,H,L,H
 Mirpur,South Paikpara (Sonali Nagar),H,H,L,L,H
 Vatara,Nayanagar,H,M,L,L,H
 Vatara,West Vatara,H,M,L,L,H
 Vatara,East Nayanagar,H,M,L,L,H
 Tejgaon,Monipuripara,H,L,L,L,H
+Tejgaon,Monipuri para,H,L,L,L,H
 Motijheel,Fakirapool,H,M,L,L,H
 Mugda,Zannat Bagh,H,M,L,L,H
 Mugda,Jannatbagh,H,M,L,L,H
@@ -460,6 +462,8 @@ Badda,Madina Nagar,H,M,L,L,H
 Badda,Sonakatra,H,L,L,L,H
 Kafrul,Corner View R/A,H,L,L,L,H
 Khilkhet,Kuratoli,H,M,L,L,H
+Khilkhet,LakeCity Concord,H,M,L,L,H
+Khilkhet,Lake City Concord,H,M,L,L,H
 Mirpur,darussalam,H,M,L,L,H
 Tejgaon,Tejkuni,H,M,L,L,H
 Tejgaon,West Tejkunipara,H,M,L,L,H
@@ -479,6 +483,7 @@ Mohammadpur,Ajij Moholla,H,H,M,L,H
 Farmgate,West Tejturi Bazar,H,M,L,L,H
 Moghbazar,Wireless Railgate,H,M,L,L,H
 Moghbazar,Peyarabagh,H,M,L,L,H
+Moghbazar,gabtola,H,M,L,L,H
 Moghbazar,Pearabagh,H,M,L,L,H
 Moghbazar,Boro Moghbazar Greenway,H,M,L,L,H
 Moghbazar,Wireless Mor,H,M,L,L,H

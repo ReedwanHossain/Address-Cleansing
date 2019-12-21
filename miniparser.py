@@ -21,7 +21,7 @@ class MiniParser(object):
         parsed_aadr=parsed_aadr.lower()
         parsed_aadr=parsed_aadr.split(',')
         parsed_aadr[0]=parsed_aadr[0].strip()
-        if not re.match('house\s+\d+',parsed_aadr[0]) and 'flat' not in parsed_aadr[0] and 'level' not in parsed_aadr[0] and 'floor' not in parsed_aadr[0]:
+        if not re.match('house\s+\d+',parsed_aadr[0]) and 'flat' not in parsed_aadr[0] and 'level' not in parsed_aadr[0] and 'floor' not in parsed_aadr[0] and parsed_aadr[0].split()[0]!='house':
             self.name=parsed_aadr[0]
             parsed_aadr.pop(0)
         for token in parsed_aadr:
