@@ -749,7 +749,8 @@ class Address(object):
         obj = {
             'status' : self.check_address_status(),
             'address' : final_address,
-            'geocoded' : self.search_addr_bkoi2(final_address)
+            'geocoded' : self.search_addr_bkoi2(final_address),
+            'area' : self.matched[self.areakey],
         }
         self.__init__()
         return obj
