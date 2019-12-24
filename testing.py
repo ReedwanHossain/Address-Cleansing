@@ -15,7 +15,7 @@ class TestAddress(unittest.TestCase):
         self.assertEqual(parse.parse_address('h12 pallabi kaful')['address'], 'house 12, pallabi, mirpur')
         self.assertEqual(parse.parse_address('213/7(b),shapla housing, panir pamp er pashe,shamoli ,dhaka')['address'], 'house 213/7, shyamoli')
         self.assertEqual(parse.parse_address('House No. 5 (1st Floor), Road No. 9, Block- A, Nobodoy Housing Society, Mohammadpur, Dhaka -1207. Near Back West Side of Baitul Wahab Masjid of Road No. 6, Mohammadi Housing Society. ')['address'], 'house 5, road 9, road 6, block a, nobodoy housing, mohammadpur')
-        self.assertEqual(parse.parse_address('mirpur 2  R -1,h- 3,B -d D cups coffee shop')['address'], 'house 3, road 1, block d, section 2, mirpur')
+        self.assertEqual(parse.parse_address('mirpur 2  R -1,h- 3,B -d D cups coffee shop')['address'], 'd d cups coffee shop, house 3, road 1, block d, section 2, mirpur')
         self.assertEqual(parse.parse_address('67/2, GP Ja, Gajnabi Road 2, behind BRAC University (by a CNG Garage) Mohakhali Wirelessgate, Dhaka-1213')['address'], 'house 67/2-gp-ja, road 2, mohakhali wirelessgate, mohakhali')
         self.assertEqual(parse.parse_address('barikoi office b-F 32 mirpur')['address'], 'barikoi office, house 32, block f, mirpur')
     
