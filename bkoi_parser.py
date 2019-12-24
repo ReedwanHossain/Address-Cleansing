@@ -80,7 +80,7 @@ class Address(object):
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
-        'house': ' house ', 'house:': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
+        'house': ' house ', 'house:': ' house ',' basha ':' house ',' basa ':' house ',' bari ':' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ',' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
     } 
@@ -489,7 +489,7 @@ class Address(object):
         if 'street' in first_street or 'street:' in first_street or first_street=='street' or first_street=='street:' or first_street=='office:' or first_street=='address:' or first_street=='address':
             input_address=input_address.replace(first_street," ")
         
-        input_address=re.sub(r'(behind|nearby|near|near by|near to|opposite|opposite of|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station)', '', input_address)
+        input_address=re.sub(r'(behind|nearby|near|near by|near to|opposite|opposite of|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station|park)', '', input_address)
         #delete flat no. or etc
         temp_input_address=input_address.split()
         if 'flat' in input_address:
@@ -668,8 +668,8 @@ class Address(object):
 
             # print(self.matched)
 
-
-
+        # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
+        #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
         getsubarea=list(set(self.get_multiple_subarea))
         subarea_min = ''
         subarea_high = ''
@@ -893,7 +893,7 @@ class Address(object):
                             if similarity>maximum:
                                 final_addr=i
                                 maximum=similarity
-                        elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                        elif self.matched[self.roadkey].strip().strip(',').strip()=="" and matched_road_flag==0:
                             print('road empty')
                             similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                             if similarity>without_road_maximum:
@@ -926,7 +926,7 @@ class Address(object):
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-                    elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                    elif self.matched[self.roadkey].strip().strip(',').strip()=="" and matched_road_flag==0:
                         print('road empty')
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>without_road_maximum:
@@ -959,7 +959,7 @@ class Address(object):
                             if similarity>maximum:
                                 final_addr=i
                                 maximum=similarity
-                        elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                        elif self.matched[self.roadkey].strip().strip(',').strip()=="" and matched_road_flag==0:
                             print('road empty')
                             similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                             if similarity>without_road_maximum:
@@ -993,7 +993,7 @@ class Address(object):
                         if similarity>maximum:
                             final_addr=i
                             maximum=similarity
-                    elif self.matched[self.roadkey].strip().strip(',').strip()!="" and matched_road_flag==0:
+                    elif self.matched[self.roadkey].strip().strip(',').strip()=="" and matched_road_flag==0:
                         print('road empty')
                         similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                         if similarity>without_road_maximum:
