@@ -460,6 +460,13 @@ class Address(object):
         input_address = " "+input_address
         input_address = input_address.lower()
         
+        if input_address.strip().lstrip(',').rstrip(',') == '' :
+            return  {
+                'status' : 'Not An Address',
+                'address' : input_address,
+                'geocoded' :{},
+            }
+            
         input_address = re.sub(r',',' ', input_address)
         input_address = re.sub( r'#|"',' ', input_address )
         input_address=input_address.lower()+"  "
