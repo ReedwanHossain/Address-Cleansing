@@ -460,7 +460,8 @@ class Address(object):
         input_address = " "+input_address
         input_address = input_address.lower()
         
-        if input_address.strip().lstrip(',').rstrip(',') == '' :
+        if input_address.strip().lstrip(',').rstrip(',').strip() == '' :
+            print(input_address.strip().lstrip(',').rstrip(','))
             return  {
                 'status' : 'Not An Address',
                 'address' : input_address,
