@@ -40,6 +40,13 @@ class Address(object):
         self.area_flag = False
         self.area_pos = 0
         self.subarea_flag = False
+        self.reverse_house_pattern=False
+        self.reverse_road_pattern=False
+        self.reverse_goli_pattern=False
+        self.reverse_lane_pattern=False
+        self.reverse_block_pattern=False
+        self.reverse_section_pattern=False
+        self.reverse_sector_pattern=False
         self.subarea_pos = 0
         self.matched = {}
         #init value...................
@@ -61,9 +68,11 @@ class Address(object):
         self.get_multiple_area=[]
         self.subarea_list_pattern=[]
         
-    status_pattern= {
+    reverse_pattern= {
     'house':'',
     'road':'',
+    'goli':'',
+    'lane':'',
     'block':'',
     'ssarea':'',
     'subarea':'',
@@ -78,13 +87,21 @@ class Address(object):
     tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp']
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
-        "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road ", " r ": " road ", " r-": " road ", " ,r-": " road ",",r":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
+        "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road "," r-": " road ", " ,r-": " road ",",r":" road "," r ":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ',' basha ':' house ',' basa ':' house ',' bari ':' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
-        'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
-        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ',' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', 'number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '', 'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
+        'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ','number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '',
+        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ',' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', ' len ': ' lane ', 'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
     } 
-    
+    rep1 = {
+        #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
+        "rd#": " road ", "rd-": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ",
+        "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", "bl#":" block ", "bl:":" block ",  'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ',
+        'house': ' house ', 'house:': ' house ',' basha ':' house ',' basa ':' house ',' bari ':' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
+        'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
+        'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ',' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane',  'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
+    }
+
     area_dict = {"nikunjo": " nikunja ", "nikunja": " nikunja ", "mirpur": " mirpur ", "uttara": " uttara ", "banani": " banani ", "mohammadpur": " mohammadpur ", "gulshan": " gulshan ", "baridhara": " baridhara ", "mdpur":"mohammadpur"} # define desired replacements here
     
     def multiple_replace(self, dict, text):
@@ -460,8 +477,7 @@ class Address(object):
         input_address = " "+input_address
         input_address = input_address.lower()
         
-        if input_address.strip().lstrip(',').rstrip(',').strip() == '' :
-            print(input_address.strip().lstrip(',').rstrip(','))
+        if input_address.strip().lstrip(',').rstrip(',') == '' :
             return  {
                 'status' : 'Not An Address',
                 'address' : input_address,
@@ -473,8 +489,12 @@ class Address(object):
         input_address=input_address.lower()+"  "
         input_address="  "+input_address.lower()
         input_address=re.sub(r'\([^)]*\)', '', input_address)
-        #behind to hospital delete text
-
+        input_address = re.sub( r'(\d+)(no\s+)', r'\1 \2', input_address )
+        input_address = re.sub( r'(\s+no)(\d+)', r'\1 \2', input_address )
+        input_address = "  "+input_address
+        input_address = self.multiple_replace(self.rep1, input_address.lower())
+        ###Check Reverse pattern like 3 no house
+        self.Check_Reverse_Key(input_address)
         if re.search('\d{5}',input_address):
             temp_input_address=input_address.split()
             for i,t in enumerate(temp_input_address):
@@ -489,7 +509,7 @@ class Address(object):
         input_address=input_address.replace("-"," ")
         input_address=input_address.replace(":"," ")
         input_address=input_address.replace(" no "," ")
-        
+        print("508-----------------"+input_address)
         try:
             first_street=re.match(r'\W*(\w[^,. !?"]*)', input_address).groups()[0]
         except:
@@ -510,9 +530,9 @@ class Address(object):
                         break
             input_address = ' '.join(str(e) for e in temp_input_address)
 
-        input_address=re.sub(r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d+)(\s*)','',input_address)
+        input_address=re.sub(r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d{4})(\s*)','',input_address)
 
-        input_address=re.sub(r'((\s*)(apt|apartment|floor|room|flat|level|flr|suite|suit)(\s*(no)*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(apt|apartment|floor|flat|level|room|flr|suite|suit))(\s*)|(((\s*)(apt|apartment|floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((apt|apartment|floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', '  ', input_address)
+        input_address=re.sub(r'((\s*)(apt|apartment|floor|room|flat|level|flr|suite|suit)(\s*(no)*[.]*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(apt|apartment|floor|flat|level|room|flr|suite|suit))(\s*)|(((\s*)(apt|apartment|floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)([0-9]*\d*[a-z]*)))(\s*)|(\s*)(((apt|apartment|floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)[a-z]+))(\s*)', '  ', input_address)
         input_address=re.sub(r'(\s+[1-9]+|\d+)(th|rd|st|nd)\s+',' ',input_address)
         input_address=input_address.replace(',',' ')
         all_num_list=re.findall(r'\d+', input_address)
@@ -549,23 +569,34 @@ class Address(object):
         if block_s:
             self.matched[self.blockkey] = 's'
             input_address = re.sub('block(\s*)(no)*(:)*(-)*(\s*)(s )',' ', input_address)
+
+        b_block=re.search('\s+b(\s*)(:)*(-)*(\s*)block',input_address)
+        if b_block:
+            self.matched[self.blockkey] = 'b'
+            input_address = re.sub('\s+b(\s*)(:)*(-)*(\s*)block',' ', input_address)
+
+        h_block=re.search('\s+b(\s*)(:)*(-)*(\s*)block',input_address)
+        if h_block:
+            self.matched[self.blockkey] = 'h'
+            input_address = re.sub('\s+h(\s*)(:)*(-)*(\s*)block',' ', input_address)
         input_address = re.sub( r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         input_address = re.sub( r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address ) #insert a '-' between letters and number
         # pre-processing...........................................................
 
         #input_address = re.sub( r'h\s+tower','h* tower', input_address)
         print('////////////////////')
-        print(input_address)
+        #print("574-----------------"+input_address)
+        #print(input_address)
         input_address = "  "+input_address
         expand = self.multiple_replace(self.rep2, input_address.lower())
         expand = self.multiple_replace(self.area_dict, expand.lower())
+        #print("579-----------------"+input_address)
         #unknown char remove
         expand = re.sub( r'#|"',' ', expand )
         if(check_hbrs==1):
             expand=expand.replace('rrrr',cut_hbrs.strip())
-
-        #spell_checker
         input_address=expand
+
         if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu', input_address) == None):
             input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
@@ -574,7 +605,7 @@ class Address(object):
         print(input_address)
         x = input_address.split("*")
         input_address = " "
-
+        #spell_checker
         # print('before spellcheck '+expand)
         spell_check=SpellCheck('area-list.txt')
         for i in x:
@@ -744,27 +775,98 @@ class Address(object):
                         break
 
  
+        # if self.reverse_pattern['road']!=self.matched[self.roadkey]:
+        #     self.matched[self.roadkey]=self.reverse_pattern['road']
+        if self.reverse_house_pattern==True and self.reverse_pattern['house']!=self.matched[self.housekey]:
+            self.matched[self.housekey]=self.reverse_pattern['house']
+        if self.reverse_road_pattern==True and self.reverse_pattern['road']!=self.matched[self.roadkey]:
+            self.matched[self.roadkey]=self.reverse_pattern['road']
+        if self.reverse_goli_pattern==True and self.reverse_pattern['goli']!=self.matched[self.roadkey]:
+            self.matched[self.roadkey]=self.reverse_pattern['goli']
+        if self.reverse_lane_pattern==True and self.reverse_pattern['lane']!=self.matched[self.roadkey]:
+            self.matched[self.roadkey]=self.reverse_pattern['lane']
+        if self.reverse_block_pattern==True and self.reverse_pattern['block']!=self.matched[self.blockkey]:
+            self.matched[self.blockkey]=self.reverse_pattern['block']
+        if self.reverse_sector_pattern==True and self.reverse_pattern['sector']!=self.matched[self.subareakey]:
+            if self.matched[self.areakey]=='mirpur':
+                self.reverse_pattern['sector']=self.reverse_pattern['sector'].replace('sector','section')
+                self.matched[self.subareakey]=self.reverse_pattern['sector']
+            elif self.matched[self.areakey]=='uttara':
+                self.matched[self.subareakey]=self.reverse_pattern['sector']
 
         print('------------------------------------------=====================================')
-        print(self.get_multiple_area)
-        print(self.get_multiple_subarea)
+        #print(self.get_multiple_area)
+        #print(self.get_multiple_subarea)
 
         
         # status_checking= self.check_address_status()
         final_address = self.bind_address()     
         #self.search_addr_bkoi(final_address)   
-
         obj = {
+
             'status' : self.check_address_status(),
             'address' : final_address,
             'geocoded' : self.search_addr_bkoi2(final_address),
             'area' : self.matched[self.areakey],
+            'parsed_house':self.matched[self.housekey],
+            'parsed_building_name':self.matched[self.buildingkey],
+            'parsed_road':self.matched[self.roadkey],
+            'parsed_block':self.matched[self.blockkey],
+            'parsed_super_subarea':self.matched[self.ssareakey],
+            'parsed_subarea':self.matched[self.subareakey],
+            'parsed_area':self.matched[self.areakey],
+            'parsed_district':self.matched[self.districtkey],
+            'parsed_sub_district':self.matched[self.sub_districtkey],
+            'parsed_union':self.matched[self.unionkey],
         }
         self.__init__()
         return obj
 
 
-
+    def Check_Reverse_Key(self,s):
+        house_key=''
+        road_key=''
+        block_key=''
+        sector_key=''
+        goli_key=''
+        #s='oaishf ka/4    no house las, 4 number   road block no 5'
+        pattern_house=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+house\s+',s)
+        pattern_road=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+road\s+',s)
+        pattern_goli=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+goli\s+',s)
+        pattern_lane=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+lane\s+',s)
+        pattern_block=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+block\s+',s)
+        pattern_sector=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+sector\s+',s)
+        if pattern_house:
+            house_key=pattern_house.group().split()[0]
+            print("house "+house_key)
+            self.reverse_house_pattern=True
+            self.reverse_pattern['house']=house_key
+        if pattern_road:
+            road_key=pattern_road.group().split()[0]
+            self.reverse_road_pattern=True
+            print("road "+road_key)
+            self.reverse_pattern['road']="road "+road_key
+        if pattern_goli:
+            goli_key=pattern_goli.group()
+            self.reverse_goli_pattern=True
+            print("goli "+goli_key)
+            self.reverse_pattern['goli']=goli_key
+        if pattern_lane:
+            lane_key=pattern_lane.group().split()[0]
+            self.reverse_lane_pattern=True
+            print("lane "+lane_key)
+            self.reverse_pattern['lane']="lane "+lane_key
+        if pattern_block:
+            block_key=pattern_block.group().split()[0]
+            self.reverse_block_pattern=True
+            print("block "+block_key)
+            self.reverse_pattern['block']=block_key
+        if pattern_sector:
+            sector_key=pattern_sector.group().split()[0]
+            self.reverse_sector_pattern=True
+            print("sector "+sector_key)
+            self.reverse_pattern['sector']="sector "+sector_key
+        return None
 
 
     def search_addr_bkoi(self, data,qstring):
@@ -870,6 +972,12 @@ class Address(object):
             geocoded_road=geocoded_addr_comp['road'].strip()
             geocoded_block=geocoded_addr_comp['block'].strip()
             geocoded_subarea=geocoded_addr_comp['subarea'].strip()
+            #print(geocoded_addr_comp['multiple_subarea'])
+            if len(geocoded_addr_comp['multiple_subarea'])>=2:
+                for sarea in geocoded_addr_comp['multiple_subarea']:
+                    #print(sarea)
+                    if sarea.strip()!=geocoded_area.strip() and sarea in geocoded_address_with_area.lower():
+                        geocoded_subarea=sarea.strip()
             print('=============================================================================')
             print(geocoded_address_with_area)
             print(geocoded_area+'    '+self.matched[self.areakey].strip().strip(',').strip())

@@ -308,6 +308,7 @@ Mirpur,West Agargaon,H,M,L,L,H
 Mirpur,Kallyanpur,H,H,M,L,H
 Mirpur,Popular Housing 2,H,L,L,L,H
 Mirpur,Janata Housing Slum Area,H,L,L,L,H
+Mirpur,Janata Housing,H,L,L,L,H
 Mirpur,Ahmad Nagar,H,L,L,L,H
 Mirpur,West Ahmednagar,H,L,L,L,H
 Mirpur,Monipur,H,M,L,L,H
@@ -413,7 +414,8 @@ Motijheel,North Kamlapur,H,H,L,L,H
 Motijheel,Kamlapur Box Culvert,H,L,L,L,H
 Motijheel,Fakirapool,H,M,L,L,H
 Motijheel,Arambagh,H,L,L,L,H 
-Motijheel,Arambag,H,L,L,L,H 
+Motijheel,Arambag,H,L,L,L,H
+Motijheel,Dilkusha,H,L,L,L,H
 Mugda,South Mugda,H,L,L,L,H
 Mugda,Mugda,H,L,L,L,H
 Mugda,Anandadhara South Mugda,H,L,L,L,H

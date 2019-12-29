@@ -3,4 +3,4 @@ dhanmondi,adabor,baitul,housing,banasree,eastern,pallabi,farmgate,jigatola,kalab
 tinshed,duaripara,bongshal,gendaria,hatirpool,kawran,eskaton,paribag,rajarbag,shahbagh,shantinagar,niketon,lalbagh,badda, extension,moghbazar,moghbazaar,siddheshwari,sadarghat,arambagh,motijheel,shegunbagicha,lalkuthi,tejgaon,mohammadpur,hazaribagh,avenue, project,jatrabari,paltan,agargaon,shewrapara,kazipara,monipur,borobagh,ahmed,paikpara,bishil,tolarbag,ibrahimpur, dhaka,uddan,ramchandrapur,nabinagar,chaduddan,block,ramna,kafrul,korail,doniya,dholairpar,jurain,mirbag,rampura,basabo,kadamtola,lane, mugdapara,maniknagar,dayaganj,luxmibazar,tikatuli,nakhalpara,kamalapur,gopibag,narinda,malitola,postagola,shamibag,Nadda,highway,rayerbagh,matuail,
 street,rasta,sarak,kotwali,shahid,vashantek,dncczone,house,road,mohanagar,narayanganj,parsed,town,malibagh,bangladesh,shankar,shankar,bonosree,barikoi,
 rasulbagh,bazar,panthapath,
-janani,hazipara,abroad,Pisciculture,mazar,uttam,rana,babar,babor,modhubazar,kandipara,Golapbag,address,monipuri,uttar
+janani,hazipara,abroad,Pisciculture,mazar,uttam,rana,babar,babor,modhubazar,kandipara,Golapbag,address,monipuri,uttar,shah

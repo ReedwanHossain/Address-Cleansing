@@ -16,6 +16,7 @@ class MiniParser(object):
         self.name=""
         self.floorkey=""
         self.subareakey=""
+        self.multiple_subarea=[]
     
     def parse(self, parsed_aadr):
         parsed_aadr=parsed_aadr.lower()
@@ -39,8 +40,7 @@ class MiniParser(object):
       
             elif ('block' not in token and not any(s in token for s in roadkeywords) and 'house' not in token and 'floor' not in token and 'level' not in token and 'flat' not in token) and any(token == subarea for subarea in subarealist):
                 self.subareakey=token.strip()
-
-
+                self.multiple_subarea.append(token.strip())
 
         obj = {
             'house': self.housekey,
@@ -49,6 +49,7 @@ class MiniParser(object):
             'road': self.roadkey,
             'block': self.blockkey,
             'subarea': self.subareakey,
+            'multiple_subarea':self.multiple_subarea,
         }
         self.roadkey=""
         self.blockkey=""
@@ -56,6 +57,7 @@ class MiniParser(object):
         self.name=""
         self.floorkey=""
         self.subareakey=""
+        self.multiple_subarea=[]
         return obj
 
   
