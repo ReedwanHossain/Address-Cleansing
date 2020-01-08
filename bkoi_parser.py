@@ -261,9 +261,11 @@ class Address(object):
 
     def check_holding(self, token, idx):
         tempList=['ka','kha','ga','gha','uma','ca','cha','ja','jha','za','zha','ta','tha','da','dha','na','pa','pha','fa','ma','ra','la','ha','ya', 'gp','rrrr']
-        if (any(char.isdigit() for char in token) or token in tempList or re.match(r'^[a-z]$',token)) and idx < len(self.tempArray)-1 and self.matched[self.housekey]==None:
+        if (any(char.isdigit() for char in token) or token in tempList or re.match(r'^[a-z]$',token)) and idx < len(self.tempArray)-1 and (self.matched[self.housekey]==None or self.matched[self.housekey]==''):
             if idx == 0 and self.tempArray[idx+1].lower()!='floor':
                 self.matched[self.housekey] = token
+                print('holding token 267')
+                print(token)
                 if ((any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList)) and idx < len(self.tempArray)-2 :
                     self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+1] 
                     if idx < len(self.tempArray)-3:
@@ -274,7 +276,8 @@ class Address(object):
 
             if self.tempArray[idx-1].lower() not in self.address_component :
                 check_match=0
-
+                print('279------------')
+                print(token)
                 area_list = dbinit.get_subarea()
                 for j, area in enumerate(area_list):
                     if area[0].lower()==self.tempArray[idx-1].lower():
@@ -284,6 +287,7 @@ class Address(object):
                     self.matched[self.housekey]=""
                 if check_match==0 and token not in self.matched[self.housekey]:
                     self.matched[self.housekey]=token
+                    print('290----------- '+self.matched[self.housekey])
                     if ((any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList))  and idx < len(self.tempArray)-2: 
                         self.matched[self.housekey] = self.matched[self.housekey]+"-"+self.tempArray[idx+1] 
                         if ((any(char.isdigit() for char in self.tempArray[idx+2])) or re.match(r'^[a-z]$', self.tempArray[idx+2]) or (self.tempArray[idx+2] in tempList)) and idx < len(self.tempArray)-3:
