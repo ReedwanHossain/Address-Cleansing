@@ -591,6 +591,10 @@ class Address(object):
         print('////////////////////')
         #print("574-----------------"+input_address)
         #print(input_address)
+        if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu|\d+\.\d+', input_address) == None):
+            input_address = input_address.replace(".","")
+            print(input_address)
+            print('##############################')
         input_address = "  "+input_address
         expand = self.multiple_replace(self.rep2, input_address.lower())
         expand = self.multiple_replace(self.area_dict, expand.lower())
@@ -601,8 +605,7 @@ class Address(object):
             expand=expand.replace('rrrr',cut_hbrs.strip())
         input_address=expand
 
-        if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu', input_address) == None):
-            input_address = re.sub('([a-z])\.([a-z])', r'\1 \2', input_address)
+
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
         print('INPUT ADDRESS............')
         print(input_address)
