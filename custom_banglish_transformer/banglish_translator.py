@@ -15,6 +15,7 @@ digit_lists=[u'\u09E6',u'\u09E7',u'\u09E8',u'\u09E9',u'\u09EA',u'\u09EB',u'\u09E
 sorborno_list=[u'\u0987',u'\u0988',u'\u0989',u'\u098A',u'\u098F',u'\u0990',u'\u0993',u'\u0994']
 
 bangla_letter_list= dbinit.get_bl()
+
 for k, letter in enumerate(bangla_letter_list):
 	# letter[0]=letter[0].strip()
 	font_list.append(letter[0].strip())

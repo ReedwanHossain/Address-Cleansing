@@ -18,7 +18,7 @@ class DBINIT(object):
 
 	def load_area(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT areaname
 		FROM AREA
 		''')
 		self.AREA = c.fetchall()
@@ -26,7 +26,7 @@ class DBINIT(object):
 
 	def load_subarea(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT area, subarea, fhouse, froad, fblock, fsuparea, fsubarea
 		FROM SUBAREA
 		''')
 		self.SUBAREA = c.fetchall()
@@ -42,7 +42,7 @@ class DBINIT(object):
 
 	def load_ebl(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT eng, bn
 		FROM ENG_BNG_LETTER
 		''')
 		self.EBL = c.fetchall()
@@ -51,7 +51,7 @@ class DBINIT(object):
 
 	def load_jbl(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT cbn, ceng
 		FROM JUKTOBRONO_MAP
 		''')
 		self.JBL = c.fetchall()
@@ -59,7 +59,7 @@ class DBINIT(object):
 
 	def load_bl(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT bn, eng
 		FROM BANGLA_KEYMAP
 		''')
 		self.BL = c.fetchall()
@@ -67,7 +67,7 @@ class DBINIT(object):
 
 	def load_bv(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT vbn
 		FROM BANGLA_VOWEL
 		''')
 		self.BV = c.fetchall()
@@ -75,7 +75,7 @@ class DBINIT(object):
 
 	def load_digit(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT deng, dbn
 		FROM DIGITS
 		''')
 		self.DIGITS = c.fetchall()
@@ -83,7 +83,7 @@ class DBINIT(object):
 
 	def load_keyword_map(self):
 		c.execute('''
-		SELECT DISTINCT *
+		SELECT DISTINCT keyeng,keybn,corbang,blank
 		FROM KEYWORD_MAPLIST
 		''')
 		self.KEYWORD_MAP = c.fetchall()

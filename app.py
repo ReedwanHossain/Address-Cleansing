@@ -9,6 +9,8 @@ import codecs
 import csv
 from bkoi_parser import Address
 from custom_banglish_transformer.bkoi_transformer import Transformer
+from dbconf.db_operations import Operations
+
 
 app = Flask(__name__)
 CORS(app)
@@ -104,6 +106,135 @@ def transform_parse():
    addr = request.form.get('addr')
    return add_parse.parse_address(add_trans.bangla_to_english(addr))
 
+
+### insert new keyword
+@app.route('/keyword', methods = ['POST'])
+def keyword_insert():
+  con=Operations()
+  bn=None
+  en=None
+  bn = request.form.get('bn')
+  en = request.form.get('en')
+  user_id = request.form.get('user_id')
+  if bn==None or en==None:
+    return "got a blank input"
+  return con.keyword_insert(en,bn,user_id)
+
+### Search keyword
+@app.route('/keyword/search', methods = ['POST'])
+def search_keyword():
+  con=Operations()
+  en=None 
+  en=request.form.get('en')
+  if en==None:
+    return "got a blank input"
+  return con.search_keyword(en)
+
+### Delete Keyword
+@app.route('/keyword/<int:kw_id>', methods=['DELETE'])
+def delete_keyword():
+    con=Operations()
+    return con.delete_keyword(kw_id)
+
+
+
+### insert new area
+@app.route('/area', methods = ['POST'])
+def area_insert():
+  con=Operations()
+  area=None
+  area = request.form.get('areaname')
+  if area==None :
+    return "got a blank input"
+  return con.area_insert(area)
+
+
+### Search Area
+@app.route('/area/search', methods = ['POST'])
+def search_area():
+  con=Operations()
+  area=None 
+  area=request.form.get('area')
+  if area==None:
+    return "got a blank input"
+  return con.search_area(area)
+
+### Delete Area
+@app.route('/area/<int:area_id>', methods=['DELETE'])
+def delete_area(area_id):
+    con=Operations()
+    return con.delete_area(area_id)
+
+### insert new subarea
+@app.route('/subarea', methods = ['POST'])
+def subarea_insert():
+  con=Operations()
+  area=None
+  subarea=None
+  fhouse=None
+  froad=None
+  fblock=None
+  fsuparea=None
+  fsubarea=None
+  area = request.form.get('area')
+  subarea = request.form.get('subarea')
+  fhouse = request.form.get('fhouse')
+  froad = request.form.get('froad')
+  fblock = request.form.get('fblock')
+  fsuparea = request.form.get('fsuparea')
+  fsubarea = request.form.get('fsubarea')
+  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None:
+    return "got a blank input"
+  return con.subarea_insert(area,subarea,fhouse,froad,fblock,fsuparea,fsubarea)
+
+### Search Subarea
+@app.route('/subarea/search', methods = ['POST'])
+def search_subarea():
+  con=Operations()
+  subarea=None 
+  subarea=request.form.get('subarea')
+  if subarea==None:
+    return "got a blank input"
+  return con.search_subarea(subarea)
+
+
+### Delete Area
+@app.route('/subarea/<int:subarea_id>', methods=['DELETE'])
+def delete_subarea(subarea_id):
+    con=Operations()
+    return con.delete_subarea(subarea_id)
+
+### insert new union,division,subdivision
+@app.route('/dsu', methods = ['POST'])
+def dsu_insert():
+  con=Operations()
+  union=None
+  subdivision=None
+  division=None
+  union = request.form.get('union')
+  subdivision = request.form.get('subdivision')
+  division = request.form.get('division')
+
+  if union==None or subdivision==None or division==None:
+    return "got a blank input"
+  return con.dsu_insert(union,subdivision,division)
+
+
+### Search DSU
+@app.route('/dsu/search', methods = ['POST'])
+def search_dsu():
+  con=Operations()
+  dsu=None 
+  dsu=request.form.get('dsu')
+  if dsu==None:
+    return "got a blank input"
+  return con.search_dsu(dsu)
+
+### Delete DSU
+@app.route('/dsu/<int:dsu_id>', methods=['DELETE'])
+def delete_dsu(dsu_id):
+    con=Operations()
+    return con.delete_dsu(dsu_id)
 
 
 if __name__ == '__main__':
