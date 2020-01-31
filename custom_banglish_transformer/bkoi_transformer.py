@@ -34,7 +34,7 @@ class Transformer(object):
         digits= dbinit.get_digit()
         for i, digit in enumerate(digits):
             address=address.replace(digit[1],digit[0])
-        address=re.sub(r'(,|#|-|:|/)',r' \1 ',address)
+        address=re.sub(r'(,|#|-|:|/|–)',r' \1 ',address)
         #print(address)
         address=re.sub(r'(\d+)',r' \1',address)
         #print(address)
@@ -67,6 +67,7 @@ class Transformer(object):
         eng_address=eng_address.strip()
         eng_address=eng_address.lower()
         eng_address=eng_address.replace(' - ','-')
+        eng_address=eng_address.replace(' – ','–')
         eng_address=eng_address.replace(' / ','/')
         eng_address=eng_address.replace(' : ',':')
         eng_address=eng_address.replace(' # ','#')

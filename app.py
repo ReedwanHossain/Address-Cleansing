@@ -8,6 +8,7 @@ import re
 import codecs
 import csv
 from bkoi_parser import Address
+from bkoi_normalizer import AddressParser
 from custom_banglish_transformer.bkoi_transformer import Transformer
 from dbconf.db_operations import Operations
 
@@ -96,6 +97,15 @@ def transformer_addr():
    # print "address.........."+de_addr
    return add_trans.bangla_to_english(addr)
 
+@app.route('/rupantor/parse', methods = ['POST'])
+def rupantor_parse():
+   ob_trans = None
+   ob_parse = None
+   ob_trans = Transformer()
+   ob_parse = AddressParser()
+   addr = request.form.get('addr')
+   print("Vatiza called ................... "+addr)
+   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr))
 
 @app.route('/transparse', methods = ['POST'])
 def transform_parse():
