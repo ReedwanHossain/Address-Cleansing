@@ -58,7 +58,29 @@ class Operations(object):
 			return 'Area deleted'
 		except Exception as e:
 			print(e)
-			return 'Error Occured'		
+			return 'Error Occured'
+
+
+	def area_update(self,area_id,area):
+		area_id=str(area_id)
+		area=area.strip().lower()
+		c = self.conn.cursor()
+
+		c.execute("SELECT * from AREA where `id`='"+area_id+"' ")
+		check_result = c.fetchall()
+		print('check check_result')
+		print(check_result)
+		if len(check_result)<=0:
+			return "Not Available"
+		else:
+			try:
+				c.execute("UPDATE AREA SET `areaname`='"+area+"' WHERE `id`='"+area_id+"' ")
+				self.conn.commit()
+				print("successfully updated")
+				return "successfully updated"
+			except Exception as e:
+				print(e)
+				return "Error"
 
 
 	def subarea_insert(self,sa_area,sa_subarea,f_house,f_road,f_block,f_suparea,f_subarea):
@@ -116,6 +138,35 @@ class Operations(object):
 			print(e)
 			return 'Error Occured'
 
+
+	def subarea_update(self,subarea_id,sa_area,sa_subarea,f_house,f_road,f_block,f_suparea,f_subarea):
+		subarea_id=str(subarea_id)
+		sa_area=sa_area.strip().lower()
+		sa_subarea=sa_subarea.strip().lower()
+		f_house=f_house.strip().lower()
+		f_road=f_road.strip().lower()
+		f_block=f_block.strip().lower()
+		f_suparea=f_suparea.strip().lower()
+		f_subarea=f_subarea.strip().lower()
+		c = self.conn.cursor()
+		print(subarea_id)
+		c.execute("SELECT * from SUBAREA where `id`='"+subarea_id+"' ")
+		check_result = c.fetchall()
+		print('check check_result')
+		print(check_result)
+		if len(check_result)<=0:
+			return "Not Available"
+		else:
+			try:
+				c.execute("UPDATE SUBAREA SET `area`='"+sa_area+"',`subarea`='"+sa_subarea+"',`fhouse`='"+f_house+"',`froad`='"+f_road+"',`fblock`='"+f_block+"',`fsuparea`='"+f_suparea+"',`fsubarea`='"+f_subarea	+"' WHERE `id`='"+subarea_id+"' ")
+				self.conn.commit()
+				print("successfully updated")
+				return "successfully updated"
+			except Exception as e:
+				print(e)
+				return "Error"
+
+
 	def dsu_insert(self,union,subdivision,division):
 		union=union.strip().lower()
 		subdivision=subdivision.strip().lower()
@@ -131,6 +182,27 @@ class Operations(object):
 				self.conn.commit()
 				print("successfully added")
 				return "successfully added"
+			except Exception as e:
+				print(e)
+				return "Error"
+
+
+	def dsu_update(self,dsu_id,union,subdivision,division):
+		dsu_id=str(dsu_id)
+		union=union.strip().lower()
+		subdivision=subdivision.strip().lower()
+		division=division.strip().lower()
+		c = self.conn.cursor()
+		c.execute("SELECT * from DSU where `id`='"+dsu_id+"' ")
+		check_result = c.fetchall()
+		if len(check_result)<=0:
+			return "Not Available"
+		else:
+			try:
+				c.execute("UPDATE DSU SET `union`='"+union+"',`subdivision`='"+subdivision+"',`division`='"+division+"' WHERE `id`='"+dsu_id+"' ")
+				self.conn.commit()
+				print("successfully updated")
+				return "successfully updated"
 			except Exception as e:
 				print(e)
 				return "Error"
@@ -181,6 +253,27 @@ class Operations(object):
 				self.conn.commit()
 				print("successfully added")
 				return "successfully added"
+			except Exception as e:
+				print(e)
+				return "Error"
+
+
+	def keyword_update(self,kw_id,en,bn,user_id):
+		en=en.strip().lower()
+		bn=bn.strip()
+		c = self.conn.cursor()
+		c.execute("SELECT * from KEYWORD_MAPLIST where  `id`='"+kw_id+"' ")
+		check_result = c.fetchall()
+		print(len(check_result))
+		if len(check_result)<=0:
+			return "Not Available"
+		else:
+			try:				
+				c.execute("UPDATE KEYWORD_MAPLIST SET `keyeng`='"+en+"',`keybn`='"+bn+"',`blank`='"+user_id+"' WHERE `id`='"+kw_id+"' ")
+				#c.execute(" INSERT INTO KEYWORD_MAPLIST(`keyeng`,`keybn`,`corbang`,`blank`) VALUES ('"+en+"','"+bn+"','','"+user_id+"' ) ")
+				self.conn.commit()
+				print("successfully updated")
+				return "successfully updated"
 			except Exception as e:
 				print(e)
 				return "Error"
