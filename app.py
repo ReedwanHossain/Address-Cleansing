@@ -101,20 +101,31 @@ def transformer_addr():
 def rupantor_parse():
    ob_trans = None
    ob_parse = None
+   thana_param = None
    ob_trans = Transformer()
    ob_parse = AddressParser()
    addr = request.form.get('addr')
-   print("Vatiza called ................... "+addr)
-   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr))
+   try:
+     thana_param = request.form.get('thana')
+   except Exception as e:
+     thana_param = None
+
+   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param)
 
 @app.route('/transparse', methods = ['POST'])
 def transform_parse():
    add_trans = None
    add_parse = None
+   thana_param = None
    add_trans = Transformer()
    add_parse = Address()
    addr = request.form.get('addr')
-   return add_parse.parse_address(add_trans.bangla_to_english(addr))
+   try:
+     thana_param = request.form.get('thana')
+   except Exception as e:
+     thana_param = None
+   
+   return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param)
 
 
 ### insert new keyword
