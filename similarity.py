@@ -18,7 +18,7 @@ def bkoi_address_matcher(a1,a2):
 	# Calculate the pairwise cosine similarities (depending on the amount of data that you are going to have this could take a while)
 	S = cosine_similarity(X)
 	score=S[0][1]
-	print(score)
+	#print(score)
 	if score>0.75:
 		return "YES"
 	else:

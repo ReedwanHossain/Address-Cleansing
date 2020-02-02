@@ -64,8 +64,12 @@ def upload_file():
 
 @app.route('/address/matcher', methods = ['POST'])
 def matcher():
+    add_trans = None
+    add_trans = Transformer()
     addr1 = request.form.get('addr1')
     addr2 = request.form.get('addr2')
+    addr1=add_trans.bangla_to_english(addr1)
+    addr2=add_trans.bangla_to_english(addr2)
     addr1=similarity.bkoi_addess_cleaner(addr1)
     addr2=similarity.bkoi_addess_cleaner(addr2)
     print(addr1+"   "+addr2)
