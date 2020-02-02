@@ -19,7 +19,7 @@ dbinit.load_dsu()
 
 from miniparser import MiniParser
 from spellcheck import SpellCheck
-class Address(object):
+class AddressParser(object):
        
     # initializaion............................
     def __init__(self):
@@ -498,7 +498,7 @@ class Address(object):
 
 
 
-    def parse_address(self, input_address):
+    def rupantor_parse_address(self, input_address):
         input_address = " "+input_address
         input_address = input_address.lower()
         
@@ -836,7 +836,6 @@ class Address(object):
 
             'status' : self.check_address_status(),
             'address' : final_address,
-            'geocoded' : self.search_addr_bkoi2(final_address),
             'area' : self.matched[self.areakey],
             'parsed_house':self.matched[self.housekey],
             'parsed_building_name':self.matched[self.buildingkey],
@@ -848,9 +847,7 @@ class Address(object):
             'parsed_district':self.matched[self.districtkey],
             'parsed_sub_district':self.matched[self.sub_districtkey],
             'parsed_union':self.matched[self.unionkey],
-            'pattern':s_pattern,
         }
-        print(self.Check_Confidence_Score())
         self.__init__()
 
         return obj
