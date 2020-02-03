@@ -19,16 +19,18 @@ def bkoi_address_matcher(a1,a2,inA1,inA2):
     # Calculate the pairwise cosine similarities (depending on the amount of data that you are going to have this could take a while)
     S = cosine_similarity(X)
     score=S[0][1]
-    #print(score)
-    if score>0.75:
-        status="YES"
+    print(score)
+    if score>=0.97:
+        status="exact"
+    elif score<0.97 and score>=0.75:
+        status = "approximate"
     else:
-        status="NO"
+        status="not matched"
 
     response_obj = {
-      'address 1' : inA1,
-      'address 2' : inA2,
-      'exact match' : status,
+      'address 1' : inA1.strip(),
+      'address 2' : inA2.strip(),
+      'match status' : status,
       'match percentage' : str(int(score*100))+"%",
     }
     return response_obj
