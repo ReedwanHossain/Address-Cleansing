@@ -68,13 +68,18 @@ def matcher():
     add_trans = Transformer()
     addr1 = request.form.get('addr1')
     addr2 = request.form.get('addr2')
+    inAdd1=addr1
+    inAdd2=addr2
     addr1=add_trans.bangla_to_english(addr1)
     addr2=add_trans.bangla_to_english(addr2)
     addr1=similarity.bkoi_addess_cleaner(addr1)
     addr2=similarity.bkoi_addess_cleaner(addr2)
-    print(addr1+"   "+addr2)
-    print (similarity.bkoi_address_matcher(addr1,addr2))
-    return similarity.bkoi_address_matcher(addr1,addr2)
+    #print(addr1+"   "+addr2)
+    #print (similarity.bkoi_address_matcher(addr1,addr2,inadd1,inadd2))
+
+
+
+    return similarity.bkoi_address_matcher(addr1,addr2,inAdd1,inAdd2)
 
 
 @app.route('/parse', methods = ['POST'])
@@ -118,20 +123,31 @@ def transformer_addr():
 def rupantor_parse():
    ob_trans = None
    ob_parse = None
+   thana_param = None
    ob_trans = Transformer()
    ob_parse = AddressParser()
    addr = request.form.get('addr')
-   print("Vatiza called ................... "+addr)
-   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr))
+   try:
+     thana_param = request.form.get('thana')
+   except Exception as e:
+     thana_param = None
+
+   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param)
 
 @app.route('/transparse', methods = ['POST'])
 def transform_parse():
    add_trans = None
    add_parse = None
+   thana_param = None
    add_trans = Transformer()
    add_parse = Address()
    addr = request.form.get('addr')
-   return add_parse.parse_address(add_trans.bangla_to_english(addr))
+   try:
+     thana_param = request.form.get('thana')
+   except Exception as e:
+     thana_param = None
+   
+   return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param)
 
 
 ### insert new keyword
@@ -147,6 +163,22 @@ def keyword_insert():
     return "got a blank input"
   return con.keyword_insert(en,bn,user_id)
 
+
+### insert new keyword
+@app.route('/keyword/update', methods = ['POST'])
+def keyword_update():
+  con=Operations()
+  kw_id=None
+  bn=None
+  en=None
+  kw_id = request.form.get('kw_id')
+  bn = request.form.get('bn')
+  en = request.form.get('en')
+  user_id = request.form.get('user_id')
+  if bn==None or en==None:
+    return "got a blank input"
+  return con.keyword_update(kw_id,en,bn,user_id)
+
 ### Search keyword
 @app.route('/keyword/search', methods = ['POST'])
 def search_keyword():
@@ -159,7 +191,7 @@ def search_keyword():
 
 ### Delete Keyword
 @app.route('/keyword/<int:kw_id>', methods=['DELETE'])
-def delete_keyword():
+def delete_keyword(kw_id):
     con=Operations()
     return con.delete_keyword(kw_id)
 
@@ -174,6 +206,19 @@ def area_insert():
   if area==None :
     return "got a blank input"
   return con.area_insert(area)
+
+### update area
+@app.route('/area/update', methods = ['POST'])
+def area_update():
+  con=Operations()
+  area_id=None
+  area=None
+  area_id = request.form.get('area_id')
+  area = request.form.get('areaname')
+  
+  if area==None:
+    return "got a blank input"
+  return con.area_update(area_id,area)
 
 
 ### Search Area
@@ -214,6 +259,30 @@ def subarea_insert():
     return "got a blank input"
   return con.subarea_insert(area,subarea,fhouse,froad,fblock,fsuparea,fsubarea)
 
+### update subarea
+@app.route('/subarea/update', methods = ['POST'])
+def subarea_update():
+  con=Operations()
+  subarea_id=None
+  area=None
+  subarea=None
+  fhouse=None
+  froad=None
+  fblock=None
+  fsuparea=None
+  fsubarea=None
+  subarea_id = request.form.get('subarea_id')
+  area = request.form.get('area')
+  subarea = request.form.get('subarea')
+  fhouse = request.form.get('fhouse')
+  froad = request.form.get('froad')
+  fblock = request.form.get('fblock')
+  fsuparea = request.form.get('fsuparea')
+  fsubarea = request.form.get('fsubarea')
+  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None:
+    return "got a blank input"
+  return con.subarea_update(subarea_id,area,subarea,fhouse,froad,fblock,fsuparea,fsubarea)
+
 ### Search Subarea
 @app.route('/subarea/search', methods = ['POST'])
 def search_subarea():
@@ -245,6 +314,24 @@ def dsu_insert():
   if union==None or subdivision==None or division==None:
     return "got a blank input"
   return con.dsu_insert(union,subdivision,division)
+
+
+### Update union,division,subdivision
+@app.route('/dsu/update', methods = ['POST'])
+def dsu_update():
+  con=Operations()
+  dsu_id=None
+  union=None
+  subdivision=None
+  division=None
+  dsu_id = request.form.get('dsu_id')
+  union = request.form.get('union')
+  subdivision = request.form.get('subdivision')
+  division = request.form.get('division')
+
+  if union==None or subdivision==None or division==None:
+    return "got a blank input"
+  return con.dsu_update(dsu_id,union,subdivision,division)
 
 
 ### Search DSU

@@ -498,7 +498,7 @@ class Address(object):
 
 
 
-    def parse_address(self, input_address):
+    def parse_address(self, input_address, thana_param):
         input_address = " "+input_address
         input_address = input_address.lower()
         
@@ -836,7 +836,7 @@ class Address(object):
 
             'status' : self.check_address_status(),
             'address' : final_address,
-            'geocoded' : self.search_addr_bkoi2(final_address),
+            'geocoded' : self.search_addr_bkoi2(final_address, thana_param),
             'area' : self.matched[self.areakey],
             'parsed_house':self.matched[self.housekey],
             'parsed_building_name':self.matched[self.buildingkey],
@@ -1016,13 +1016,18 @@ class Address(object):
 
             # result=fuzz.ratio(qstring.lower(), i['Address'].lower())
 
-    def search_addr_bkoi2(self, qstring):
+    def search_addr_bkoi2(self, qstring, thana_param):
         obj=MiniParser()
         # print(self.matched)
         # print('.....at search..........')
         ## print(qstring)
         url="http://elastic.barikoi.com/api/search/autocomplete/exact"
         r = requests.post(url, params={'q': qstring})
+        if(thana_param == None):
+            r = requests.post(url, params={'q': qstring})
+        elif(thana_param == 'yes'):
+            r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+
         try:
             datas = r.json()
             # print("got it")
@@ -1310,19 +1315,31 @@ class Address(object):
             print(self.matched)
             final_addr=self.search_addr_bkoi(data,qstring)
 
+        thana_value = None
+        try:
+            thana_value = final_addr['thana']
+
+        except Exception as e:
+            thana_value = None
+
         try:
             prop_filter = {
-            'Address': final_addr['new_address'],
-            'latitude': final_addr['latitude'],
-            'longitude': final_addr['longitude'],
-            'city': final_addr['city'],
-            'area': final_addr['area'],
-            'postCode': final_addr['postCode'],
-            'pType': final_addr['pType'],
-            'uCode': final_addr['uCode']
-        }
+                'Address': final_addr['new_address'],
+                'latitude': final_addr['latitude'],
+                'longitude': final_addr['longitude'],
+                'city': final_addr['city'],
+                'area': final_addr['area'],
+                'postCode': final_addr['postCode'],
+                'pType': final_addr['pType'],
+                'uCode': final_addr['uCode']
+            }
+            if thana_value != None:
+                prop_filter['thana'] = thana_value
+
+
         except Exception as e:
             prop_filter = {}
+
 
 
         return prop_filter
