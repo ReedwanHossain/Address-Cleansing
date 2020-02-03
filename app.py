@@ -11,6 +11,7 @@ from bkoi_parser import Address
 from bkoi_normalizer import AddressParser
 from custom_banglish_transformer.bkoi_transformer import Transformer
 from dbconf.db_operations import Operations
+import similarity
 
 
 app = Flask(__name__)
@@ -59,6 +60,22 @@ def upload_file():
         return send_from_directory('.', 'parsed.csv', attachment_filename='parsed.csv', as_attachment=True)
     except FileNotFoundError:
         abort(404)
+
+
+@app.route('/address/matcher', methods = ['POST'])
+def matcher():
+    add_trans = None
+    add_trans = Transformer()
+    addr1 = request.form.get('addr1')
+    addr2 = request.form.get('addr2')
+    addr1=add_trans.bangla_to_english(addr1)
+    addr2=add_trans.bangla_to_english(addr2)
+    addr1=similarity.bkoi_addess_cleaner(addr1)
+    addr2=similarity.bkoi_addess_cleaner(addr2)
+    print(addr1+"   "+addr2)
+    print (similarity.bkoi_address_matcher(addr1,addr2))
+    return similarity.bkoi_address_matcher(addr1,addr2)
+
 
 @app.route('/parse', methods = ['POST'])
 def parse_it():
