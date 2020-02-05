@@ -1022,11 +1022,15 @@ class Address(object):
         # print('.....at search..........')
         ## print(qstring)
         url="http://elastic.barikoi.com/api/search/autocomplete/exact"
-        r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
-        # if(thana_param == None and ):
-        #     r = requests.post(url, params={'q': qstring})
-        # elif(thana_param == 'yes' and district_param == 'yes'):
-        #     r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+        #r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
+        if(thana_param == "yes" and district_param != 'yes'):
+            r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+        elif(thana_param != "yes" and district_param == 'yes'):
+            r = requests.post(url, params={'q': qstring, 'district' : district_param})
+        elif(thana_param == 'yes' and district_param == 'yes'):
+            r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
+        elif(thana_param != "yes" and district_param != 'yes'):
+            r = requests.post(url, params={'q': qstring})
 
         try:
             datas = r.json()
@@ -1330,26 +1334,21 @@ class Address(object):
         except Exception as e:
             district_value = None
 
-        try:
-            prop_filter = {
-                'Address': final_addr['new_address'],
-                'latitude': final_addr['latitude'],
-                'longitude': final_addr['longitude'],
-                'city': final_addr['city'],
-                'area': final_addr['area'],
-                'postCode': final_addr['postCode'],
-                'pType': final_addr['pType'],
-                'uCode': final_addr['uCode']
-            }
-            if thana_value != None:
-                prop_filter['thana'] = thana_value
+        prop_filter = {
+            'Address': final_addr['new_address'],
+            'latitude': final_addr['latitude'],
+            'longitude': final_addr['longitude'],
+            'city': final_addr['city'],
+            'area': final_addr['area'],
+            'postCode': final_addr['postCode'],
+            'pType': final_addr['pType'],
+            'uCode': final_addr['uCode']
+        }
+        if thana_param=="yes":
+            prop_filter['thana'] = thana_value
 
-            if district_value != None:
-                prop_filter['district'] = district_value
-
-
-        except Exception as e:
-            prop_filter = {}
+        if district_param == "yes":
+            prop_filter['district'] = district_value
 
 
 
