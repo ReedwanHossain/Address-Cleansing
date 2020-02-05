@@ -498,7 +498,7 @@ class Address(object):
 
 
 
-    def parse_address(self, input_address, thana_param):
+    def parse_address(self, input_address, thana_param, district_param):
         input_address = " "+input_address
         input_address = input_address.lower()
         
@@ -836,7 +836,7 @@ class Address(object):
 
             'status' : self.check_address_status(),
             'address' : final_address,
-            'geocoded' : self.search_addr_bkoi2(final_address, thana_param),
+            'geocoded' : self.search_addr_bkoi2(final_address, thana_param, district_param),
             'area' : self.matched[self.areakey],
             'parsed_house':self.matched[self.housekey],
             'parsed_building_name':self.matched[self.buildingkey],
@@ -1016,17 +1016,17 @@ class Address(object):
 
             # result=fuzz.ratio(qstring.lower(), i['Address'].lower())
 
-    def search_addr_bkoi2(self, qstring, thana_param):
+    def search_addr_bkoi2(self, qstring, thana_param, district_param):
         obj=MiniParser()
         # print(self.matched)
         # print('.....at search..........')
         ## print(qstring)
         url="http://elastic.barikoi.com/api/search/autocomplete/exact"
-        r = requests.post(url, params={'q': qstring})
-        if(thana_param == None):
-            r = requests.post(url, params={'q': qstring})
-        elif(thana_param == 'yes'):
-            r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+        r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
+        # if(thana_param == None and ):
+        #     r = requests.post(url, params={'q': qstring})
+        # elif(thana_param == 'yes' and district_param == 'yes'):
+        #     r = requests.post(url, params={'q': qstring, 'thana': thana_param})
 
         try:
             datas = r.json()
@@ -1322,6 +1322,14 @@ class Address(object):
         except Exception as e:
             thana_value = None
 
+
+        district_value = None
+        try:
+            district_value = final_addr['district']
+
+        except Exception as e:
+            district_value = None
+
         try:
             prop_filter = {
                 'Address': final_addr['new_address'],
@@ -1335,6 +1343,9 @@ class Address(object):
             }
             if thana_value != None:
                 prop_filter['thana'] = thana_value
+
+            if district_value != None:
+                prop_filter['district'] = district_value
 
 
         except Exception as e:
