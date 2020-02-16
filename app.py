@@ -124,6 +124,7 @@ def rupantor_parse():
    ob_trans = None
    ob_parse = None
    thana_param = None
+   district_param = None
    ob_trans = Transformer()
    ob_parse = AddressParser()
    addr = request.form.get('addr')
@@ -132,13 +133,19 @@ def rupantor_parse():
    except Exception as e:
      thana_param = None
 
-   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param)
+   try:
+     district_param = request.form.get('district')
+   except Exception as e:
+     district_param = None
+
+   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param, district_param)
 
 @app.route('/transparse', methods = ['POST'])
 def transform_parse():
    add_trans = None
    add_parse = None
    thana_param = None
+   district_param = None
    add_trans = Transformer()
    add_parse = Address()
    addr = request.form.get('addr')
@@ -146,8 +153,14 @@ def transform_parse():
      thana_param = request.form.get('thana')
    except Exception as e:
      thana_param = None
+
+   try:
+     district_param = request.form.get('district')
+   except Exception as e:
+     district_param = None
+
    
-   return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param)
+   return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
 
 
 ### insert new keyword
