@@ -633,10 +633,13 @@ class Address(object):
         print('INPUT ADDRESS............')
         print(input_address)
         print(input_address)
+        input_address=re.sub('sh*id+h*es+h*\s*w*(o+|a+)r(i|y)','siddheshwari',input_address)
+        print(input_address)
         x = input_address.split("*")
         input_address = " "
         #spell_checker
         # print('before spellcheck '+expand)
+
         spell_check=SpellCheck('area-list.txt')
         for i in x:
             i=i.strip()
@@ -735,7 +738,7 @@ class Address(object):
                     self.matched_array.append(self.matched[self.unionkey])
                 continue
 
-            # print(self.matched)
+        #print(self.matched)
 
         # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
         #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
@@ -916,8 +919,8 @@ class Address(object):
                     score=score-(self.matched[self.subarea_pattern].count('H')-1)*(self.matched[self.subarea_pattern].count('H')-1)
         if self.matched[self.areakey]=="" and self.matched[self.areakey]==None:
             score=20
-        print(str(score)+"%")
-        return None
+        #print(str(score)+"%")
+        return score
     def Check_Reverse_Key(self,s):
         house_key=''
         road_key=''
