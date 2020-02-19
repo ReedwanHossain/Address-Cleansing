@@ -532,6 +532,9 @@ class Address(object):
             input_address=input_address.replace("."," ")
         '''
         input_address=input_address.replace(";"," ")
+        input_address=input_address.replace("\\","")
+        input_address=input_address.replace("\n"," ")
+        input_address=input_address.replace("="," ")
         input_address=input_address.replace("-"," ")
         input_address=input_address.replace("–"," ")
         input_address=input_address.replace(":"," ")
@@ -634,6 +637,8 @@ class Address(object):
         print(input_address)
         print(input_address)
         input_address=re.sub('sh*id+h*es+h*\s*w*(o+|a+)r(i|y)','siddheshwari',input_address)
+        input_address=re.sub('n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*','nikunja',input_address)
+
         print(input_address)
         x = input_address.split("*")
         input_address = " "
@@ -647,8 +652,15 @@ class Address(object):
                 spell_check.check(i)
                 i=str(spell_check.correct())
             input_address+=i
-        expand=input_address
+        
         # print('after spellcheck '+expand)
+
+
+        input_address=re.sub('dohs\s*(,)*\s*mirpur','mirpur dohs',input_address)
+        input_address=re.sub('dohs\s*(,)*\s*mohakhali','mohakhali dohs',input_address)
+        input_address=re.sub('dohs\s*(,)*\s*baridhara','baridhara dohs',input_address)
+        input_address=re.sub('dohs\s*(,)*\s*banani','banani dohs',input_address)
+        expand=input_address
         self.clone_input_address = input_address
                 
         expand=expand.lower()+"  "
@@ -934,6 +946,12 @@ class Address(object):
         pattern_lane=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+lane\s+',s)
         pattern_block=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+block\s+',s)
         pattern_sector=re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s+sector\s+',s)
+        pattern_road_feet=re.search('\s+\d+\s*(feet|(ft[.]*|foot)\s+)',s)
+        if pattern_road_feet:
+            road_feet=re.search("\d+",pattern_road_feet.group())
+            #print(road_feet.group())
+            self.reverse_road_pattern=True
+            self.reverse_pattern['road']=str(road_feet.group())+" feet road"
         if pattern_house:
             house_key=pattern_house.group().split()[0]
             print("house "+house_key)
@@ -1041,7 +1059,7 @@ class Address(object):
             data=datas
             pass
         except Exception as e:
-            # print("Failed to get data...................")
+            print("Failed to get data...................")
             return {}
         
         geocoded_addr_comp=""
@@ -1336,17 +1354,19 @@ class Address(object):
 
         except Exception as e:
             district_value = None
-
-        prop_filter = {
-            'Address': final_addr['new_address'],
-            'latitude': final_addr['latitude'],
-            'longitude': final_addr['longitude'],
-            'city': final_addr['city'],
-            'area': final_addr['area'],
-            'postCode': final_addr['postCode'],
-            'pType': final_addr['pType'],
-            'uCode': final_addr['uCode']
-        }
+        try:
+            prop_filter = {
+                'Address': final_addr['new_address'],
+                'latitude': final_addr['latitude'],
+                'longitude': final_addr['longitude'],
+                'city': final_addr['city'],
+                'area': final_addr['area'],
+                'postCode': final_addr['postCode'],
+                'pType': final_addr['pType'],
+                'uCode': final_addr['uCode']
+            }
+        except Exception as e:
+            return {}
         if thana_param=="yes":
             prop_filter['thana'] = thana_value
 
