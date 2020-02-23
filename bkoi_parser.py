@@ -12,14 +12,12 @@ import enchant
 
 
 from dbconf.initdb import DBINIT
-dbinit = DBINIT()
-dbinit.load_area()
-dbinit.load_subarea()
-dbinit.load_dsu()
+
 
 from miniparser import MiniParser
 from spellcheck import SpellCheck
 class Address(object):
+
        
     # initializaion............................
     def __init__(self):
@@ -70,6 +68,13 @@ class Address(object):
         self.get_multiple_area=[]
         self.subarea_list_pattern=[]
         self.GeoTrueFor={}    
+        self.dbinit = DBINIT()
+        self.dbinit.load_area()
+        self.dbinit.load_subarea()
+        self.dbinit.load_dsu()
+
+
+
     reverse_pattern= {
     'house':'',
     'road':'',
@@ -119,7 +124,7 @@ class Address(object):
         #dist_token = word_tokenize(dist_token)
         dist_token = dist_token.split()
 
-        district_list = dbinit.get_dsu()
+        district_list = self.dbinit.get_dsu()
         for j, district in enumerate(district_list):
                 if (dist_token[0].lower() == district[2].lower() and dist_token[0].lower() in self.cleanAddressStr.lower()):
                     self.matched[self.districtkey] = district[2].lower()
@@ -157,7 +162,7 @@ class Address(object):
         #area_token = word_tokenize(area_token)
         area_token = area_token.split()
         
-        area_list = dbinit.get_area()
+        area_list = self.dbinit.get_area()
         for j, area in enumerate(area_list):
             if (area_token[0].lower() == area.lower() and area_token[0].lower() in self.cleanAddressStr.lower()):
                 self.matched[self.areakey] = area.lower()
@@ -178,7 +183,7 @@ class Address(object):
                 elif(area.lower() == 'uttara'):
                     token = 'sector '+ self.tempArray[idx]
                 
-                subarea_list = dbinit.get_subarea()
+                subarea_list = self.dbinit.get_subarea()
                 for j, subarea in enumerate(subarea_list):
                     if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
                         self.matched[self.subareakey] = token.lower()
@@ -218,7 +223,7 @@ class Address(object):
                         self.subarea_flag = True
                         return True
 
-                subarea_list = dbinit.get_subarea()
+                subarea_list = self.dbinit.get_subarea()
                 for j, subarea in enumerate(subarea_list):
                     # subarea[0] = subarea[0].strip()
 
@@ -236,7 +241,7 @@ class Address(object):
         
 
         elif self.area_flag == False:
-            subarea_list = dbinit.get_subarea()
+            subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
                 if (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower()):
                     if (token.lower().strip()=='section' or token.lower().strip()=='sector') and len(self.tempArray)-1>idx:
@@ -299,7 +304,7 @@ class Address(object):
                 check_match=0
                 print('279------------')
                 print(token)
-                area_list = dbinit.get_subarea()
+                area_list = self.dbinit.get_subarea()
                 for j, area in enumerate(area_list):
                     if area[0].lower()==self.tempArray[idx-1].lower():
                         check_match=1
@@ -443,7 +448,7 @@ class Address(object):
         
 
     def check_address_status(self):
-        area_pattern = dbinit.get_subarea()
+        area_pattern = self.dbinit.get_subarea()
         checkst=0
         getarea=0
         
@@ -783,13 +788,13 @@ class Address(object):
         #         if subarea not in self.get_multiple_area:
         #             self.matched[self.subareakey]=subarea.lower()
  
-        # subarea_list = dbinit.get_subarea()
+        # subarea_list = self.dbinit.get_subarea()
 
         getarea=list(set(self.get_multiple_area))
         if len(getarea)>=2:
             chk=0
             for area in getarea:
-                subarea_list = dbinit.get_subarea()
+                subarea_list = self.dbinit.get_subarea()
                 try:
                     if self.matched[self.subareakey] in self.matched[self.roadkey]:
                         self.matched[self.subareakey] = ""
