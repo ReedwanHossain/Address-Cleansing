@@ -8,7 +8,7 @@ import urllib
 import re
 import csv
 import enchant
-
+import similarity
 
 
 from dbconf.initdb import DBINIT
@@ -865,12 +865,13 @@ class Address(object):
             'parsed_union':self.matched[self.unionkey],
             'pattern':s_pattern,
         }
-        print(self.Check_Confidence_Score())
+        obj['confidence_score']=self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address'])
+        print(self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address']))
         self.__init__()
 
         return obj
 
-    def Check_Confidence_Score(self):
+    def Check_Confidence_Score(self,fixedaddr,geoaddr):
         p=1
         score=0
         print(self.matched[self.subarea_pattern])
@@ -932,7 +933,10 @@ class Address(object):
         if self.matched[self.areakey]=="" and self.matched[self.areakey]==None:
             score=20
         #print(str(score)+"%")
-        return score
+        if score==0:
+            score=similarity.bkoi_address_matcher(fixedaddr,geoaddr,fixedaddr,geoaddr)['match percentage']
+            return str(int(score.strip("%").strip())//2)+"%"
+        return str(score)+"%"
     def Check_Reverse_Key(self,s):
         house_key=''
         road_key=''
