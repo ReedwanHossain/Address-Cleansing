@@ -607,9 +607,11 @@ class Address(object):
         if b_block:
             self.matched[self.blockkey] = 'b'
             input_address = re.sub('\s+b(\s*)(:)*(-)*(\s*)block',' ', input_address)
+        print(input_address +".....................................610")
 
-        h_block=re.search('\s+b(\s*)(:)*(-)*(\s*)block',input_address)
+        h_block=re.search('\s+h(\s*)(:)*(-)*(\s*)block',input_address)
         if h_block:
+            #print("treu...........")
             self.matched[self.blockkey] = 'h'
             input_address = re.sub('\s+h(\s*)(:)*(-)*(\s*)block',' ', input_address)
         input_address = re.sub( r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address ) #insert a '-' between letters and number
