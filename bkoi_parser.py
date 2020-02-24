@@ -689,6 +689,8 @@ class Address(object):
 
         # print('....................................................')
         # print(temp_str_address)
+        if re.search('sector\s+\d+\s+mirpur',temp_str_address):
+            temp_str_address=temp_str_address.replace('sector','section')
         addresscomponents = temp_str_address.split()
 
         for i, comp in enumerate(addresscomponents):
