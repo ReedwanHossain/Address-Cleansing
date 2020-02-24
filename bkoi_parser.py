@@ -172,7 +172,7 @@ class Address(object):
         
         if self.area_flag== True:
             area = self.matched[self.areakey].lower()
-            if (idx-self.area_pos == 1 and any(char.isdigit() for char in self.tempArray[idx])):
+            if (idx-self.area_pos == 1 and any(char.isdigit() for char in self.tempArray[idx])): 
                 if(area.lower() == 'mirpur'):
                     token = 'section '+ self.tempArray[idx]
                 elif(area.lower() == 'uttara'):
@@ -241,6 +241,7 @@ class Address(object):
                 if (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower()):
                     if (token.lower().strip()=='section' or token.lower().strip()=='sector') and len(self.tempArray)-1>idx:
                         if token.lower().strip()+" "+self.tempArray[idx+1]==subarea[1].lower():
+                            print("for section 12.......")
                             self.matched[self.subareakey] = subarea[1].lower()
                             self.matched[self.areakey] = subarea[0].lower()
 
@@ -257,6 +258,8 @@ class Address(object):
                             self.subarea_flag = True
                             break
                     else:
+                        if "section" in subarea[1].lower() or "sector" in subarea[1].lower():
+                            continue
                         self.matched[self.subareakey] = subarea[1].lower()
                         self.matched[self.areakey] = subarea[0].lower()
 
@@ -750,7 +753,7 @@ class Address(object):
                     self.matched_array.append(self.matched[self.unionkey])
                 continue
 
-        #print(self.matched)
+        print(self.get_multiple_subarea)
 
         # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
         #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
