@@ -877,8 +877,12 @@ class Address(object):
             'parsed_union':self.matched[self.unionkey],
             'pattern':s_pattern,
         }
-        obj['confidence_score']=self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address'])
-        print(self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address']))
+        try:
+            obj['confidence_score']=self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address'])
+            print(self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address']))
+        except Exception as e:
+            obj['confidence_score']= '0%'
+
         self.__init__()
 
         return obj
