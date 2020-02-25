@@ -878,10 +878,10 @@ class Address(object):
             'pattern':s_pattern,
         }
         try:
-            obj['confidence_score']=self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address'])
+            obj['confidence_score_percentage']=self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address'])
             print(self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address']))
         except Exception as e:
-            obj['confidence_score']= '0%'
+            obj['confidence_score_percentage']= 0
 
         self.__init__()
 
@@ -951,8 +951,8 @@ class Address(object):
         #print(str(score)+"%")
         if score==0:
             score=similarity.bkoi_address_matcher(fixedaddr,geoaddr,fixedaddr,geoaddr)['match percentage']
-            return str(int(score.strip("%").strip())//2)+"%"
-        return str(score)+"%"
+            return int(score.strip("%").strip())//2
+        return round(score)
     def Check_Reverse_Key(self,s):
         house_key=''
         road_key=''
