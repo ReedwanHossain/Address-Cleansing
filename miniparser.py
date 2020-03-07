@@ -17,12 +17,19 @@ class MiniParser(object):
         self.floorkey=""
         self.subareakey=""
         self.multiple_subarea=[]
+        self.dis_flag = True
     
     def parse(self, parsed_aadr):
         parsed_aadr=parsed_aadr.lower()
         parsed_aadr=parsed_aadr.split(',')
         parsed_aadr[0]=parsed_aadr[0].strip()
-        if not re.match('house\s+\d+',parsed_aadr[0]) and 'flat' not in parsed_aadr[0] and 'level' not in parsed_aadr[0] and 'floor' not in parsed_aadr[0] and parsed_aadr[0].split()[0]!='house':
+        
+        try:
+        	self.dis_flag = re.match('house\s+\d+',parsed_aadr[0]) and 'flat' not in parsed_aadr[0] and 'level' not in parsed_aadr[0] and 'floor' not in parsed_aadr[0] and parsed_aadr[0].split()[0]!='house' 
+        except:
+        	print(self.dis_flag)
+
+        if not self.dis_flag:
             self.name=parsed_aadr[0]
             parsed_aadr.pop(0)
         for token in parsed_aadr:
