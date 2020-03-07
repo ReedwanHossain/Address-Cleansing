@@ -457,7 +457,7 @@ class Address(object):
         area_pattern = self.dbinit.get_subarea()
         checkst=0
         getarea=0
-        
+        same_sub_area_count=0
         assignaddress=1
         self.matched[self.areakey]=self.matched[self.areakey].replace(',','')
         if self.matched[self.areakey] not in self.cleanAddressStr:
