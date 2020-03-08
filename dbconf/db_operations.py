@@ -32,7 +32,7 @@ class Operations(object):
 	def search_area(self,area):
 		area=area.strip().lower()
 		c = self.conn.cursor()
-		c.execute("SELECT * from AREA where  LOWER(`areaname`) like ('"+area+"')")
+		c.execute("SELECT * from AREA where  LOWER(`areaname`) like ('%"+area+"%')")
 		check_result = c.fetchall()
 		area_dict_list = []
 		for i,item in  enumerate(check_result):
@@ -83,7 +83,7 @@ class Operations(object):
 				return "Error"
 
 
-	def subarea_insert(self,sa_area,sa_subarea,f_house,f_road,f_block,f_suparea,f_subarea):
+	def subarea_insert(self,sa_area,sa_subarea,f_house,f_road,f_block,f_suparea,f_subarea,area_rex,subarea_rex):
 		sa_area=sa_area.strip().lower()
 		sa_subarea=sa_subarea.strip().lower()
 		f_house=f_house.strip().lower()
@@ -91,6 +91,8 @@ class Operations(object):
 		f_block=f_block.strip().lower()
 		f_suparea=f_suparea.strip().lower()
 		f_subarea=f_subarea.strip().lower()
+		area_rex=area_rex.strip().lower()
+		subarea_rex=subarea_rex.strip().lower()
 		c = self.conn.cursor()
 		c.execute("SELECT * from SUBAREA where  LOWER(`area`)='"+sa_area+"' and  lower(`subarea`)='"+sa_subarea+"'  ")
 		check_result = c.fetchall()
@@ -98,7 +100,7 @@ class Operations(object):
 			return "Already exist"
 		else:
 			try:
-				c.execute(" INSERT INTO SUBAREA(`area`,`subarea`,`fhouse`,`froad`,`fblock`,`fsuparea`,`fsubarea`) VALUES ('"+sa_area+"','"+sa_subarea+"','"+f_house+"','"+f_road+"','"+f_block+"','"+f_suparea+"','"+f_subarea	+"' ) ")
+				c.execute(" INSERT INTO SUBAREA(`area`,`subarea`,`fhouse`,`froad`,`fblock`,`fsuparea`,`fsubarea`,`area_regex`,`subarea_regex`) VALUES ('"+sa_area+"','"+sa_subarea+"','"+f_house+"','"+f_road+"','"+f_block+"','"+f_suparea+"','"+f_subarea	+"','"+area_rex+"','"+subarea_rex+"' ) ")
 				self.conn.commit()
 				print("successfully added")
 				return "successfully added"
@@ -110,11 +112,11 @@ class Operations(object):
 	def search_subarea(self,subarea):
 		subarea=subarea.strip().lower()
 		c = self.conn.cursor()
-		c.execute("SELECT * from SUBAREA where  LOWER(`area`) like ('"+subarea+"') or `subarea` like ('"+subarea+"')")
+		c.execute("SELECT * from SUBAREA where  LOWER(`area`) like ('%"+subarea+"%') or `subarea` like ('%"+subarea+"%')")
 		check_result = c.fetchall()
 		subarea_dict_list = []
 		for i,item in  enumerate(check_result):
-			subarea_dict_list.append({'id':item[0],'area':item[1],'subarea':item[2],'fhouse':item[3],'froad':item[4],'fblock':item[5],'fsuparea':item[6],'fsubarea':item[7]})
+			subarea_dict_list.append({'id':item[0],'area':item[1],'area_regex':item[2],'subarea':item[3],'subarea_regex':item[4],'fhouse':item[5],'froad':item[6],'fblock':item[7],'fsuparea':item[8],'fsubarea':item[9]})
 		# check_result = [i for i in check_result]
 		obj = {
 			'subarea_list' : subarea_dict_list
@@ -139,7 +141,7 @@ class Operations(object):
 			return 'Error Occured'
 
 
-	def subarea_update(self,subarea_id,sa_area,sa_subarea,f_house,f_road,f_block,f_suparea,f_subarea):
+	def subarea_update(self,subarea_id,sa_area,sa_subarea,f_house,f_road,f_block,f_suparea,f_subarea,area_rex,subarea_rex):
 		subarea_id=str(subarea_id)
 		sa_area=sa_area.strip().lower()
 		sa_subarea=sa_subarea.strip().lower()
@@ -148,6 +150,8 @@ class Operations(object):
 		f_block=f_block.strip().lower()
 		f_suparea=f_suparea.strip().lower()
 		f_subarea=f_subarea.strip().lower()
+		area_rex=area_rex.strip().lower()
+		subarea_rex=subarea_rex.strip().lower()
 		c = self.conn.cursor()
 		print(subarea_id)
 		c.execute("SELECT * from SUBAREA where `id`='"+subarea_id+"' ")
@@ -158,7 +162,7 @@ class Operations(object):
 			return "Not Available"
 		else:
 			try:
-				c.execute("UPDATE SUBAREA SET `area`='"+sa_area+"',`subarea`='"+sa_subarea+"',`fhouse`='"+f_house+"',`froad`='"+f_road+"',`fblock`='"+f_block+"',`fsuparea`='"+f_suparea+"',`fsubarea`='"+f_subarea	+"' WHERE `id`='"+subarea_id+"' ")
+				c.execute("UPDATE SUBAREA SET `area`='"+sa_area+"',`subarea`='"+sa_subarea+"',`fhouse`='"+f_house+"',`froad`='"+f_road+"',`fblock`='"+f_block+"',`fsuparea`='"+f_suparea+"',`fsubarea`='"+f_subarea	+"',`area_regex`='"+area_rex +"',`subarea_regex`='"+subarea_rex +"' WHERE `id`='"+subarea_id+"' ")
 				self.conn.commit()
 				print("successfully updated")
 				return "successfully updated"
@@ -210,7 +214,7 @@ class Operations(object):
 	def search_dsu(self,dsu):
 		dsu=dsu.strip().lower()
 		c = self.conn.cursor()
-		c.execute("SELECT * from DSU where  LOWER(`union`) like ('"+dsu+"') or `subdivision` like ('"+dsu+"') or `division` like ('"+dsu+"') ")
+		c.execute("SELECT * from DSU where  LOWER(`union`) like ('%"+dsu+"%') or `subdivision` like ('%"+dsu+"%') or `division` like ('%"+dsu+"%') ")
 		check_result = c.fetchall()
 		dsu_dict_list = []
 		for i,item in  enumerate(check_result):
@@ -242,7 +246,7 @@ class Operations(object):
 		en=en.strip().lower()
 		bn=bn.strip()
 		c = self.conn.cursor()
-		c.execute("SELECT * from KEYWORD_MAPLIST where  LOWER(`keyeng`)='"+en+"' and `keybn`='"+bn+"'  ")
+		c.execute("SELECT * from KEYWORD_MAPLIST where  LOWER(`keyeng`) = '"+en+"' and `keybn` = '"+bn+"'  ")
 		check_result = c.fetchall()
 		print(len(check_result))
 		if len(check_result)>0:
@@ -283,7 +287,7 @@ class Operations(object):
 		en=en.strip().lower()
 		c = self.conn.cursor()
 		print(en)
-		c.execute("SELECT * from KEYWORD_MAPLIST where  LOWER(`keyeng`) like ('"+en+"') or `keybn` like ('"+en+"')")
+		c.execute("SELECT * from KEYWORD_MAPLIST where  LOWER(`keyeng`) like ('%"+en+"%') or `keybn` like ('%"+en+"%')")
 		check_result = c.fetchall()
 		keyword_dict_list = []
 		for i,item in  enumerate(check_result):
