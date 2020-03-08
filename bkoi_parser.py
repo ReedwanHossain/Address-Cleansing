@@ -644,6 +644,17 @@ class Address(object):
             expand=expand.replace('rrrr',cut_hbrs.strip())
         input_address=expand
 
+        ### regex to correct spell
+        sec_input_address=input_address
+        input_address=re.sub('sh*id+h*es+h*\s*w*(o+|a+)r(i|y)','siddheshwari',input_address)
+        input_address=re.sub('n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*','nikunja',input_address)
+        subarea_list = self.dbinit.get_subarea()
+        for j, subarea in enumerate(subarea_list):
+            input_address=re.sub(subarea[7].strip().lower(),subarea[0].strip().lower(),input_address)
+            input_address=re.sub(subarea[8].strip().lower(),subarea[1].strip().lower(),input_address)
+        if sec_input_address==input_address and ' block ' in input_address and ' sector ' in input_address:
+            input_address=input_address.replace('sector','section')
+        print(input_address+"  "+sec_input_address)
 
         input_address = re.sub( r'([a-zA-Z])(\d)', r'\1*\2', input_address )
         print('INPUT ADDRESS............')
@@ -661,19 +672,8 @@ class Address(object):
                 spell_check.check(i)
                 i=str(spell_check.correct())
             input_address+=i
-        
-        # print('after spellcheck '+expand)
-        ### regex to correct spell
-        sec_input_address=input_address
-        input_address=re.sub('sh*id+h*es+h*\s*w*(o+|a+)r(i|y)','siddheshwari',input_address)
-        input_address=re.sub('n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*','nikunja',input_address)
-        subarea_list = self.dbinit.get_subarea()
-        for j, subarea in enumerate(subarea_list):
-            input_address=re.sub(subarea[7].strip().lower(),subarea[0].strip().lower(),input_address)
-            input_address=re.sub(subarea[8].strip().lower(),subarea[1].strip().lower(),input_address)
-        if sec_input_address==input_address and ' block ' in input_address and ' sector ' in input_address:
-            input_address=input_address.replace('sector','section')
-        print(input_address+"  "+sec_input_address)
+        print('after spellcheck '+input_address)
+
 
 
         input_address=re.sub('dohs\s*(,)*\s*mirpur','mirpur dohs',input_address)
