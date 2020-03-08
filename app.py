@@ -261,6 +261,8 @@ def subarea_insert():
   fblock=None
   fsuparea=None
   fsubarea=None
+  area_regex=None
+  subarea_regex=None
   area = request.form.get('area')
   subarea = request.form.get('subarea')
   fhouse = request.form.get('fhouse')
@@ -268,9 +270,11 @@ def subarea_insert():
   fblock = request.form.get('fblock')
   fsuparea = request.form.get('fsuparea')
   fsubarea = request.form.get('fsubarea')
-  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None:
+  area_regex = request.form.get('area_regex')
+  subarea_regex = request.form.get('subarea_regex')
+  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None or area_regex==None or subarea_regex==None:
     return "got a blank input"
-  return con.subarea_insert(area,subarea,fhouse,froad,fblock,fsuparea,fsubarea)
+  return con.subarea_insert(area,subarea,fhouse,froad,fblock,fsuparea,fsubarea,area_regex,subarea_regex)
 
 ### update subarea
 @app.route('/subarea/update', methods = ['POST'])
@@ -284,6 +288,8 @@ def subarea_update():
   fblock=None
   fsuparea=None
   fsubarea=None
+  area_regex=None
+  subarea_regex=None
   subarea_id = request.form.get('subarea_id')
   area = request.form.get('area')
   subarea = request.form.get('subarea')
@@ -292,9 +298,11 @@ def subarea_update():
   fblock = request.form.get('fblock')
   fsuparea = request.form.get('fsuparea')
   fsubarea = request.form.get('fsubarea')
-  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None:
+  area_regex = request.form.get('area_regex')
+  subarea_regex = request.form.get('subarea_regex')
+  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None or area_regex==None or subarea_regex==None:
     return "got a blank input"
-  return con.subarea_update(subarea_id,area,subarea,fhouse,froad,fblock,fsuparea,fsubarea)
+  return con.subarea_update(subarea_id,area,subarea,fhouse,froad,fblock,fsuparea,fsubarea,area_regex,subarea_regex)
 
 ### Search Subarea
 @app.route('/subarea/search', methods = ['POST'])
