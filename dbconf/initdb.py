@@ -28,7 +28,7 @@ class DBINIT(object):
 		conn = sqlite3.connect('dbconf/TestDB.db')  
 		c = conn.cursor()
 		c.execute('''
-		SELECT DISTINCT area, subarea, fhouse, froad, fblock, fsuparea, fsubarea
+		SELECT DISTINCT area, subarea, fhouse, froad, fblock, fsuparea, fsubarea, area_regex, subarea_regex
 		FROM SUBAREA
 		''')
 		self.SUBAREA = c.fetchall()

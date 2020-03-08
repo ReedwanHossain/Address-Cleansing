@@ -241,9 +241,11 @@ class Address(object):
         
 
         elif self.area_flag == False:
+            print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
             subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
-                if (token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower()):
+                if (token.lower().strip() in subarea[1].lower().strip() and subarea[1].lower().strip() in self.cleanAddressStr.lower()):
+                    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
                     if (token.lower().strip()=='section' or token.lower().strip()=='sector') and len(self.tempArray)-1>idx:
                         if token.lower().strip()+" "+self.tempArray[idx+1]==subarea[1].lower():
                             print("for section 12.......")
@@ -265,6 +267,7 @@ class Address(object):
                     else:
                         if "section" in subarea[1].lower() or "sector" in subarea[1].lower():
                             continue
+                        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$2   "+token)
                         self.matched[self.subareakey] = subarea[1].lower()
                         self.matched[self.areakey] = subarea[0].lower()
 
@@ -454,7 +457,7 @@ class Address(object):
         area_pattern = self.dbinit.get_subarea()
         checkst=0
         getarea=0
-        
+        same_sub_area_count=0
         assignaddress=1
         self.matched[self.areakey]=self.matched[self.areakey].replace(',','')
         if self.matched[self.areakey] not in self.cleanAddressStr:
@@ -646,10 +649,6 @@ class Address(object):
         print('INPUT ADDRESS............')
         print(input_address)
         print(input_address)
-        input_address=re.sub('sh*id+h*es+h*\s*w*(o+|a+)r(i|y)','siddheshwari',input_address)
-        input_address=re.sub('n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*','nikunja',input_address)
-
-        print(input_address)
         x = input_address.split("*")
         input_address = " "
         #spell_checker
@@ -664,6 +663,17 @@ class Address(object):
             input_address+=i
         
         # print('after spellcheck '+expand)
+        ### regex to correct spell
+        sec_input_address=input_address
+        input_address=re.sub('sh*id+h*es+h*\s*w*(o+|a+)r(i|y)','siddheshwari',input_address)
+        input_address=re.sub('n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*','nikunja',input_address)
+        subarea_list = self.dbinit.get_subarea()
+        for j, subarea in enumerate(subarea_list):
+            input_address=re.sub(subarea[7].strip().lower(),subarea[0].strip().lower(),input_address)
+            input_address=re.sub(subarea[8].strip().lower(),subarea[1].strip().lower(),input_address)
+        if sec_input_address==input_address and ' block ' in input_address and ' sector ' in input_address:
+            input_address=input_address.replace('sector','section')
+        print(input_address+"  "+sec_input_address)
 
 
         input_address=re.sub('dohs\s*(,)*\s*mirpur','mirpur dohs',input_address)
