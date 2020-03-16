@@ -48,7 +48,7 @@ class MiniParser(object):
                 self.blockkey=token
             elif 'flat' in token or 'floor' in token or 'level' in token:
                 self.floorkey=token
-            elif ('block' not in token and not any(s in token for s in roadkeywords) and 'house' not in token and 'floor' not in token and 'level' not in token and 'flat' not in token) and any(token.lower().strip() == subarea.lower().strip() for subarea in subarealist):
+            elif ('block' not in token and not any(s in token for s in roadkeywords) and 'house' not in token and 'floor' not in token and 'level' not in token and token.strip().lower()!='dhaka' and 'flat' not in token) and any(token.lower().strip() == subarea.lower().strip() for subarea in subarealist):
                 self.subareakey=token
                 self.multiple_subarea.append(token.strip())
                 if not re.match('house\s+\d+',parsed_aadr[i-1]) and 'flat' not in parsed_aadr[i-1] and 'level' not in parsed_aadr[i-1] and not any(s in parsed_aadr[i-1] for s in roadkeywords) and 'floor' not in parsed_aadr[i-1] and 'block' not in parsed_aadr[i-1] and (self.holding=="" or self.name=="") and not any(parsed_aadr[i-1].lower().strip() == subarea.lower().strip() for subarea in subarealist) and self.housekey!="" and parsed_aadr[i-1].split()[0]!='house':
@@ -62,7 +62,7 @@ class MiniParser(object):
             self.holding=multiple_name[1]
         if self.subareakey=="":
             token=parsed_aadr[len(parsed_aadr)-1].strip()
-            if ( not any(s in token for s in roadkeywords) and 'house' not in token and 'floor' not in token and 'level' not in token and 'flat' not in token and 'block' not in token):
+            if ( not any(s in token for s in roadkeywords) and 'house' not in token and 'floor' not in token and token.strip().lower()!='dhaka' and 'level' not in token and 'flat' not in token and 'block' not in token):
                 self.subareakey=token
                 self.multiple_subarea.append(token.strip())
     

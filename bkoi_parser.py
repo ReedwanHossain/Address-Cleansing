@@ -64,6 +64,7 @@ class Address(object):
         self.usedToken= []
         self.matched_array = []
         self.area_pattern = None
+        self.confScore=0
         self.get_multiple_subarea=[]
         self.get_multiple_area=[]
         self.subarea_list_pattern=[]
@@ -96,7 +97,7 @@ class Address(object):
     rep2 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  "," rode ": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ","road #": " road "," r-": " road ", " ,r-": " road ",",r":" road "," r ":" road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
-        "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', 'sec.': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
+        "bl-":" block "," blk ":" block "," blc ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", " b ":" block ", "bl#":" block ", "bl:":" block ", "b-":" block ","b:":" block ", "b#":" block ", 'sec-': ' sector ', 'sec.': ' sector ', ' sec ':' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ',' basha ':' house ',' basa ':' house ',' bari ':' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', ' no ':'', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ','number':'', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '','no#': '', 'no=': '', 'no.': '',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ',' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', ' len ': ' lane ', 'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
@@ -104,7 +105,7 @@ class Address(object):
     rep1 = {
         #' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  "," rode ": " road  ", " rd": " road  "," road#": " road  ", "rd:": " road  ",
-        "bl-":" block "," blk ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", "bl#":" block ", "bl:":" block ",  'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ','sec.': ' sector ', 'sec:': ' sector ',
+        "bl-":" block "," blk ":" block "," blc ":" block ", " blk: ":" block ", " blk- ":" block ", " blk# ":" block ", " blk":" block ", "bl ":" block ", "bl#":" block ", "bl:":" block ",  'sec-': ' sector ', ' sec ':' sector ', 'sec#': ' sector ','sec.': ' sector ', 'sec:': ' sector ',
         'house': ' house ', 'house:': ' house ',' basha ':' house ',' basa ':' house ',' bari ':' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ','section:': ' section ', 'sector': ' sector ','sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ','sectionno': ' section ', 'sector no': ' sector ','sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ','ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ',' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane',  'plot':' ', ' ltd.':' limited', ' pvt.':' private', ' inc.':' incorporation', ' co.':' company',
@@ -522,11 +523,14 @@ class Address(object):
                 'address' : input_address,
                 'geocoded' :{},
             }
+        
+
         # remove hash, comma, qoutation marks from the address and add extra space after the address
         input_address = re.sub(r',',' ', input_address)
         input_address = re.sub( r'#|"',' ', input_address )
         input_address=input_address.lower()+"  "
         input_address="  "+input_address.lower()
+        input_address=re.sub(r'\s*flat\s*(no)*(:)*(-)*\s*[a-z]{1}\d{1}\s+',' ',input_address)
         # remove the section inside the first brakets() as considered as a comments or hints of an address
         input_address=re.sub(r'\([^)]*\)', '', input_address)
         # insert space between 'no' and digits
@@ -559,6 +563,7 @@ class Address(object):
         input_address=input_address.replace("-"," ")
         input_address=input_address.replace("–"," ")
         input_address=input_address.replace(":"," ")
+        input_address=input_address.replace("#"," ")
         input_address=input_address.replace(" no "," ")
         print("508-----------------"+input_address)
         # some address contains 'street' or 'address' keyword at the begining of the address. so remove them 
@@ -907,17 +912,27 @@ class Address(object):
             'parsed_union':self.matched[self.unionkey],
             'pattern':s_pattern,
         }
-        unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s","ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d", "ra+(i*|y*)e*r\s*ba+(z|j|g)(a|e)+r", "b(a+|o+)r(a+|o+|u+)\s*ba+gh*", "sh*(e|a|i)r\s*(e|a)\s*b(a|e)nga*la\s*n(a+|o+)g(a+|o+)re*", "sh*(a+y|e)mo+l(i+|e+|y)", "k(a+|o+)l+y*a+n\s*p(o+|u+)r", "p(i+|e+)re+r+\s*ba+gh*", "paic*k\s*pa+ra+", "k(o+|u+)r(e+|i+)l+", "(v|bh)a+ta+ra+", "(j|z|g)oa*r\s*sh*a+ha+ra+", "ka+la+\s*(ch|s)a+n*d*\s*p(o+|u+)r", "n(a+|o+)r*d+a+", "gh*o+ra+n"]
+        unique_area=0
+        unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s","ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d", "ra+(i*|y*)e*r\s*ba+(z|j|g)(a|e)+r", "b(a+|o+)r(a+|o+|u+)\s*ba+gh*", "sh*(e|a|i)r\s*(e|a)\s*b(a|e)nga*la\s*n(a+|o+)g(a+|o+)re*", "sh*(ya+|a+y|e)mo+l(i+|e+|y)", "k(a+|o+)l+y*a+n\s*p(o+|u+)r", "p(i+|e+)re+r+\s*ba+gh*", "paic*k\s*pa+ra+", "k(o+|u+)r(e+|i+)l+", "(v|bh)a+ta+ra+", "(j|z|g)oa*r\s*sh*a+ha+ra+", "ka+la+\s*(ch|s)a+n*d*\s*p(o+|u+)r", "n(a+|o+)r*d+a+", "gh*o+ra+n"]
         for unique_area in unique_area_pattern:
             if re.search(unique_area.strip(), self.matched[self.areakey].strip().strip(',').strip()) or re.search(unique_area.strip(), self.matched[self.subareakey].strip().strip(',').strip()):
                 obj['geocoded']= self.search_addr_bkoi2_unique(final_address, thana_param, district_param)
                 print("considered as unique holding")
+                unique_area=1
                 break
         try:
-            obj['confidence_score_percentage']=self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address'])
+            print('927 ................')
+        
             print(self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address']))
+            obj['confidence_score_percentage']=self.Check_Confidence_Score(obj['address'],obj['geocoded']['Address'])
         except Exception as e:
+            print('930 ................')
             obj['confidence_score_percentage']= 0
+        if unique_area==1:
+            obj['confidence_score_percentage']=self.confScore
+        
+
+
 
         self.__init__()
 
@@ -988,7 +1003,9 @@ class Address(object):
         if score==0:
             score=similarity.bkoi_address_matcher(fixedaddr,geoaddr,fixedaddr,geoaddr)['match percentage']
             return int(score.strip("%").strip())//2
-        return round(score)
+        #self.confScore=round(score)
+        score=round(score)
+        return score-3
     def Check_Reverse_Key(self,s):
         house_key=''
         road_key=''
@@ -1432,6 +1449,33 @@ class Address(object):
 
 
         return prop_filter
+    # to search exact holding or the nearest one
+    def bkoi_search_holding(self,house, house_dict):
+        match = {}
+        least = 1000
+        if house in house_dict:
+            match = house_dict[house]
+            least=0
+
+        else:
+            house = house.replace("-", "/")
+            if house in house_dict:
+                match = house_dict[house]
+                least=0
+
+            else:
+                digits = re.findall("\d+", house)
+                digit = digits[0]
+                for h in house_dict:
+                    result = re.findall("\d+", h)
+                    if len(result)>0:
+                        diff = abs(int(digit) - int(result[0]))
+                        if diff<least:
+                            least = diff
+                            match = house_dict[h]  
+
+        #print(match)
+        return [match,least]
 
     def search_addr_bkoi2_unique(self, qstring, thana_param, district_param):
         obj=MiniParser()
@@ -1457,7 +1501,8 @@ class Address(object):
         except Exception as e:
             print("Failed to get data...................")
             return {}
-        
+
+        unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s","ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d", "ra+(i*|y*)e*r\s*ba+(z|j|g)(a|e)+r", "b(a+|o+)r(a+|o+|u+)\s*ba+gh*", "sh*(e|a|i)r\s*(e|a)\s*b(a|e)nga*la\s*n(a+|o+)g(a+|o+)re*", "sh*(ya+|a+y|e)mo+l(i+|e+|y)", "k(a+|o+)l+y*a+n\s*p(o+|u+)r", "p(i+|e+)re+r+\s*ba+gh*", "paic*k\s*pa+ra+", "k(o+|u+)r(e+|i+)l+", "(v|bh)a+ta+ra+", "(j|z|g)oa*r\s*sh*a+ha+ra+", "ka+la+\s*(ch|s)a+n*d*\s*p(o+|u+)r", "n(a+|o+)r*d+a+", "gh*o+ra+n"]
         geocoded_addr_comp=""
         geocoded_holding=None
         geocoded_floor=None
@@ -1475,6 +1520,7 @@ class Address(object):
         without_road_maximum=0
         exact_addr=''
         gotHoldings=[]
+        holding_dict={}
         TrueFor={'housekey':0,'roadkey':0,'blockkey':0,'ssareakey':0,'subareakey':0,}
         matched_house_key = self.matched[self.housekey]
         if any(char.isdigit() for char in self.matched[self.housekey]):
@@ -1505,14 +1551,15 @@ class Address(object):
             print('=============================================================================')
             print(geocoded_addr_comp)
             print(geocoded_address_with_area)
-            print(geocoded_area+'    '+self.matched[self.areakey].strip().strip(',').strip())
-            print(geocoded_subarea+'    '+self.matched[self.subareakey].strip().strip(',').strip())
+            print(geocoded_area+'  vsa  '+self.matched[self.areakey].strip().strip(',').strip())
+            print(geocoded_subarea+'  vss  '+self.matched[self.subareakey].strip().strip(',').strip())
             holding=''
             holding=geocoded_house
             if any(char.isdigit() for char in geocoded_house):
                 geocoded_house = re.findall('\d+',geocoded_house)[0]
             #if (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip()==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea.strip()==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip()== subareas.strip().strip(',').strip() for subareas in  geocoded_addr_comp['multiple_subarea'] )) and self.matched[self.subareakey].strip().strip(',').strip()!='':
-            if (geocoded_area.strip() in self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip() in self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea.strip() in self.matched[self.areakey].strip().strip(',').strip()  ) or (geocoded_subarea.lower().strip() in self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip() in subareas.strip().strip(',').strip() for subareas in  geocoded_addr_comp['multiple_subarea'] )) and self.matched[self.subareakey].strip().strip(',').strip()!='':
+            if ((geocoded_area.strip() == self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip() in self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea.strip() in self.matched[self.areakey].strip().strip(',').strip()  ) or (geocoded_subarea.lower().strip() in self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip() in subareas.strip().strip(',').strip() for subareas in  geocoded_addr_comp['multiple_subarea'] ))) and (self.matched[self.subareakey].strip().strip(',').strip()!=''and self.matched[self.subareakey].strip().strip(',').strip()!=None and geocoded_area.strip().lower()!='' and geocoded_area!=None and geocoded_subarea.strip().lower()!="" and geocoded_subarea!=None) and (( re.search(unique_area.strip(), self.matched[self.areakey].strip().strip(',').strip()) or re.search(unique_area.strip(), self.matched[self.subareakey].strip().strip(',').strip()) for unique_area in unique_area_pattern)):
+                print(self.matched[self.subareakey].strip().strip(',').strip())
                 similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                 print(self.matched[self.housekey].strip().strip(',').strip() +"  and  "+geocoded_house)
                 gotHoldings.append(holding)
@@ -1526,10 +1573,11 @@ class Address(object):
                     TrueFor['blockkey']=1
                     TrueFor['roadkey']=1
                     TrueFor['housekey']=1
+                holding_dict[holding]=i
                  
                 
 
-            elif (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() in self.matched[self.subareakey].strip().strip(',').strip()==''):
+            elif (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() and self.matched[self.subareakey].strip().strip(',').strip()==''):
                 similarity=fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip() ,geocoded_house)
                 gotHoldings.append(holding)
 
@@ -1542,18 +1590,32 @@ class Address(object):
                     TrueFor['roadkey']=1
                     TrueFor['housekey']=1
                     TrueFor['housekey']=1
-        self.matched[self.housekey] = matched_house_key
-        self.GeoTrueFor=TrueFor
-        print(gotHoldings)
-        print(len(gotHoldings))
-        if matched_road_flag==1:
-            final_addr=exact_addr
-            self.GeoTrueFor=TrueFor
+                holding_dict[holding]=i
+
+        distance=1000
+        search_addr=[{},1000]
+        if matched_house_key.strip().strip(',').strip()!='' and matched_house_key.strip().strip(',').strip()!=None and len(holding_dict)>0:            
+            search_addr=self.bkoi_search_holding(matched_house_key.strip().strip(',').strip(), holding_dict)
+            print("search .....")
+            print(search_addr)
+            if len(search_addr[0])!=0:
+                final_addr=search_addr[0]
+                distance=search_addr[1]
+                print(distance)
+                if distance<6 and distance>=0:
+                    self.confScore=95
+                elif distance<11 and distance >5:
+                    self.confScore=80
+                elif distance<21 and distance>10:
+                    self.confScore=50
+                else:
+                    self.confScore=15
+
         if final_addr=="":
             print("from prev 1")
             print(self.matched)
             final_addr=self.search_addr_bkoi(data,qstring)
-
+        self.matched[self.housekey]=matched_house_key
         thana_value = None
         try:
             thana_value = final_addr['thana']

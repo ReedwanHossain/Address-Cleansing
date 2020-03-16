@@ -88,7 +88,7 @@ def main(input_text):
 	#print(text)
 	for w in range(len(text)):
 	    result=bangla_rupantor(text[w])
-	    print(text[w])
+	    #print(text[w])
 	    if w<len(text)-1:
 	    	if (text[w+1] not in vowel_list and text[w] not in vowel_list) and text[w] not in digit_lists and text[w] in font_list and text[w] not in sorborno_list:
 	    		st+=result+'o'

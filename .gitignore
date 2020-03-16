@@ -2,3 +2,4 @@
 parsed.csv
 *.pyc
 *.log
+/rough.py
