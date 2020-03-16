@@ -149,6 +149,7 @@ def transform_parse():
    add_trans = Transformer()
    add_parse = Address()
    addr = request.form.get('addr')
+   print(addr)
    try:
      thana_param = request.form.get('thana')
    except Exception as e:
@@ -373,4 +374,4 @@ def delete_dsu(dsu_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host = '127.0.0.1', port = 8010)
+    app.run(debug=True, host = '0.0.0.0', port = 8010)
