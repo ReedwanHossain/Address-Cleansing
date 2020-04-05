@@ -19,7 +19,8 @@ CORS(app)
 
 add_parse = Address()
 
-@app.route('/uploader', methods = ['POST'])
+
+@app.route('/uploader', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
         result_array = []
@@ -32,19 +33,21 @@ def upload_file():
         flask_file = request.files['file']
         if not flask_file:
             return 'Upload a CSV file'
-        
+
         stream = codecs.iterdecode(flask_file.stream, 'utf-8')
         for td in csv.DictReader(stream, dialect=csv.excel):
             input_address = td['address']
             print(input_address)
             result = add_parse.parse_address(input_address)
             try:
-              result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  result['geocoded']['Address']})
+                result_array.append(
+                    {'input-address': input_address, 'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  result['geocoded']['Address']})
             except Exception as e:
-              result_array.append({'input-address': input_address ,'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  'Failed to GeoCode'})
+                result_array.append(
+                    {'input-address': input_address, 'clean-address': result['address'], 'status':  result['status'], 'geocoded-address':  'Failed to GeoCode'})
 
-                       
-        csv_columns = ['input-address' ,'clean-address', 'status', 'geocoded-address']
+        csv_columns = ['input-address', 'clean-address',
+                       'status', 'geocoded-address']
         csv_file = "parsed.csv"
 
         try:
@@ -54,7 +57,7 @@ def upload_file():
                 for data in result_array:
                     writer.writerow(data)
         except IOError:
-            print("I/O error") 
+            print("I/O error")
 
     try:
         return send_from_directory('.', 'parsed.csv', attachment_filename='parsed.csv', as_attachment=True)
@@ -62,316 +65,312 @@ def upload_file():
         abort(404)
 
 
-@app.route('/address/matcher', methods = ['POST'])
+@app.route('/address/matcher', methods=['POST'])
 def matcher():
     add_trans = None
     add_trans = Transformer()
     addr1 = request.form.get('addr1')
     addr2 = request.form.get('addr2')
-    inAdd1=addr1
-    inAdd2=addr2
-    addr1=add_trans.bangla_to_english(addr1)
-    addr2=add_trans.bangla_to_english(addr2)
-    addr1=similarity.bkoi_addess_cleaner(addr1)
-    addr2=similarity.bkoi_addess_cleaner(addr2)
+    inAdd1 = addr1
+    inAdd2 = addr2
+    addr1 = add_trans.bangla_to_english(addr1)
+    addr2 = add_trans.bangla_to_english(addr2)
+    addr1 = similarity.bkoi_addess_cleaner(addr1)
+    addr2 = similarity.bkoi_addess_cleaner(addr2)
     #print(addr1+"   "+addr2)
     #print (similarity.bkoi_address_matcher(addr1,addr2,inadd1,inadd2))
 
+    return similarity.bkoi_address_matcher(addr1, addr2, inAdd1, inAdd2)
 
 
-    return similarity.bkoi_address_matcher(addr1,addr2,inAdd1,inAdd2)
-
-
-@app.route('/parse', methods = ['POST'])
+@app.route('/parse', methods=['POST'])
 def parse_it():
-   addr = request.form.get('addr')
-   # de_addr = urllib.unquote(addr)
-   # print "address.........."+de_addr
-   return add_parse.parse_address(addr)
+    addr = request.form.get('addr')
+    # de_addr = urllib.unquote(addr)
+    # print "address.........."+de_addr
+    return add_parse.parse_address(addr)
 
 
-
-@app.route('/parser', methods = ['GET'])
+@app.route('/parser', methods=['GET'])
 def parser():
-   addr = request.args.get('addr')
-   # de_addr = urllib.unquote(addr)
-   # print "address.........."+de_addr
-   return add_parse.parse_address(addr)
+    addr = request.args.get('addr')
+    # de_addr = urllib.unquote(addr)
+    # print "address.........."+de_addr
+    return add_parse.parse_address(addr)
 
 
-
-@app.route('/transform', methods = ['GET'])
+@app.route('/transform', methods=['GET'])
 def transform_addr():
-   add_trans = None
-   add_trans = Transformer()
-   addr = request.args.get('addr')
-   # de_addr = urllib.unquote(addr)
-   # print "address.........."+de_addr
-   return add_trans.bangla_to_english(addr)
+    add_trans = None
+    add_trans = Transformer()
+    addr = request.args.get('addr')
+    # de_addr = urllib.unquote(addr)
+    # print "address.........."+de_addr
+    return add_trans.bangla_to_english(addr)
 
 
-@app.route('/transformer', methods = ['POST'])
+@app.route('/transformer', methods=['POST'])
 def transformer_addr():
-   add_trans = None
-   add_trans = Transformer()
-   addr = request.form.get('addr')
-   # de_addr = urllib.unquote(addr)
-   # print "address.........."+de_addr
-   return add_trans.bangla_to_english(addr)
+    add_trans = None
+    add_trans = Transformer()
+    addr = request.form.get('addr')
+    # de_addr = urllib.unquote(addr)
+    # print "address.........."+de_addr
+    return add_trans.bangla_to_english(addr)
 
-@app.route('/rupantor/parse', methods = ['POST'])
+
+@app.route('/rupantor/parse', methods=['POST'])
 def rupantor_parse():
-   ob_trans = None
-   ob_parse = None
-   thana_param = None
-   district_param = None
-   ob_trans = Transformer()
-   ob_parse = AddressParser()
-   addr = request.form.get('addr')
-   try:
-     thana_param = request.form.get('thana')
-   except Exception as e:
-     thana_param = None
+    ob_trans = None
+    ob_parse = None
+    thana_param = None
+    district_param = None
+    ob_trans = Transformer()
+    ob_parse = AddressParser()
+    addr = request.form.get('addr')
+    try:
+        thana_param = request.form.get('thana')
+    except Exception as e:
+        thana_param = None
 
-   try:
-     district_param = request.form.get('district')
-   except Exception as e:
-     district_param = None
+    try:
+        district_param = request.form.get('district')
+    except Exception as e:
+        district_param = None
 
-   return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param, district_param)
+    return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param, district_param)
 
-@app.route('/transparse', methods = ['POST'])
+
+@app.route('/transparse', methods=['POST'])
 def transform_parse():
-   add_trans = None
-   add_parse = None
-   thana_param = None
-   district_param = None
-   add_trans = Transformer()
-   add_parse = Address()
-   addr = request.form.get('addr')
-   print(addr)
-   try:
-     thana_param = request.form.get('thana')
-   except Exception as e:
-     thana_param = None
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
+    add_trans = Transformer()
+    add_parse = Address()
+    addr = request.form.get('addr')
+    print(addr)
+    try:
+        thana_param = request.form.get('thana')
+    except Exception as e:
+        thana_param = None
 
-   try:
-     district_param = request.form.get('district')
-   except Exception as e:
-     district_param = None
+    try:
+        district_param = request.form.get('district')
+    except Exception as e:
+        district_param = None
 
-   
-   return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
+    return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
 
 
-### insert new keyword
-@app.route('/keyword', methods = ['POST'])
+# insert new keyword
+@app.route('/keyword', methods=['POST'])
 def keyword_insert():
-  con=Operations()
-  bn=None
-  en=None
-  bn = request.form.get('bn')
-  en = request.form.get('en')
-  user_id = request.form.get('user_id')
-  if bn==None or en==None:
-    return "got a blank input"
-  return con.keyword_insert(en,bn,user_id)
+    con = Operations()
+    bn = None
+    en = None
+    bn = request.form.get('bn')
+    en = request.form.get('en')
+    user_id = request.form.get('user_id')
+    if bn == None or en == None:
+        return "got a blank input"
+    return con.keyword_insert(en, bn, user_id)
 
 
-### insert new keyword
-@app.route('/keyword/update', methods = ['POST'])
+# insert new keyword
+@app.route('/keyword/update', methods=['POST'])
 def keyword_update():
-  con=Operations()
-  kw_id=None
-  bn=None
-  en=None
-  kw_id = request.form.get('kw_id')
-  bn = request.form.get('bn')
-  en = request.form.get('en')
-  user_id = request.form.get('user_id')
-  if bn==None or en==None:
-    return "got a blank input"
-  return con.keyword_update(kw_id,en,bn,user_id)
+    con = Operations()
+    kw_id = None
+    bn = None
+    en = None
+    kw_id = request.form.get('kw_id')
+    bn = request.form.get('bn')
+    en = request.form.get('en')
+    user_id = request.form.get('user_id')
+    if bn == None or en == None:
+        return "got a blank input"
+    return con.keyword_update(kw_id, en, bn, user_id)
 
-### Search keyword
-@app.route('/keyword/search', methods = ['POST'])
+# Search keyword
+@app.route('/keyword/search', methods=['POST'])
 def search_keyword():
-  con=Operations()
-  en=None 
-  en=request.form.get('en')
-  if en==None:
-    return "got a blank input"
-  return con.search_keyword(en)
+    con = Operations()
+    en = None
+    en = request.form.get('en')
+    if en == None:
+        return "got a blank input"
+    return con.search_keyword(en)
 
-### Delete Keyword
+# Delete Keyword
 @app.route('/keyword/<int:kw_id>', methods=['DELETE'])
 def delete_keyword(kw_id):
-    con=Operations()
+    con = Operations()
     return con.delete_keyword(kw_id)
 
 
-
-### insert new area
-@app.route('/area', methods = ['POST'])
+# insert new area
+@app.route('/area', methods=['POST'])
 def area_insert():
-  con=Operations()
-  area=None
-  area = request.form.get('areaname')
-  if area==None :
-    return "got a blank input"
-  return con.area_insert(area)
+    con = Operations()
+    area = None
+    area = request.form.get('areaname')
+    if area == None:
+        return "got a blank input"
+    return con.area_insert(area)
 
-### update area
-@app.route('/area/update', methods = ['POST'])
+# update area
+@app.route('/area/update', methods=['POST'])
 def area_update():
-  con=Operations()
-  area_id=None
-  area=None
-  area_id = request.form.get('area_id')
-  area = request.form.get('areaname')
-  
-  if area==None:
-    return "got a blank input"
-  return con.area_update(area_id,area)
+    con = Operations()
+    area_id = None
+    area = None
+    area_id = request.form.get('area_id')
+    area = request.form.get('areaname')
+
+    if area == None:
+        return "got a blank input"
+    return con.area_update(area_id, area)
 
 
-### Search Area
-@app.route('/area/search', methods = ['POST'])
+# Search Area
+@app.route('/area/search', methods=['POST'])
 def search_area():
-  con=Operations()
-  area=None 
-  area=request.form.get('area')
-  if area==None:
-    return "got a blank input"
-  return con.search_area(area)
+    con = Operations()
+    area = None
+    area = request.form.get('area')
+    if area == None:
+        return "got a blank input"
+    return con.search_area(area)
 
-### Delete Area
+# Delete Area
 @app.route('/area/<int:area_id>', methods=['DELETE'])
 def delete_area(area_id):
-    con=Operations()
+    con = Operations()
     return con.delete_area(area_id)
 
-### insert new subarea
-@app.route('/subarea', methods = ['POST'])
+# insert new subarea
+@app.route('/subarea', methods=['POST'])
 def subarea_insert():
-  con=Operations()
-  area=None
-  subarea=None
-  fhouse=None
-  froad=None
-  fblock=None
-  fsuparea=None
-  fsubarea=None
-  area_regex=None
-  subarea_regex=None
-  area = request.form.get('area')
-  subarea = request.form.get('subarea')
-  fhouse = request.form.get('fhouse')
-  froad = request.form.get('froad')
-  fblock = request.form.get('fblock')
-  fsuparea = request.form.get('fsuparea')
-  fsubarea = request.form.get('fsubarea')
-  area_regex = request.form.get('area_regex')
-  subarea_regex = request.form.get('subarea_regex')
-  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None or area_regex==None or subarea_regex==None:
-    return "got a blank input"
-  return con.subarea_insert(area,subarea,fhouse,froad,fblock,fsuparea,fsubarea,area_regex,subarea_regex)
+    con = Operations()
+    area = None
+    subarea = None
+    fhouse = None
+    froad = None
+    fblock = None
+    fsuparea = None
+    fsubarea = None
+    area_regex = None
+    subarea_regex = None
+    area = request.form.get('area')
+    subarea = request.form.get('subarea')
+    fhouse = request.form.get('fhouse')
+    froad = request.form.get('froad')
+    fblock = request.form.get('fblock')
+    fsuparea = request.form.get('fsuparea')
+    fsubarea = request.form.get('fsubarea')
+    area_regex = request.form.get('area_regex')
+    subarea_regex = request.form.get('subarea_regex')
+    if area == None or subarea == None or fhouse == None or froad == None or fblock == None or fsuparea == None or fsubarea == None or area_regex == None or subarea_regex == None:
+        return "got a blank input"
+    return con.subarea_insert(area, subarea, fhouse, froad, fblock, fsuparea, fsubarea, area_regex, subarea_regex)
 
-### update subarea
-@app.route('/subarea/update', methods = ['POST'])
+# update subarea
+@app.route('/subarea/update', methods=['POST'])
 def subarea_update():
-  con=Operations()
-  subarea_id=None
-  area=None
-  subarea=None
-  fhouse=None
-  froad=None
-  fblock=None
-  fsuparea=None
-  fsubarea=None
-  area_regex=None
-  subarea_regex=None
-  subarea_id = request.form.get('subarea_id')
-  area = request.form.get('area')
-  subarea = request.form.get('subarea')
-  fhouse = request.form.get('fhouse')
-  froad = request.form.get('froad')
-  fblock = request.form.get('fblock')
-  fsuparea = request.form.get('fsuparea')
-  fsubarea = request.form.get('fsubarea')
-  area_regex = request.form.get('area_regex')
-  subarea_regex = request.form.get('subarea_regex')
-  if area==None or subarea==None or fhouse==None or froad==None or fblock==None or fsuparea==None or fsubarea==None or area_regex==None or subarea_regex==None:
-    return "got a blank input"
-  return con.subarea_update(subarea_id,area,subarea,fhouse,froad,fblock,fsuparea,fsubarea,area_regex,subarea_regex)
+    con = Operations()
+    subarea_id = None
+    area = None
+    subarea = None
+    fhouse = None
+    froad = None
+    fblock = None
+    fsuparea = None
+    fsubarea = None
+    area_regex = None
+    subarea_regex = None
+    subarea_id = request.form.get('subarea_id')
+    area = request.form.get('area')
+    subarea = request.form.get('subarea')
+    fhouse = request.form.get('fhouse')
+    froad = request.form.get('froad')
+    fblock = request.form.get('fblock')
+    fsuparea = request.form.get('fsuparea')
+    fsubarea = request.form.get('fsubarea')
+    area_regex = request.form.get('area_regex')
+    subarea_regex = request.form.get('subarea_regex')
+    if area == None or subarea == None or fhouse == None or froad == None or fblock == None or fsuparea == None or fsubarea == None or area_regex == None or subarea_regex == None:
+        return "got a blank input"
+    return con.subarea_update(subarea_id, area, subarea, fhouse, froad, fblock, fsuparea, fsubarea, area_regex, subarea_regex)
 
-### Search Subarea
-@app.route('/subarea/search', methods = ['POST'])
+# Search Subarea
+@app.route('/subarea/search', methods=['POST'])
 def search_subarea():
-  con=Operations()
-  subarea=None 
-  subarea=request.form.get('subarea')
-  if subarea==None:
-    return "got a blank input"
-  return con.search_subarea(subarea)
+    con = Operations()
+    subarea = None
+    subarea = request.form.get('subarea')
+    if subarea == None:
+        return "got a blank input"
+    return con.search_subarea(subarea)
 
 
-### Delete Area
+# Delete Area
 @app.route('/subarea/<int:subarea_id>', methods=['DELETE'])
 def delete_subarea(subarea_id):
-    con=Operations()
+    con = Operations()
     return con.delete_subarea(subarea_id)
 
-### insert new union,division,subdivision
-@app.route('/dsu', methods = ['POST'])
+# insert new union,division,subdivision
+@app.route('/dsu', methods=['POST'])
 def dsu_insert():
-  con=Operations()
-  union=None
-  subdivision=None
-  division=None
-  union = request.form.get('union')
-  subdivision = request.form.get('subdivision')
-  division = request.form.get('division')
+    con = Operations()
+    union = None
+    subdivision = None
+    division = None
+    union = request.form.get('union')
+    subdivision = request.form.get('subdivision')
+    division = request.form.get('division')
 
-  if union==None or subdivision==None or division==None:
-    return "got a blank input"
-  return con.dsu_insert(union,subdivision,division)
+    if union == None or subdivision == None or division == None:
+        return "got a blank input"
+    return con.dsu_insert(union, subdivision, division)
 
 
-### Update union,division,subdivision
-@app.route('/dsu/update', methods = ['POST'])
+# Update union,division,subdivision
+@app.route('/dsu/update', methods=['POST'])
 def dsu_update():
-  con=Operations()
-  dsu_id=None
-  union=None
-  subdivision=None
-  division=None
-  dsu_id = request.form.get('dsu_id')
-  union = request.form.get('union')
-  subdivision = request.form.get('subdivision')
-  division = request.form.get('division')
+    con = Operations()
+    dsu_id = None
+    union = None
+    subdivision = None
+    division = None
+    dsu_id = request.form.get('dsu_id')
+    union = request.form.get('union')
+    subdivision = request.form.get('subdivision')
+    division = request.form.get('division')
 
-  if union==None or subdivision==None or division==None:
-    return "got a blank input"
-  return con.dsu_update(dsu_id,union,subdivision,division)
+    if union == None or subdivision == None or division == None:
+        return "got a blank input"
+    return con.dsu_update(dsu_id, union, subdivision, division)
 
 
-### Search DSU
-@app.route('/dsu/search', methods = ['POST'])
+# Search DSU
+@app.route('/dsu/search', methods=['POST'])
 def search_dsu():
-  con=Operations()
-  dsu=None 
-  dsu=request.form.get('dsu')
-  if dsu==None:
-    return "got a blank input"
-  return con.search_dsu(dsu)
+    con = Operations()
+    dsu = None
+    dsu = request.form.get('dsu')
+    if dsu == None:
+        return "got a blank input"
+    return con.search_dsu(dsu)
 
-### Delete DSU
+# Delete DSU
 @app.route('/dsu/<int:dsu_id>', methods=['DELETE'])
 def delete_dsu(dsu_id):
-    con=Operations()
+    con = Operations()
     return con.delete_dsu(dsu_id)
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host = '0.0.0.0', port = 8010)
+    app.run(debug=True, host='127.0.0.1', port=8010)
