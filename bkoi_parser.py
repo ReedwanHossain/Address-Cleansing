@@ -1513,7 +1513,7 @@ class Address(object):
             if len(search_addr[0]) != 0:
                 final_addr = search_addr[0]
                 distance = search_addr[1]
-                if distance < 6 and distance >= 0:
+                if distance < 6 and distance >= 1:
                     try:
                         ChangedAddr = final_addr['new_address'].lower().split(
                             mp.parse(final_addr['new_address'].lower().strip(), 'residential')['house'])[1]
@@ -1526,10 +1526,16 @@ class Address(object):
                 print('changing....')
                 print(ChangedAddr)
                 exact_addr = 1
-                TrueFor['subareakey'] = 1
-                TrueFor['blockkey'] = 1
-                TrueFor['roadkey'] = 1
-                TrueFor['housekey'] = 1
+                if distance < 6 and distance >= 1:
+                    TrueFor['subareakey'] = 1
+                    TrueFor['blockkey'] = 1
+                    TrueFor['roadkey'] = 1
+                    TrueFor['housekey'] = 1
+                if distance >= 6:
+                    TrueFor['subareakey'] = 1
+                    TrueFor['blockkey'] = 1
+                    TrueFor['roadkey'] = 3
+                    TrueFor['housekey'] = 1
                 # print('exactttttttttttttttttttttttttttttttttttttttttttttttt')
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict_in) > 0 and exact_addr == 0:
             search_addr = self.bkoi_search_holding(
@@ -1538,6 +1544,10 @@ class Address(object):
                 final_addr = search_addr[0]
                 distance = search_addr[1]
                 in_addr = 1
+                TrueFor['subareakey'] = 1
+                TrueFor['blockkey'] = 1
+                TrueFor['roadkey'] = 2
+                TrueFor['housekey'] = 1
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict_fuzzy) > 0 and exact_addr == 0 and in_addr == 0:
             search_addr = self.bkoi_search_holding(
                 matched_house_key.strip().strip(',').strip(), holding_dict_fuzzy)
@@ -1546,6 +1556,10 @@ class Address(object):
                 distance = search_addr[1]
                 fuzzy_addr = 1
                 # print('innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn')
+                TrueFor['subareakey'] = 1
+                TrueFor['blockkey'] = 1
+                TrueFor['roadkey'] = 3
+                TrueFor['housekey'] = 1
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict_no_road) > 0 and exact_addr == 0 and in_addr == 0 and fuzzy_addr == 0:
             search_addr = self.bkoi_search_holding(
                 matched_house_key.strip().strip(',').strip(), holding_dict_no_road)
@@ -1554,7 +1568,12 @@ class Address(object):
                 distance = search_addr[1]
                 no_road_addr = 1
                 # print('fuzyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
+                TrueFor['subareakey'] = 1
+                TrueFor['blockkey'] = 1
+                TrueFor['roadkey'] = 0
+                TrueFor['housekey'] = 1
         # print(final_addr)
+        self.GeoTrueFor = TrueFor
         self.matched[self.housekey] = matched_house_key
         if exact_addr == 0 and in_addr == 0 and fuzzy_addr == 0 and no_road_addr == 0:
             self.GeoTrueFor = TrueFor
