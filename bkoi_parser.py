@@ -1582,7 +1582,9 @@ class Address(object):
             if matched_road_flag == 1:
                 final_addr = exact_addr
                 self.GeoTrueFor = TrueFor
-        if final_addr == "":
+        print('ppppppp')
+        print(final_addr)
+        if final_addr == "" or final_addr == None or final_addr == 0:
             print("from prev 1")
             print(self.matched)
             final_addr = self.search_addr_bkoi(data, qstring)
@@ -1806,7 +1808,7 @@ class Address(object):
                 else:
                     self.confScore = 15
 
-        if final_addr == "":
+        if final_addr == "" or final_addr == None or final_addr == 0:
             print("from prev 1")
             print(self.matched)
             final_addr = self.search_addr_bkoi(data, qstring)
