@@ -702,7 +702,7 @@ class Address(object):
             input_address = re.sub(subarea[8].strip().lower(
             ), subarea[1].strip().lower(), input_address)
         # can be changed
-        if sec_input_address == input_address and ' block ' in input_address and ' sector ' in input_address:
+        if 'block' in input_address and 'sector' in input_address:
             input_address = input_address.replace('sector', 'section')
         print(input_address+"  "+sec_input_address)
 
