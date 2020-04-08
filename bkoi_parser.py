@@ -1773,7 +1773,7 @@ class Address(object):
                     TrueFor['housekey'] = 1
                     TrueFor['housekey'] = 1
                 holding_dict[holding] = i
-
+        # holding compare
         distance = 1000
         search_addr = [{}, 1000]
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict) > 0:
@@ -1781,12 +1781,24 @@ class Address(object):
                 matched_house_key.strip().strip(',').strip(), holding_dict)
             print("search .....")
             print(search_addr)
+            ChangedAddr = ''
             if len(search_addr[0]) != 0:
                 final_addr = search_addr[0]
                 distance = search_addr[1]
                 print(distance)
                 if distance < 6 and distance >= 0:
                     self.confScore = 95
+                    if distance < 6 and distance >= 1:
+                        try:
+                            ChangedAddr = final_addr['new_address'].lower().split(
+                                mp.parse(final_addr['new_address'].lower().strip(), 'residential')['house'])[1]
+                        except Exception as e:
+                            print(e)
+                            ChangedAddr = ''
+                        if ChangedAddr != '' and ChangedAddr != None:
+                            final_addr['new_address'] = str('house ' +
+                                                            self.matched[self.housekey])+str(ChangedAddr)
+                    print('changing....')
                 elif distance < 11 and distance > 5:
                     self.confScore = 80
                 elif distance < 21 and distance > 10:
