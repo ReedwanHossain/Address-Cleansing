@@ -25,6 +25,7 @@ class Address(object):
         self.dict_data = []
         self.addresskey = 'address'
         self.namekey = 'name'
+        self.flatkey = 'flat'
         self.housekey = 'House'
         self.buildingkey = 'building'
         self.roadkey = 'road'
@@ -50,6 +51,7 @@ class Address(object):
         self.subarea_pos = 0
         self.matched = {}
         # init value...................
+        self.matched[self.flatkey] = None
         self.matched[self.housekey] = None
         self.matched[self.buildingkey] = None
         self.matched[self.roadkey] = None
@@ -519,6 +521,7 @@ class Address(object):
 
     def parse_address(self, input_address, thana_param, district_param):
         # adding extra space before inputted address and convert it into lowercase
+        saveTortnAddr = input_address
         print(input_address)
         input_address = " "+input_address
         input_address = input_address.lower()
@@ -596,10 +599,18 @@ class Address(object):
                         temp_input_address.remove(temp_input_address[i])
                         break
             input_address = ' '.join(str(e) for e in temp_input_address)
+
         # remove postal codes
         input_address = re.sub(
             r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d{4})(\s*)', '', input_address)
         # remove apt, room level no etc
+        # flat floor stroing
+        flat = None
+        flat = re.search(
+            r'((\s+)(apt|apartment|floor|room|flat|level|flr|suite|suit)(\s+(no)*[.]*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit))(\s*)|(((\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)(\d+[a-z]{1}\s+)))(\s*)|(\s+)(((apt|apartment|floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)))(\s*)',  input_address)
+        if flat:
+            print("got flat")
+            print(flat)
         input_address = re.sub(
             r'((\s+)(apt|apartment|floor|room|flat|level|flr|suite|suit)(\s+(no)*[.]*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit))(\s*)|(((\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)(\d+[a-z]{1}\s+)))(\s*)|(\s+)(((apt|apartment|floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)))(\s*)', '  ', input_address)
         input_address = re.sub(
@@ -928,6 +939,11 @@ class Address(object):
             'status': self.check_address_status(),
             'address': final_address,
             'geocoded': self.search_addr_bkoi2(final_address, thana_param, district_param),
+
+        }
+
+        parsed_addr = {
+
             'area': self.matched[self.areakey],
             'parsed_house': self.matched[self.housekey],
             'parsed_building_name': self.matched[self.buildingkey],
@@ -954,8 +970,8 @@ class Address(object):
         try:
             print('927 ................')
 
-            print(self.Check_Confidence_Score(
-                obj['address'], obj['geocoded']['Address']))
+            # print(self.Check_Confidence_Score(
+            # obj['address'], obj['geocoded']['Address']))
             obj['confidence_score_percentage'] = self.Check_Confidence_Score(
                 obj['address'], obj['geocoded']['Address'])
         except Exception as e:
@@ -963,7 +979,16 @@ class Address(object):
             obj['confidence_score_percentage'] = 0
         if unique_area == 1:
             obj['confidence_score_percentage'] = self.confScore
-
+        obj['input_address'] = saveTortnAddr
+        try:
+            obj['latitude'] = obj['geocoded']['latitude']
+            obj['longitude'] = obj['geocoded']['longitude']
+        except Exception as e:
+            obj['latitude'] = ''
+            obj['longitude'] = ''
+            pass
+        #del obj['geocoded']
+        obj['parsed_address'] = parsed_addr
         self.__init__()
 
         return obj
