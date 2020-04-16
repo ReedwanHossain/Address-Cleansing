@@ -987,7 +987,7 @@ class Address(object):
             obj['latitude'] = ''
             obj['longitude'] = ''
             pass
-        #del obj['geocoded']
+        del obj['geocoded']
         obj['parsed_address'] = parsed_addr
         self.__init__()
 
