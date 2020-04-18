@@ -531,7 +531,7 @@ class Address(object):
             return {
                 'status': 'Not An Address',
                 'address': input_address,
-                'geocoded': {},
+                'input_address': saveTortnAddr,
             }
 
         # remove hash, comma, qoutation marks from the address and add extra space after the address
