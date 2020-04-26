@@ -9,6 +9,7 @@ import re
 import csv
 import enchant
 import similarity
+from bkoi_e2b import ReverseTransformer
 
 
 from dbconf.initdb import DBINIT
@@ -983,11 +984,21 @@ class Address(object):
         try:
             obj['latitude'] = obj['geocoded']['latitude']
             obj['longitude'] = obj['geocoded']['longitude']
+            obj['pType'] = obj['geocoded']['pType']
         except Exception as e:
             obj['latitude'] = ''
             obj['longitude'] = ''
+            obj['pType'] = ''
             pass
+
         del obj['geocoded']
+        # for bangla address
+        obT = ReverseTransformer()
+        try:
+            obj['address_bn'] = obT.english_to_bangla(obj['address'])
+        except Exception as e:
+            obj['address_bn'] = obj['address']
+
         obj['parsed_address'] = parsed_addr
         self.__init__()
 
