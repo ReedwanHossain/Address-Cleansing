@@ -10,6 +10,7 @@ import csv
 from bkoi_parser import Address
 from bkoi_normalizer import AddressParser
 from custom_banglish_transformer.bkoi_transformer import Transformer
+from bkoi_e2b import ReverseTransformer
 from dbconf.db_operations import Operations
 import similarity
 
@@ -107,6 +108,16 @@ def transform_addr():
     # de_addr = urllib.unquote(addr)
     # print "address.........."+de_addr
     return add_trans.bangla_to_english(addr)
+
+# English to Bangla Transformer
+@app.route('/btransformer', methods=['POST'])
+def btransform_addr():
+    add_trans = None
+    add_trans = ReverseTransformer()
+    addr = request.form.get('addr')
+    # de_addr = urllib.unquote(addr)
+    # print "address.........."+de_addr
+    return add_trans.english_to_bangla(addr)
 
 
 @app.route('/transformer', methods=['POST'])
