@@ -1,0 +1,13 @@
+*.pyc
+__pycache__/
+build/
+dist/
+*.egg-info
+.tox
+.coverage*
+htmlcov
+
+.aspell*
+
+enchant-prefix-*.zip
+enchant/data/

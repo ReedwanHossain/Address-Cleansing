@@ -7,7 +7,7 @@ from fuzzywuzzy import fuzz
 import urllib
 import re
 import csv
-import enchant
+from pyenchant import enchant
 import similarity
 from bkoi_e2b import ReverseTransformer
 
