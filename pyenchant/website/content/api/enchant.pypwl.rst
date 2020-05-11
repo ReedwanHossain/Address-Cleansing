@@ -1,4 +1,0 @@
-
-.. automodule:: enchant.pypwl
-   :members:
-

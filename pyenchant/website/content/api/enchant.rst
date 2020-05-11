@@ -1,4 +1,0 @@
-
-.. automodule:: enchant
-   :members:
-

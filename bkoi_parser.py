@@ -7,7 +7,8 @@ from fuzzywuzzy import fuzz
 import urllib
 import re
 import csv
-from pyenchant import enchant
+#from pyenchant import enchant
+from nltk.corpus import words
 import similarity
 from bkoi_e2b import ReverseTransformer
 
@@ -756,11 +757,12 @@ class Address(object):
         addresscomponents = expand.split()
         # print(addresscomponents)
         temp_str_address = ''
+        setofwords = set(words.words())
         for i, comp in enumerate(addresscomponents):
             # print(comp)
             # print(enchant.Dict("en_US").check(comp))
 
-            if 'road' in comp and enchant.Dict("en_US").check(comp) == False and comp != 'road':
+            if 'road' in comp and (comp in setofwords) == False and comp != 'road':
                 comp = comp.replace('road', ' road')
             temp_str_address += " "+comp
 

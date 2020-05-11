@@ -1,4 +1,0 @@
-
-.. automodule:: enchant.checker
-   :members:
-
