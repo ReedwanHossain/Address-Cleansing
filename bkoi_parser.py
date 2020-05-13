@@ -995,7 +995,9 @@ class Address(object):
         # for bangla address
         obT = ReverseTransformer()
         try:
-            obj['address_bn'] = obT.english_to_bangla(obj['address'])
+
+            bnAddress = obT.english_to_bangla(obj['address'])
+            obj['address_bn'] = bnAddress['address_bn']
         except Exception as e:
             obj['address_bn'] = obj['address']
 
