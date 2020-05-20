@@ -152,6 +152,16 @@ def rupantor_parse():
     return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param, district_param)
 
 
+@app.route('/test', methods=['POST'])
+def test():
+    add_trans = None
+    add_parse = None
+    add_trans = Transformer()
+    add_parse = Address()
+    addr = request.form.get('addr')
+    return add_parse.check_room(add_trans.bangla_to_english(addr))
+
+
 @app.route('/transparse', methods=['POST'])
 def transform_parse():
     add_trans = None
