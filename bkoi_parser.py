@@ -77,6 +77,8 @@ class Address(object):
         self.dbinit.load_area()
         self.dbinit.load_subarea()
         self.dbinit.load_dsu()
+        self.globalAddress = ''
+        self.extraHomeKeys = ''
 
     reverse_pattern = {
         'house': '',
@@ -104,7 +106,7 @@ class Address(object):
         "rd#": " road ", "rd-": " road  ", " rode ": " road  ", " rd": " road  ", " road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", "road #": " road ", " r-": " road ", " ,r-": " road ", ",r": " road ", " r ": " road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-": " block ", " blk ": " block ", " blc ": " block ", " blk: ": " block ", " blk- ": " block ", " blk# ": " block ", " blk": " block ", "bl ": " block ", " b ": " block ", "bl#": " block ", "bl:": " block ", "b-": " block ", "b:": " block ", "b#": " block ", 'sec-': ' sector ', 'sec.': ' sector ', ' sec ': ' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', ' basha ': ' house ', ' basa ': ' house ', ' bari ': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ', 'section:': ' section ', 'sector': ' sector ', 'sector:': ' sector ',
-        'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', ' no ': '', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ', 'sectionno': ' section ', 'sector no': ' sector ', 'sector': ' sector ', 'number': '', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no#': '', 'no=': '', 'no.': '',
+        'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', ' no ': '', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ', 'sectionno': ' section ', 'sector no': ' sector ', 'sector': ' sector ', 'number': '', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no#': '', 'no=': '', 'no.': '', ' num ': ' no ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ', 'ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ', ' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', ' len ': ' lane ', 'plot': ' ', ' ltd.': ' limited', ' pvt.': ' private', ' inc.': ' incorporation', ' co.': ' company',
     }
     rep1 = {
@@ -463,6 +465,72 @@ class Address(object):
                     # matched_array.append(matched[roadkey])
                     return True
 
+    def check_apartment(self, address):
+        address = address.lower()
+        match_apartment = re.search(
+            r'(apt|apartment)\s*(no)*[.]*(-)*(#)*(:)*(:-)*\s*([a-z](-)*[/]*[0-9]+|[0-9]+(-)*[/]*[a-z]|\d+)', address)
+        if match_apartment:
+            print(match_apartment.group())
+            value = str(match_apartment.group(7))
+            self.globalAddress = self.globalAddress.replace(
+                match_apartment.group(), ' ')
+            value = value.replace('-', '')
+            value = value.replace(' ', '')
+            return 'apartment '+value
+        else:
+            return "None"
+
+    def check_room(self, address):
+        address = address.lower()
+        match_room = re.search(
+            r'\s+room\s*(no)*[.]*(-)*(#)*(:)*(:-)*\s*(\d+)', address)
+        if match_room:
+            self.globalAddress = self.globalAddress.replace(
+                match_room.group(), ' ')
+            print(match_room.group(6))
+            return 'room '+str(match_room.group(6))
+        else:
+            return "None"
+
+    def check_flat(self, address):
+        address = address.lower()
+        match_flat = re.search(
+            r'flat\s*(no)*[.]*(-)*(#)*(:)*(:-)*\s*([a-z](-)*[/]*[0-9]+|[0-9]+(-)*[/]*[a-z])', address)
+        if match_flat:
+            print(match_flat.groups())
+            self.globalAddress = self.globalAddress.replace(
+                match_flat.group(), ' ')
+            value = str(match_flat.group(6))
+            value = value.replace('-', '')
+            value = value.replace(' ', '')
+            return 'flat '+value
+        else:
+            return "None"
+
+    def check_floor(self, address):
+        address = address.lower()
+        match_floor = re.search(
+            r'(\d+s*th|1st|2nd|3rd)\s*(floor|flr)', address)
+        if match_floor:
+            self.globalAddress = self.globalAddress.replace(
+                match_floor.group(), ' ')
+            print(match_floor.groups())
+            return 'floor '+str(match_floor.group(1))
+        else:
+            return "None"
+
+    def check_level(self, address):
+        address = address.lower()
+        match_level = re.search(
+            r'level\s*(-)*(#)*(:)*(:-)*\s*(\d+)', address)
+        if match_level:
+            self.globalAddress = self.globalAddress.replace(
+                match_level.group(), ' ')
+            print(match_level.groups())
+            return str(match_level.group())
+        else:
+            return "None"
+
     def check_address_status(self):
         area_pattern = self.dbinit.get_subarea()
         checkst = 0
@@ -518,6 +586,25 @@ class Address(object):
         else:
             return "incomplete"
 
+    def check_all_home_keys(self, address):
+        homeKeys = ''
+        response = self.check_flat(address)
+        if response != 'None':
+            homeKeys += response+', '
+        response = self.check_room(address)
+        if response != 'None':
+            homeKeys += response+', '
+        response = self.check_floor(address)
+        if response != 'None':
+            homeKeys += response+', '
+        response = self.check_level(address)
+        if response != 'None':
+            homeKeys += response+', '
+        response = self.check_apartment(address)
+        if response != 'None':
+            homeKeys += response
+        return homeKeys
+
     # Start parsing...
 
     def parse_address(self, input_address, thana_param, district_param):
@@ -526,7 +613,9 @@ class Address(object):
         print(input_address)
         input_address = " "+input_address
         input_address = input_address.lower()
-
+        self.globalAddress = input_address
+        self.extraHomeKeys = self.check_all_home_keys(self.globalAddress)
+        input_address = self.globalAddress
         # checking if address is blank , return
         if input_address.strip().lstrip(',').rstrip(',') == '':
             return {
@@ -1002,6 +1091,8 @@ class Address(object):
             obj['address_bn'] = obj['address']
 
         obj['parsed_address'] = parsed_addr
+        obj['address'] = (self.extraHomeKeys.strip().strip(',')+', ' +
+                          obj['address']).strip().strip(',')
         self.__init__()
 
         return obj
