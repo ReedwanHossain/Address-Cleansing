@@ -1020,14 +1020,24 @@ class Address(object):
                     s_pattern = patterns['pattern']
                     self.matched[self.subarea_pattern] = s_pattern
                     break
-
-        # status_checking= self.check_address_status()
+        # if area has no block remove it though given by address
+        areas_with_block = ['mirpur', 'basundhara', 'banani', 'banasree',
+                            'aftabnagar', 'khilgaon', 'mohammadpur', 'niketon', 'turag', 'baridhara']
+        if (self.matched[self.areakey] != "" and self.matched[self.areakey] != None and self.matched[self.areakey] not in areas_with_block):
+            self.matched[self.blockkey] = None
+        try:
+            if self.matched[self.subarea_pattern][2] != 'H':
+                self.matched[self.blockkey] = None
+        except Exception as e:
+            print(e)
+            pass
+        # status_checking = self.check_address_status()
         final_address = self.bind_address()
         # self.search_addr_bkoi(final_address)
         obj = {
 
             'status': self.check_address_status(),
-            'address': final_address,
+            'address': final_address.strip(),
             'geocoded': self.search_addr_bkoi2(final_address, thana_param, district_param),
 
         }
@@ -1092,7 +1102,7 @@ class Address(object):
 
         obj['parsed_address'] = parsed_addr
         obj['address'] = (self.extraHomeKeys.strip().strip(',')+', ' +
-                          obj['address']).strip().strip(',')
+                          obj['address']).strip().strip(',').strip()
         self.__init__()
 
         return obj
