@@ -1091,6 +1091,11 @@ class Address(object):
         #     pass
 
         # del obj['geocoded']
+
+
+        obj['parsed_address'] = parsed_addr
+        obj['address'] = (self.extraHomeKeys.strip().strip(',')+', ' +obj['address']).strip().strip(',').strip()
+
         # for bangla address
         obT = ReverseTransformer()
         try:
@@ -1100,9 +1105,7 @@ class Address(object):
         except Exception as e:
             obj['address_bn'] = obj['address']
 
-        obj['parsed_address'] = parsed_addr
-        obj['address'] = (self.extraHomeKeys.strip().strip(',')+', ' +
-                          obj['address']).strip().strip(',').strip()
+        
         self.__init__()
 
         return obj
