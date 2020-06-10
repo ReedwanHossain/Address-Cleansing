@@ -58,8 +58,12 @@ class MiniParser(object):
             elif ('block' not in token and not any(s in token for s in roadkeywords) and 'house' not in token and 'floor' not in token and 'level' not in token and token.strip().lower() != 'dhaka' and 'flat' not in token) and any(token.lower().strip() == subarea.lower().strip() for subarea in subarealist):
                 self.subareakey = token
                 self.multiple_subarea.append(token.strip())
-                if not re.match('house\s+\d+', parsed_aadr[i-1]) and 'flat' not in parsed_aadr[i-1] and 'level' not in parsed_aadr[i-1] and not any(s in parsed_aadr[i-1] for s in roadkeywords) and 'floor' not in parsed_aadr[i-1] and 'block' not in parsed_aadr[i-1] and (self.holding == "" or self.name == "") and not any(parsed_aadr[i-1].lower().strip() == subarea.lower().strip() for subarea in subarealist) and self.housekey != "" and parsed_aadr[i-1].split()[0] != 'house':
-                    self.ssarea = parsed_aadr[i-1].strip()
+                try:
+                    if not re.match('house\s+\d+', parsed_aadr[i-1]) and 'flat' not in parsed_aadr[i-1] and 'level' not in parsed_aadr[i-1] and not any(s in parsed_aadr[i-1] for s in roadkeywords) and 'floor' not in parsed_aadr[i-1] and 'block' not in parsed_aadr[i-1] and (self.holding == "" or self.name == "") and not any(parsed_aadr[i-1].lower().strip() == subarea.lower().strip() for subarea in subarealist) and self.housekey != "" and parsed_aadr[i-1].split()[0] != 'house':
+                        self.ssarea = parsed_aadr[i - 1].strip()
+                except Exception as e:
+                    print(e)
+                    pass
 
             #print(str(idx)+" "+token)
             print(i)
