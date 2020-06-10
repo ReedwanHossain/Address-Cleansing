@@ -531,6 +531,17 @@ class Address(object):
         else:
             return "None"
 
+    def check_dhanmondi_road(self, addr):
+        ss = re.search(
+            r'(dh*a+nm(a+|o+|u+)nd(i+|e+|y+))\s*((10|11|12|13|14|15|27|1|2|3|4|5|6|7|8|9)\\*\/*a*)', addr)
+        if ss:
+            d = ss.groups()
+            res = ss.group()
+            print('road in dhanmondi')
+            print(res)
+            addr = addr.replace(res, d[0]+" road "+d[3])
+        return addr
+
     def check_address_status(self):
         area_pattern = self.dbinit.get_subarea()
         checkst = 0
@@ -857,8 +868,9 @@ class Address(object):
         # print(temp_str_address)
         if re.search('sector\s+\d+\s+mirpur', temp_str_address):
             temp_str_address = temp_str_address.replace('sector', 'section')
+        if 'road' not in temp_str_address:
+            temp_str_address = self.check_dhanmondi_road(temp_str_address)
         addresscomponents = temp_str_address.split()
-
         for i, comp in enumerate(addresscomponents):
             comp = comp.strip()
             if comp == "," or comp == "":
@@ -877,6 +889,7 @@ class Address(object):
         if 'uttara' in self.cleanAddressStr and 'section' in self.cleanAddressStr:
             self.cleanAddressStr = self.cleanAddressStr.replace(
                 "section", "sector")
+
         # self.tempArray = word_tokenize(self.cleanAddressStr)
 
             # self.cleanAddressStr="mrpr s2"
@@ -1092,9 +1105,9 @@ class Address(object):
 
         # del obj['geocoded']
 
-
         obj['parsed_address'] = parsed_addr
-        obj['address'] = (self.extraHomeKeys.strip().strip(',')+', ' +obj['address']).strip().strip(',').strip()
+        obj['address'] = (self.extraHomeKeys.strip().strip(
+            ',')+', ' + obj['address']).strip().strip(',').strip()
 
         # for bangla address
         obT = ReverseTransformer()
@@ -1105,7 +1118,6 @@ class Address(object):
         except Exception as e:
             obj['address_bn'] = obj['address']
 
-        
         self.__init__()
 
         return obj
