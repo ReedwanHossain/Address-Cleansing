@@ -181,8 +181,15 @@ def transform_parse():
         district_param = request.form.get('district')
     except Exception as e:
         district_param = None
+    obj = add_parse.parse_address(
+        add_trans.bangla_to_english(addr), thana_param, district_param)
+    try:
+        del obj['matched_keys']
+    except Exception as e:
+        print(e)
+        pass
 
-    return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
+    return obj
 
 
 @app.route('/matchparse', methods=['POST'])
@@ -207,7 +214,7 @@ def match_parse():
 
     obj = add_parse.parse_address(
         add_trans.bangla_to_english(addr), thana_param, district_param)
-    if obj['confidence_score_percentage'] >= 75 and (obj['status'] == 'incomplete' or (obj['matched_keys']['housekey'] != 1 and obj['parsed_address']['pattern'][0] == 'H') or (obj['matched_keys']['roadkey'] != 1 and obj['parsed_address']['pattern'][1] == 'H') or (obj['matched_keys']['blockkey'] != 1 and obj['parsed_address']['pattern'][2] == 'H') or (obj['matched_keys']['subareakey'] != 1 and obj['parsed_address']['pattern'][3] == 'H')):
+    if obj['confidence_score_percentage'] >= 75 and (obj['status'] == 'incomplete' or (obj['matched_keys']['housekey'] != 1 and obj['parsed_address']['pattern'][0] == 'H') or (obj['matched_keys']['roadkey'] != 1 and obj['parsed_address']['pattern'][1] == 'H') or (obj['matched_keys']['blockkey'] != 1 and obj['parsed_address']['pattern'][2] == 'H') or (obj['matched_keys']['subareakey'] != 1 and obj['parsed_address']['pattern'][4] == 'H')):
         obj['FP'] = "yes"
     else:
         obj['FP'] = "no"
