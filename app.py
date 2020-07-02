@@ -185,6 +185,35 @@ def transform_parse():
     return add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
 
 
+@app.route('/matchparse', methods=['POST'])
+def match_parse():
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
+    add_trans = Transformer()
+    add_parse = Address()
+    addr = request.form.get('addr')
+    print(addr)
+    try:
+        thana_param = request.form.get('thana')
+    except Exception as e:
+        thana_param = None
+
+    try:
+        district_param = request.form.get('district')
+    except Exception as e:
+        district_param = None
+
+    obj = add_parse.parse_address(
+        add_trans.bangla_to_english(addr), thana_param, district_param)
+    if obj['confidence_score_percentage'] >= 75 and (obj['status'] == 'incomplete' or (obj['matched_keys']['housekey'] != 1 and obj['parsed_address']['pattern'][0] == 'H') or (obj['matched_keys']['roadkey'] != 1 and obj['parsed_address']['pattern'][1] == 'H') or (obj['matched_keys']['blockkey'] != 1 and obj['parsed_address']['pattern'][2] == 'H') or (obj['matched_keys']['subareakey'] != 1 and obj['parsed_address']['pattern'][3] == 'H')):
+        obj['FP'] = "yes"
+    else:
+        obj['FP'] = "no"
+    return obj
+
+
 # insert new keyword
 @app.route('/keyword', methods=['POST'])
 def keyword_insert():

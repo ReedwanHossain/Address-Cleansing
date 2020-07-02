@@ -542,6 +542,9 @@ class Address(object):
             addr = addr.replace(res, d[0]+" road "+d[3])
         return addr
 
+    def hasNumbers(self, inputString):
+        return any(char.isdigit() for char in inputString)
+
     def check_address_status(self):
         area_pattern = self.dbinit.get_subarea()
         checkst = 0
@@ -1117,6 +1120,11 @@ class Address(object):
             obj['address_bn'] = bnAddress['address_bn']
         except Exception as e:
             obj['address_bn'] = obj['address']
+        try:
+            obj['matched_keys'] = self.GeoTrueFor
+        except Exception as e:
+            print(e)
+            pass
 
         self.__init__()
 
@@ -1429,7 +1437,7 @@ class Address(object):
                                 TrueFor['roadkey'] = 2
                                 TrueFor['housekey'] = 1
                             holding_dict_in[holding] = i
-                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and self.matched[self.roadkey].strip().strip(',').strip() != "" and matched_road_flag == 0 and geocoded_road != "":
+                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and self.matched[self.roadkey].strip().strip(',').strip() != "" and matched_road_flag == 0 and geocoded_road != "" and not self.hasNumbers(self.matched[self.roadkey].strip().strip(',').strip()):
                             print('road match in fuzzy')
                             similarity = fuzz.ratio(
                                 self.matched[self.housekey].strip().strip(',').strip(), geocoded_house)
@@ -1492,7 +1500,7 @@ class Address(object):
                             TrueFor['roadkey'] = 2
                             TrueFor['housekey'] = 1
                         holding_dict_in[holding] = i
-                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and self.matched[self.roadkey].strip().strip(',').strip() != "" and matched_road_flag == 0 and geocoded_road != "":
+                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and self.matched[self.roadkey].strip().strip(',').strip() != "" and matched_road_flag == 0 and geocoded_road != ""and not self.hasNumbers(self.matched[self.roadkey].strip().strip(',').strip()):
                         print('road match in fuzzy............'+self.matched[self.roadkey].strip(
                         ).strip(',').strip()+' vs ' + geocoded_road)
                         similarity = fuzz.ratio(
@@ -1559,7 +1567,7 @@ class Address(object):
                                 TrueFor['roadkey'] = 2
                                 TrueFor['housekey'] = 1
                             holding_dict_in[holding] = i
-                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and geocoded_road != "" and matched_road_flag == 0:
+                        elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and geocoded_road != "" and matched_road_flag == 0 and not self.hasNumbers(self.matched[self.roadkey].strip().strip(',').strip()):
                             print('road match in fuzzy............'+self.matched[self.roadkey].strip(
                             ).strip(',').strip()+' vs ' + geocoded_road)
                             similarity = fuzz.ratio(
@@ -1625,7 +1633,7 @@ class Address(object):
                             TrueFor['housekey'] = 1
                         holding_dict_in[holding] = i
 
-                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and geocoded_road != "" and self.matched[self.roadkey].strip().strip(',').strip() != "" and matched_road_flag == 0:
+                    elif (fuzz.ratio(self.matched[self.roadkey].strip().strip(',').strip(), geocoded_road) > 80) and geocoded_road != "" and self.matched[self.roadkey].strip().strip(',').strip() != "" and matched_road_flag == 0 and not self.hasNumbers(self.matched[self.roadkey].strip().strip(',').strip()):
                         print('road match in fuzzy............'+self.matched[self.roadkey].strip(
                         ).strip(',').strip()+' vs ' + geocoded_road)
                         similarity = fuzz.ratio(
@@ -1737,6 +1745,8 @@ class Address(object):
                 final_addr = exact_addr
                 self.GeoTrueFor = TrueFor
         print('ppppppp')
+        print(self.GeoTrueFor)
+        print(distance)
         print(final_addr)
         if final_addr == "" or final_addr == None or final_addr == 0:
             print("from prev 1")
