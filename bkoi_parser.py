@@ -1125,6 +1125,12 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
+        try:
+            if obj['status'] == "incomplete" and obj['confidence_score_percentage'] > 50:
+                obj['confidence_score_percentage'] = 50
+        except Exception as e:
+            print(e)
+            pass
 
         self.__init__()
 
