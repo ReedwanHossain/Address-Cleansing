@@ -51,6 +51,8 @@ class Address(object):
         self.reverse_sector_pattern = False
         self.subarea_pos = 0
         self.matched = {}
+        self.ambiguous_area = False
+        self.ambiguous_subarea = False
         # init value...................
         self.matched[self.flatkey] = None
         self.matched[self.housekey] = None
@@ -946,9 +948,9 @@ class Address(object):
                 if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
                     self.matched_array.append(self.matched[self.unionkey])
                 continue
-
-        print(self.get_multiple_subarea)
-
+        print('******************************')
+        print(self.get_multiple_area)
+        print('******************************')
         # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
         #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
         getsubarea = list(set(self.get_multiple_subarea))
@@ -980,6 +982,7 @@ class Address(object):
         # subarea_list = self.dbinit.get_subarea()
 
         getarea = list(set(self.get_multiple_area))
+        avail_area = getarea
         if len(getarea) >= 2:
             chk = 0
             for area in getarea:
@@ -1004,6 +1007,23 @@ class Address(object):
                         # area=area.rstrip(',')
                         self.matched[self.areakey] = area.lower()
                         break
+        amgs_area = 0
+        if len(getarea) >= 2:
+            for area in getarea:
+                try:
+                    if area in self.matched[self.roadkey] or area in self.matched[self.buildingkey]:
+                        avail_area.remove(area)
+                        # print('removing...')
+                except Exception as e:
+                    print(e)
+                    pass
+
+        print('******************************')
+        print(avail_area)
+        print(getsubarea)
+        print('******************************')
+        if len(avail_area) >= 2 and len(getsubarea) < 2 and self.matched[self.areakey] not in self.cleanAddressStr:
+            self.ambiguous_area = True
 
         # if self.reverse_pattern['road']!=self.matched[self.roadkey]:
         #     self.matched[self.roadkey]=self.reverse_pattern['road']
@@ -1126,8 +1146,8 @@ class Address(object):
             print(e)
             pass
         try:
-            if obj['status'] == "incomplete" and obj['confidence_score_percentage'] > 50:
-                obj['confidence_score_percentage'] = 50
+            if obj['status'] == "incomplete" and obj['confidence_score_percentage'] > 50 or self.ambiguous_area == True:
+                obj['confidence_score_percentage'] = 20
         except Exception as e:
             print(e)
             pass
