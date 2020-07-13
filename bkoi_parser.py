@@ -948,6 +948,13 @@ class Address(object):
                 if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
                     self.matched_array.append(self.matched[self.unionkey])
                 continue
+
+        try:
+            self.matched[self.roadkey] = self.matched[self.roadkey].replace(
+                '-', '/')
+        except Exception as e:
+            print(e)
+            pass
         print('******************************')
         print(self.get_multiple_area)
         print('******************************')
@@ -1172,6 +1179,8 @@ class Address(object):
                         score += 10
                     if self.matched[self.subarea_pattern][1] == 'H' and self.GeoTrueFor['roadkey'] == 2:
                         score += 8
+                        if any(map(str.isdigit, self.matched[self.roadkey])):
+                            score -= 8
                     if self.matched[self.subarea_pattern][1] == 'H' and self.GeoTrueFor['roadkey'] == 3:
                         score += 4
                     if self.matched[self.subarea_pattern][1] != 'H':
@@ -1186,7 +1195,9 @@ class Address(object):
                     if self.matched[self.subarea_pattern][1] == 'H' and self.GeoTrueFor['roadkey'] == 1:
                         score += 10//2
                     if self.matched[self.subarea_pattern][1] == 'H' and self.GeoTrueFor['roadkey'] == 2:
-                        score += 8//2
+                        score += 8 // 2
+                        if any(map(str.isdigit, self.matched[self.roadkey])):
+                            score -= 4
                     if self.matched[self.subarea_pattern][1] == 'H' and self.GeoTrueFor['roadkey'] == 3:
                         score += 4//2
                     if self.matched[self.subarea_pattern][1] != 'H':
