@@ -81,6 +81,7 @@ class Address(object):
         self.dbinit.load_dsu()
         self.globalAddress = ''
         self.extraHomeKeys = ''
+        self.distance = 99
 
     reverse_pattern = {
         'house': '',
@@ -1115,10 +1116,11 @@ class Address(object):
 
             # print(self.Check_Confidence_Score(
             # obj['address'], obj['geocoded']['Address']))
-            obj['confidence_score_percentage'] = self.Check_Confidence_Score(
+            obj['confidence_score_percentage'] = self.Check_Confidence_Score2(
                 obj['address'], obj['geocoded']['Address'])
         except Exception as e:
             print('930 ................')
+            print(e)
             obj['confidence_score_percentage'] = 0
         if unique_area == 1:
             obj['confidence_score_percentage'] = self.confScore
@@ -1152,16 +1154,124 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
-        try:
-            if obj['status'] == "incomplete" and obj['confidence_score_percentage'] > 50 or self.ambiguous_area == True:
-                obj['confidence_score_percentage'] = 20
-        except Exception as e:
-            print(e)
-            pass
+        # try:
+        #     if obj['status'] == "incomplete" and obj['confidence_score_percentage'] > 50 or self.ambiguous_area == True:
+        #         obj['confidence_score_percentage'] = 20
+        # except Exception as e:
+        #     print(e)
+        #     pass
 
         self.__init__()
 
         return obj
+
+    def Check_Confidence_Score2(self, fixedaddr, geoaddr):
+        score = 0
+        print(self.distance)
+        if self.matched[self.subareakey] != None and self.matched[self.subareakey] != '':
+            if self.matched[self.subarea_pattern] == ['H', 'H', 'H', 'L', 'H']:
+                if self.GeoTrueFor['subareakey'] == 1:
+                    score += 48
+                    if self.GeoTrueFor['blockkey'] == 1:
+                        score += 20
+                        if self.GeoTrueFor['roadkey'] == 1:
+                            score += 18
+                            if self.distance >= 0 and self.distance <= 9:
+                                score += 14
+                            elif self.distance >= 10 and self.distance <= 20:
+                                score += 7
+                            else:
+                                score += 0
+                        elif self.GeoTrueFor['roadkey'] == 2 or self.GeoTrueFor['roadkey'] == 3:
+                            score += 8
+                            if self.distance >= 0 and self.distance <= 9:
+                                score += 3
+                            elif self.distance >= 10 and self.distance <= 20:
+                                score += 2
+                            else:
+                                score += 0
+                        else:
+                            score += 0
+                            if self.distance >= 0 and self.distance <= 9:
+                                score += 2
+                            elif self.distance >= 10 and self.distance <= 20:
+                                score += 1
+                            else:
+                                score += 0
+                    elif self.GeoTrueFor['blockkey'] != 1:
+                        score += 0
+                        if self.GeoTrueFor['roadkey'] == 1:
+                            score += 2
+                            if self.distance >= 0 and self.distance <= 9:
+                                score += 2
+                            elif self.distance >= 10 and self.distance <= 20:
+                                score += 1
+                            else:
+                                score += 0
+                        elif self.GeoTrueFor['roadkey'] == 2 or self.GeoTrueFor['roadkey'] == 3:
+                            score += 1
+                            if self.distance >= 0 and self.distance <= 9:
+                                score += 1
+                            elif self.distance >= 10 and self.distance <= 20:
+                                score += 1
+                            else:
+                                score += 0
+                        else:
+                            score += 0
+                            if self.distance >= 0 and self.distance <= 9:
+                                score += 1
+                            elif self.distance >= 10 and self.distance <= 20:
+                                score += 1
+                            else:
+                                score += 0
+                else:
+                    score += 50
+            elif self.matched[self.subarea_pattern] == ['H', 'H', 'L', 'L', 'H']:
+                if self.GeoTrueFor['subareakey'] == 1:
+                    score += 48
+                    if self.GeoTrueFor['roadkey'] == 1:
+                        score += 38
+                        if self.distance >= 0 and self.distance <= 9:
+                            score += 14
+                        elif self.distance >= 10 and self.distance <= 20:
+                            score += 7
+                        else:
+                            score += 0
+                    elif self.GeoTrueFor['roadkey'] == 2 or self.GeoTrueFor['roadkey'] == 3:
+                        score += 8
+                        if self.distance >= 0 and self.distance <= 9:
+                            score += 3
+                        elif self.distance >= 10 and self.distance <= 20:
+                            score += 2
+                        else:
+                            score += 0
+                    else:
+                        score += 0
+                        if self.distance >= 0 and self.distance <= 9:
+                            score += 2
+                        elif self.distance >= 10 and self.distance <= 20:
+                            score += 1
+                        else:
+                            score += 0
+                else:
+                    score += 50
+            elif self.matched[self.subarea_pattern] == ['H', 'L', 'L', 'L', 'H']:
+                if self.GeoTrueFor['subareakey'] == 1:
+                    score += 55
+                    if self.distance >= 0 and self.distance <= 6:
+                        score += 45
+                    elif self.distance >= 7 and self.distance <= 12:
+                        score += 23
+                    else:
+                        score += 0
+                else:
+                    score += 50
+            else:
+                score = similarity.bkoi_address_matcher(
+                    fixedaddr, geoaddr, fixedaddr, geoaddr)['match percentage']
+                score = int(score.strip("%").strip()) // 2
+        print('Score---> '+str(score))
+        return score
 
     def Check_Confidence_Score(self, fixedaddr, geoaddr):
         p = 1
@@ -1171,7 +1281,7 @@ class Address(object):
         if len(self.matched[self.subarea_pattern]) > 0 and len(self.GeoTrueFor) > 0:
             print(self.matched[self.subarea_pattern][4])
             print(self.GeoTrueFor['subareakey'])
-            if self.matched[self.subarea_pattern][4] == 'H' and self.GeoTrueFor['subareakey'] == 1:
+            if self.matched[self.subarea_pattern][4].strip() == 'H' and self.GeoTrueFor['subareakey'] == 1:
                 score += 50
                 if self.matched[self.subarea_pattern][2] == 'H' and self.GeoTrueFor['blockkey'] == 1:
                     score += 30
@@ -1726,13 +1836,13 @@ class Address(object):
                 print(ChangedAddr)
                 exact_addr = 1
                 if distance < 6 and distance >= 1:
-                    TrueFor['subareakey'] = 1
-                    TrueFor['blockkey'] = 1
+                    # TrueFor['subareakey'] = 1
+                    # TrueFor['blockkey'] = 1
                     TrueFor['roadkey'] = 1
                     TrueFor['housekey'] = 1
                 if distance >= 6:
-                    TrueFor['subareakey'] = 1
-                    TrueFor['blockkey'] = 1
+                    # TrueFor['subareakey'] = 1
+                    # TrueFor['blockkey'] = 1
                     TrueFor['roadkey'] = 3
                     TrueFor['housekey'] = 1
                 # print('exactttttttttttttttttttttttttttttttttttttttttttttttt')
@@ -1743,8 +1853,8 @@ class Address(object):
                 final_addr = search_addr[0]
                 distance = search_addr[1]
                 in_addr = 1
-                TrueFor['subareakey'] = 1
-                TrueFor['blockkey'] = 1
+                # TrueFor['subareakey'] = 1
+                # TrueFor['blockkey'] = 1
                 TrueFor['roadkey'] = 2
                 TrueFor['housekey'] = 1
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict_fuzzy) > 0 and exact_addr == 0 and in_addr == 0:
@@ -1755,8 +1865,8 @@ class Address(object):
                 distance = search_addr[1]
                 fuzzy_addr = 1
                 # print('innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn')
-                TrueFor['subareakey'] = 1
-                TrueFor['blockkey'] = 1
+                # TrueFor['subareakey'] = 1
+                # TrueFor['blockkey'] = 1
                 TrueFor['roadkey'] = 3
                 TrueFor['housekey'] = 1
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict_no_road) > 0 and exact_addr == 0 and in_addr == 0 and fuzzy_addr == 0:
@@ -1765,15 +1875,24 @@ class Address(object):
             if len(search_addr[0]) != 0:
                 final_addr = search_addr[0]
                 distance = search_addr[1]
+                self.distance = distance
                 no_road_addr = 1
                 # print('fuzyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy')
-                TrueFor['subareakey'] = 1
-                TrueFor['blockkey'] = 1
+                # TrueFor['subareakey'] = 1
+                # TrueFor['blockkey'] = 1
                 TrueFor['roadkey'] = 0
                 TrueFor['housekey'] = 1
         # print(final_addr)
-        self.GeoTrueFor = TrueFor
         self.matched[self.housekey] = matched_house_key
+        if self.matched[self.subareakey] == '' or self.matched[self.subareakey] == None:
+            TrueFor['subareakey'] = 0
+        if self.matched[self.blockkey] == '' or self.matched[self.blockkey] == None:
+            TrueFor['blockkey'] = 0
+        if self.matched[self.roadkey] == '' or self.matched[self.roadkey] == None:
+            TrueFor['roadkey'] = 0
+        if self.matched[self.housekey] == '' or self.matched[self.housekey] == None:
+            TrueFor['housekey'] = 0
+        self.GeoTrueFor = TrueFor
         if exact_addr == 0 and in_addr == 0 and fuzzy_addr == 0 and no_road_addr == 0:
             self.GeoTrueFor = TrueFor
             print(gotHoldings)
@@ -1785,6 +1904,7 @@ class Address(object):
         print(self.GeoTrueFor)
         print(distance)
         print(final_addr)
+        self.distance = distance
         if final_addr == "" or final_addr == None or final_addr == 0:
             print("from prev 1")
             print(self.matched)
