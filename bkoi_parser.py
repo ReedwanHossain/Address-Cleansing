@@ -1200,7 +1200,8 @@ class Address(object):
         score = 0
         print(self.distance)
         if self.matched[self.subareakey] != None and self.matched[self.subareakey] != '':
-            if self.matched[self.subarea_pattern] == ['H', 'H', 'H', 'L', 'H']:
+            # if self.matched[self.subarea_pattern] == ['H', 'H', 'H', 'L', 'H']:
+            if self.matched[self.subarea_pattern][0].strip() == 'H' and self.matched[self.subarea_pattern][1].strip() == 'H' and self.matched[self.subarea_pattern][2].strip() == 'H' and self.matched[self.subarea_pattern][4].strip() == 'H':
                 if self.GeoTrueFor['subareakey'] == 1:
                     score += 48
                     if self.GeoTrueFor['blockkey'] == 1:
@@ -1257,7 +1258,8 @@ class Address(object):
                                 score += 0
                 else:
                     score += 50
-            elif self.matched[self.subarea_pattern] == ['H', 'H', 'L', 'L', 'H']:
+            # elif self.matched[self.subarea_pattern] == ['H', 'H', 'L', 'L', 'H']:
+            elif self.matched[self.subarea_pattern][0].strip() == 'H' and self.matched[self.subarea_pattern][1].strip() == 'H' and self.matched[self.subarea_pattern][4].strip() == 'H':
                 if self.GeoTrueFor['subareakey'] == 1:
                     score += 48
                     if self.GeoTrueFor['roadkey'] == 1:
@@ -1286,7 +1288,8 @@ class Address(object):
                             score += 0
                 else:
                     score += 50
-            elif self.matched[self.subarea_pattern] == ['H', 'L', 'L', 'L', 'H']:
+            # elif self.matched[self.subarea_pattern] == ['H', 'L', 'L', 'L', 'H']:
+            elif self.matched[self.subarea_pattern][0].strip() == 'H' and self.matched[self.subarea_pattern][4].strip() == 'H':
                 if self.GeoTrueFor['subareakey'] == 1:
                     score += 55
                     if self.distance >= 0 and self.distance <= 6:
