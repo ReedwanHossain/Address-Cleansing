@@ -66,7 +66,7 @@ class MiniParser(object):
                     pass
 
             #print(str(idx)+" "+token)
-            print(i)
+            # print(i)
             idx += 1
         if len(multiple_name) > 1 and ptype != 'residential':
             self.name = multiple_name[0]
