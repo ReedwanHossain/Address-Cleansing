@@ -82,6 +82,7 @@ class Address(object):
         self.globalAddress = ''
         self.extraHomeKeys = ''
         self.distance = 99
+        self.name_search = None
 
     reverse_pattern = {
         'house': '',
@@ -1075,17 +1076,6 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
-        # status_checking = self.check_address_status()
-        final_address = self.bind_address()
-        # self.search_addr_bkoi(final_address)
-        obj = {
-
-            'status': self.check_address_status(),
-            'address': final_address.strip(),
-            'geocoded': self.search_addr_bkoi2(final_address, thana_param, district_param),
-
-        }
-
         parsed_addr = {
 
             'area': self.matched[self.areakey],
@@ -1101,6 +1091,47 @@ class Address(object):
             'parsed_union': self.matched[self.unionkey],
             'pattern': s_pattern,
         }
+        if (self.matched[self.housekey] == None or self.matched[self.housekey] == "") and (self.matched[self.roadkey] == None or self.matched[self.roadkey] == "") and (self.matched[self.blockkey] == None or self.matched[self.blockkey] == ""):
+            # print('no addr comp exist')
+            ob = {}
+            data = self.get_geo_data(
+                saveTortnAddr, thana_param, district_param)
+            # print(data)
+            # fin_addr = self.search_addr_bkoi(data, saveTortnAddr)
+            fin_addr = self.matcher_addr_bkoi(data, saveTortnAddr)
+            # print(fin_addr)
+            self.name_search = fin_addr
+            ob['geocoded'] = self.name_search
+            ob['input_address'] = saveTortnAddr
+            ob['address'] = saveTortnAddr
+            ob['parsed_address'] = parsed_addr
+            print(ob)
+            try:
+                ob['confidence_score_percentage'] = int(
+                    ob['geocoded']['score'] // ob['geocoded']['match_freq'])
+                obT = ReverseTransformer()
+                bnAddress = obT.english_to_bangla(ob['address'])
+                ob['address_bn'] = bnAddress['address_bn']
+                ob['status'] = 'incomplete'
+                del ob['geocoded']['score']
+                del ob['geocoded']['match_freq']
+                del ob['geocoded']['matching_diff']
+                del ob['geocoded']['match_fuzzy']
+                return ob
+            except Exception as e:
+                print(e)
+                pass
+
+        final_address = self.bind_address()
+
+        obj = {
+
+            'status': self.check_address_status(),
+            'address': final_address.strip(),
+            'geocoded': self.search_addr_bkoi2(final_address, thana_param, district_param),
+
+        }
+
         unique_area = 0
         unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s", "ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d",
                                "ra+(i*|y*)e*r\s*ba+(z|j|g)(a|e)+r", "b(a+|o+)r(a+|o+|u+)\s*ba+gh*", "sh*(e|a|i)r\s*(e|a)\s*b(a|e)nga*la\s*n(a+|o+)g(a+|o+)re*", "sh*(ya+|a+y|e)mo+l(i+|e+|y)", "k(a+|o+)l+y*a+n\s*p(o+|u+)r", "p(i+|e+)re+r+\s*ba+gh*", "paic*k\s*pa+ra+", "k(o+|u+)r(e+|i+)l+", "(v|bh)a+ta+ra+", "(j|z|g)oa*r\s*sh*a+ha+ra+", "ka+la+\s*(ch|s)a+n*d*\s*p(o+|u+)r", "n(a+|o+)r*d+a+", "gh*o+ra+n"]
@@ -1406,6 +1437,141 @@ class Address(object):
             print("sector "+sector_key)
             self.reverse_pattern['sector'] = "sector "+sector_key
         return None
+
+    def matcher_addr_bkoi(self, data, qstring):
+        similar_addr = []
+        mp = MiniParser()
+        temp_qstring = qstring.split(' ')
+        isAreapoint = 0
+        match_address_max = {}
+        match_counter_max = -1
+        match_obj_max = {}
+        numOfmatches = 0
+        fuzzy_matches = 0
+        geocoded_addr_name_len = 0
+        p = 0
+        cnt = []
+        if self.matched[self.subareakey] == None:
+            self.matched[self.subareakey] = ''
+        if self.matched[self.areakey] == None:
+            self.matched[self.areakey] = ''
+        if (self.matched[self.areakey] != '' and self.matched[self.areakey] != None) or (self.matched[self.subareakey] != '' and self.matched[self.subareakey] != None):
+            for i in data:
+                match_counter = 0
+                fuzzy_match_counter = 0
+                geocoded_area = i['area']
+                geocoded_area = geocoded_area.strip().lower()
+                # geocoded_address_with_area=i['address']+", "+geocoded_area
+                geocoded_address_with_area = i['new_address']
+                geocoded_addr_comp = mp.parse(
+                    geocoded_address_with_area.lower(), i['pType'])
+                # print(geocoded_addr_comp)
+                # print(geocoded_area)
+                geocoded_holding = geocoded_addr_comp['holding'].strip()
+                geocoded_subarea = geocoded_addr_comp['subarea'].strip()
+                # print('***************** Geo ** ************')
+                # print(geocoded_holding)
+                # print(geocoded_area)
+                # print(geocoded_subarea)
+                # print('***************** parsed ** ************')
+                # print(self.matched[self.areakey])
+                # print(self.matched[self.subareakey])
+                # if (geocoded_holding != None or geocoded_holding != '') and geocoded_holding in qstring:
+                #     numOfmatches_exact += 1
+                #     exact_matched.append(i)
+                #     print(qstring)
+                #     print(i['new_address'])
+                #     exact_check = 1
+                #     continue
+                # if exact_matched == 1:
+                #     continue
+                if (geocoded_holding != None or geocoded_holding != '') and ((self.matched[self.areakey] != '' and self.matched[self.areakey] in geocoded_area) or (self.matched[self.areakey] != '' and geocoded_area in self.matched[self.areakey]) or (self.matched[self.subareakey] != '' and self.matched[self.subareakey] in geocoded_subarea) or (self.matched[self.subareakey] != '' and geocoded_subarea in self.matched[self.subareakey]) or (self.matched[self.subareakey] != '' and geocoded_area in self.matched[self.subareakey]) or (self.matched[self.areakey] != '' and geocoded_subarea in self.matched[self.areakey])):
+                    for comp in geocoded_holding.split(' '):
+
+                        if comp != '' and (comp in qstring):
+                            match_counter += 1
+                        elif comp != '' and any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] and len(comp) >= 5 for st in temp_qstring):
+                            match_counter += 0.5
+                            fuzzy_match_counter += 1
+                            # print(match_counter)
+                    cnt.append(match_counter)
+                    if match_counter_max < match_counter:
+                        match_counter_max = match_counter
+                        match_address_max = i['new_address'].lower()
+                        geocoded_addr_name_len = len(
+                            geocoded_holding.split(' '))
+                        match_obj_max = i
+                        p = 1
+                    if match_counter_max == match_counter:
+                        print(i['new_address'])
+                        similar_addr.append(geocoded_holding)
+
+        else:
+            cnt = []
+            for i in data:
+                match_counter = 0
+                fuzzy_match_counter = 0
+                geocoded_area = i['area']
+                geocoded_area = geocoded_area.strip().lower()
+                # geocoded_address_with_area=i['address']+", "+geocoded_area
+                geocoded_address_with_area = i['new_address']
+                geocoded_addr_comp = mp.parse(
+                    geocoded_address_with_area.lower(), i['pType'])
+                # print(geocoded_addr_comp)
+                # print(geocoded_area)
+                geocoded_holding = geocoded_addr_comp['holding'].strip(
+                ).lower()
+                geocoded_subarea = geocoded_addr_comp['subarea'].strip(
+                ).lower()
+                # print('***************** Geo ** ************')
+                # print(geocoded_holding)
+                # print(geocoded_area)
+                # print(geocoded_subarea)
+                # print('***************** parsed ** ************')
+                # print(self.matched[self.areakey])
+                # print(self.matched[self.subareakey])
+                print('********************')
+                print(geocoded_address_with_area)
+                print(geocoded_holding)
+                # print(qstring)
+                print('********************')
+                if (geocoded_holding != None or geocoded_holding.strip() != ''):
+                    if len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
+                        match_counter += 1
+                        p = 1
+                    for comp in geocoded_holding.split(' '):
+                        if p == 0 and comp != '' and (comp in qstring):
+                            match_counter += 1
+                            # print(match_counter)
+                        elif p == 0 and comp != '' and (any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] for st in temp_qstring)):
+                            match_counter += 0.5
+                            fuzzy_match_counter += 1
+                    cnt.append(match_counter)
+                    if match_counter_max < match_counter:
+                        match_counter_max = match_counter
+                        match_address_max = i['new_address'].lower()
+                        geocoded_addr_name_len = len(
+                            geocoded_holding.split(' '))
+                        fuzzy_matches = fuzzy_match_counter
+                        match_obj_max = i
+
+                        p = 1
+                    if match_counter_max == match_counter:
+                        # print(i['new_address'])
+                        similar_addr.append(geocoded_holding)
+        # for addr in similar_addr:
+        #     print(self.lcs(qstring, addr, len(qstring), len(addr)))
+        print('same addr: ')
+        print(cnt)
+        largest = max(cnt)
+        match_obj_max['match_freq'] = cnt.count(largest)
+        match_obj_max['matching_diff'] = abs(
+            geocoded_addr_name_len - match_counter_max)
+        match_obj_max['match_fuzzy'] = fuzzy_matches
+        print(match_obj_max['match_fuzzy'])
+        match_obj_max['score'] = (
+            100*match_counter_max)//geocoded_addr_name_len
+        return match_obj_max
 
     def search_addr_bkoi(self, data, qstring):
         # print('.....at search..........')
@@ -2167,6 +2333,28 @@ class Address(object):
             prop_filter['district'] = district_value
 
         return prop_filter
+
+    def get_geo_data(self, qstring, thana_param, district_param):
+
+        url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
+        # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
+        if(thana_param == "yes" and district_param != 'yes'):
+            r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+        elif(thana_param != "yes" and district_param == 'yes'):
+            r = requests.post(
+                url, params={'q': qstring, 'district': district_param})
+        elif(thana_param == 'yes' and district_param == 'yes'):
+            r = requests.post(
+                url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
+        elif(thana_param != "yes" and district_param != 'yes'):
+            r = requests.post(url, params={'q': qstring})
+
+        try:
+            data = r.json()
+            return data
+        except Exception as e:
+            print("Failed to get data...................")
+            return {}
 
     def bind_address(self):
 
