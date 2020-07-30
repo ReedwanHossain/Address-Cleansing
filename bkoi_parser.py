@@ -83,6 +83,7 @@ class Address(object):
         self.extraHomeKeys = ''
         self.distance = 99
         self.name_search = None
+        self.fixed_addr = ''
 
     reverse_pattern = {
         'house': '',
@@ -816,10 +817,15 @@ class Address(object):
             'n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*', 'nikunja', input_address)
         subarea_list = self.dbinit.get_subarea()
         for j, subarea in enumerate(subarea_list):
-            input_address = re.sub(subarea[7].strip().lower(
-            ), subarea[0].strip().lower(), input_address)
-            input_address = re.sub(subarea[8].strip().lower(
-            ), subarea[1].strip().lower(), input_address)
+            try:
+                input_address = re.sub(subarea[7].strip().lower(
+                ), subarea[0].strip().lower(), input_address)
+                input_address = re.sub(subarea[8].strip().lower(
+                ), subarea[1].strip().lower(), input_address)
+            except Exception as e:
+                print(e)
+                pass
+
         # can be changed
         if 'block' in input_address and 'sector' in input_address:
             input_address = input_address.replace('sector', 'section')
@@ -1066,12 +1072,12 @@ class Address(object):
                     self.matched[self.subarea_pattern] = s_pattern
                     break
         # if area has no block remove it though given by address
-        areas_with_block = ['mirpur', 'basundhara', 'banani', 'banasree',
-                            'aftabnagar', 'khilgaon', 'mohammadpur', 'niketon', 'turag', 'baridhara']
-        if (self.matched[self.areakey] != "" and self.matched[self.areakey] != None and self.matched[self.areakey] not in areas_with_block):
-            self.matched[self.blockkey] = None
+        # areas_with_block = ['mirpur', 'basundhara', 'banani', 'banasree',
+        #                     'aftabnagar', 'khilgaon', 'mohammadpur', 'niketon', 'turag', 'baridhara','lalmatia']
+        # if (self.matched[self.areakey] != "" and self.matched[self.areakey] != None and self.matched[self.areakey] not in areas_with_block):
+        #     self.matched[self.blockkey] = None
         try:
-            if self.matched[self.subarea_pattern][2] != 'H':
+            if self.matched[self.subarea_pattern][2] != 'H' and self.matched[self.subarea_pattern][2] != 'M':
                 self.matched[self.blockkey] = None
         except Exception as e:
             print(e)
@@ -1109,6 +1115,14 @@ class Address(object):
             try:
                 ob['confidence_score_percentage'] = int(
                     ob['geocoded']['score'] // ob['geocoded']['match_freq'])
+                if ob['confidence_score_percentage'] == 100:
+                    ob['confidence_score_percentage'] = 98
+                if ob['confidence_score_percentage'] == 0:
+                    import similarity
+                    score = similarity.bkoi_address_matcher(
+                        ob['input_address'], ob['geocoded']['new_address'], ob['input_address'], ob['geocoded']['new_address'])['match percentage']
+                    ob['confidence_score_percentage'] = (int(
+                        score.strip("%").strip()) // 2)+2
                 obT = ReverseTransformer()
                 bnAddress = obT.english_to_bangla(ob['address'])
                 ob['address_bn'] = bnAddress['address_bn']
@@ -1123,6 +1137,7 @@ class Address(object):
                 pass
 
         final_address = self.bind_address()
+        self.fixed_addr = final_address
 
         obj = {
 
@@ -1144,6 +1159,7 @@ class Address(object):
                 break
         try:
             print('927 ................')
+            print('1150')
 
             # print(self.Check_Confidence_Score(
             # obj['address'], obj['geocoded']['Address']))
@@ -1152,10 +1168,12 @@ class Address(object):
         except Exception as e:
             print('930 ................')
             print(e)
-            obj['confidence_score_percentage'] = 0
+            obj['confidence_score_percentage'] = 2
         if unique_area == 1:
             obj['confidence_score_percentage'] = self.confScore
         obj['input_address'] = saveTortnAddr
+        if obj['confidence_score_percentage'] == 100:
+            obj['confidence_score_percentage'] = 98
         # try:
         #     obj['latitude'] = obj['geocoded']['latitude']
         #     obj['longitude'] = obj['geocoded']['longitude']
@@ -1304,7 +1322,14 @@ class Address(object):
                 score = similarity.bkoi_address_matcher(
                     fixedaddr, geoaddr, fixedaddr, geoaddr)['match percentage']
                 score = int(score.strip("%").strip()) // 2
-        print('Score---> '+str(score))
+        if score == 0:
+            score = similarity.bkoi_address_matcher(
+                fixedaddr, geoaddr, fixedaddr, geoaddr)['match percentage']
+            return int(score.strip("%").strip())//2
+        # self.confScore=round(score)
+        score = round(score)
+        print('Score---> ' + str(score))
+        self.confScore = score
         return score
 
     def Check_Confidence_Score(self, fixedaddr, geoaddr):
@@ -1707,6 +1732,7 @@ class Address(object):
                         geocoded_subarea = sarea.strip()
             print(
                 '=============================================================================')
+            #print('Geocoded Subarea '+geocoded_subarea)
             print(geocoded_address_with_area)
             print(geocoded_area+'    ' +
                   self.matched[self.areakey].strip().strip(',').strip())
@@ -2076,8 +2102,17 @@ class Address(object):
         self.distance = distance
         if final_addr == "" or final_addr == None or final_addr == 0:
             print("from prev 1")
-            print(self.matched)
+            # print(self.matched)
             final_addr = self.search_addr_bkoi(data, qstring)
+            try:
+                if self.fixed_addr != '':
+                    import similarity
+                    score = similarity.bkoi_address_matcher(
+                        self.fixed_addr, final_addr['new_address'], self.fixed_addr, final_addr['new_address'])['match percentage']
+                    self.confScore = int(score.strip("%").strip()) // 2
+            except Exception as e:
+                print(e)
+                pass
 
         thana_value = None
         try:
@@ -2271,8 +2306,8 @@ class Address(object):
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict) > 0:
             search_addr = self.bkoi_search_holding(
                 matched_house_key.strip().strip(',').strip(), holding_dict)
-            print("search .....")
-            print(search_addr)
+            #print("search .....")
+            # print(search_addr)
             ChangedAddr = ''
             if len(search_addr[0]) != 0:
                 final_addr = search_addr[0]
@@ -2300,7 +2335,8 @@ class Address(object):
 
         if final_addr == "" or final_addr == None or final_addr == 0:
             print("from prev 1")
-            print(self.matched)
+            print('2316......')
+            # print(self.matched)
             final_addr = self.search_addr_bkoi(data, qstring)
         self.matched[self.housekey] = matched_house_key
         thana_value = None
@@ -2327,7 +2363,13 @@ class Address(object):
                 'pType': final_addr['pType'],
                 'uCode': final_addr['uCode']
             }
+            if self.fixed_addr != '':
+                import similarity
+                score = similarity.bkoi_address_matcher(
+                    self.fixed_addr, final_addr['new_address'], self.fixed_addr, final_addr['new_address'])['match percentage']
+                self.confScore = int(score.strip("%").strip())//2
         except Exception as e:
+            print(e)
             return {}
         if thana_param == "yes":
             prop_filter['thana'] = thana_value
@@ -2468,9 +2510,9 @@ class Address(object):
         if len(self.matched_array) < 1:
             # print("913...........................")
             full_address = self.clone_input_address.lstrip().rstrip()
-        print('......................................1090')
-        print(self.tempArray)
-        print(self.matched)
+        # print('......................................1090')
+        # print(self.tempArray)
+        # print(self.matched)
 
         return full_address
 

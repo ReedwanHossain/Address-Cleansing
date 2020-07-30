@@ -7,6 +7,8 @@ subarealist = []
 arealist = []
 subareas = dbinit.get_subarea()
 for i, subarea in enumerate(subareas):
+    if subarea[1] == None or subarea[0] == None:
+        continue
     subarealist.append(subarea[1].lower().strip())
     arealist.append(subarea[0].lower().strip())
 roadkeywords = ['road', 'ave', 'lane', 'sarani', 'sharani', 'soroni', 'shoroni', 'rd#', 'sarak', 'sharak',
