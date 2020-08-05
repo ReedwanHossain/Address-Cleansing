@@ -109,7 +109,7 @@ class Address(object):
     rep2 = {
         # ' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rode ": " road  ", " rd": " road  ", " road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", "road #": " road ", " r-": " road ", " ,r-": " road ", ",r": " road ", " r ": " road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
-        "bl-": " block ", " blk ": " block ", " blc ": " block ", " blk: ": " block ", " blk- ": " block ", " blk# ": " block ", " blk": " block ", "bl ": " block ", " b ": " block ", "bl#": " block ", "bl:": " block ", "b-": " block ", "b:": " block ", "b#": " block ", 'sec-': ' sector ', 'sec.': ' sector ', ' sec ': ' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
+        "bl-": " block ", " blk ": " block ", " blc ": " block ", " blk: ": " block ", " blk- ": " block ", " blk# ": " block ", " blk": " block ", " bl ": " block ", " b ": " block ", "bl#": " block ", "bl:": " block ", "b-": " block ", "b:": " block ", "b#": " block ", 'sec-': ' sector ', 'sec.': ' sector ', ' sec ': ' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
         'house': ' house ', 'house:': ' house ', ' basha ': ' house ', ' basa ': ' house ', ' bari ': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ', 'section:': ' section ', 'sector': ' sector ', 'sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', ' no ': '', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ', 'sectionno': ' section ', 'sector no': ' sector ', 'sector': ' sector ', 'number': '', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no#': '', 'no=': '', 'no.': '', ' num ': ' no ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ', 'ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ', ' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', ' len ': ' lane ', 'plot': ' ', ' ltd.': ' limited', ' pvt.': ' private', ' inc.': ' incorporation', ' co.': ' company',
@@ -117,7 +117,7 @@ class Address(object):
     rep1 = {
         # ' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rode ": " road  ", " rd": " road  ", " road#": " road  ", "rd:": " road  ",
-        "bl-": " block ", " blk ": " block ", " blc ": " block ", " blk: ": " block ", " blk- ": " block ", " blk# ": " block ", " blk": " block ", "bl ": " block ", "bl#": " block ", "bl:": " block ",  'sec-': ' sector ', ' sec ': ' sector ', 'sec#': ' sector ', 'sec.': ' sector ', 'sec:': ' sector ',
+        "bl-": " block ", " blk ": " block ", " blc ": " block ", " blk: ": " block ", " blk- ": " block ", " blk# ": " block ", " blk": " block ", " bl ": " block ", "bl#": " block ", "bl:": " block ",  'sec-': ' sector ', ' sec ': ' sector ', 'sec#': ' sector ', 'sec.': ' sector ', 'sec:': ' sector ',
         'house': ' house ', 'house:': ' house ', ' basha ': ' house ', ' basa ': ' house ', ' bari ': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ', 'section:': ' section ', 'sector': ' sector ', 'sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ', 'sectionno': ' section ', 'sector no': ' sector ', 'sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ', 'ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ', ' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane',  'plot': ' ', ' ltd.': ' limited', ' pvt.': ' private', ' inc.': ' incorporation', ' co.': ' company',
@@ -1275,7 +1275,7 @@ class Address(object):
                             else:
                                 score += 0
                 else:
-                    score += 50
+                    score += 0
             # elif self.matched[self.subarea_pattern] == ['H', 'H', 'L', 'L', 'H']:
             elif self.matched[self.subarea_pattern][0].strip() == 'H' and self.matched[self.subarea_pattern][1].strip() == 'H' and self.matched[self.subarea_pattern][4].strip() == 'H':
                 if self.GeoTrueFor['subareakey'] == 1:
@@ -1305,7 +1305,7 @@ class Address(object):
                         else:
                             score += 0
                 else:
-                    score += 50
+                    score += 0
             # elif self.matched[self.subarea_pattern] == ['H', 'L', 'L', 'L', 'H']:
             elif self.matched[self.subarea_pattern][0].strip() == 'H' and self.matched[self.subarea_pattern][4].strip() == 'H':
                 if self.GeoTrueFor['subareakey'] == 1:
@@ -1317,7 +1317,7 @@ class Address(object):
                     else:
                         score += 0
                 else:
-                    score += 50
+                    score += 0
             else:
                 score = similarity.bkoi_address_matcher(
                     fixedaddr, geoaddr, fixedaddr, geoaddr)['match percentage']
