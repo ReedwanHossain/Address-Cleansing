@@ -253,11 +253,11 @@ class Address(object):
                         self.subarea_flag = True
 
         elif self.area_flag == False:
-            print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
+            #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
             subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
                 if (token.lower().strip() in subarea[1].lower().strip() and subarea[1].lower().strip() in self.cleanAddressStr.lower()):
-                    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
+                    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
                     if (token.lower().strip() == 'section' or token.lower().strip() == 'sector') and len(self.tempArray)-1 > idx:
                         if token.lower().strip()+" "+self.tempArray[idx+1] == subarea[1].lower():
                             print("for section 12.......")
@@ -280,7 +280,7 @@ class Address(object):
                     else:
                         if "section" in subarea[1].lower() or "sector" in subarea[1].lower():
                             continue
-                        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$2   "+token)
+                        #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$2   "+token)
                         self.matched[self.subareakey] = subarea[1].lower()
                         self.matched[self.areakey] = subarea[0].lower()
 
