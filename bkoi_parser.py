@@ -84,6 +84,7 @@ class Address(object):
         self.distance = 99
         self.name_search = None
         self.fixed_addr = ''
+        self.get_geo_obj = []
 
     reverse_pattern = {
         'house': '',
@@ -253,11 +254,11 @@ class Address(object):
                         self.subarea_flag = True
 
         elif self.area_flag == False:
-            print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
+            #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
             subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
                 if (token.lower().strip() in subarea[1].lower().strip() and subarea[1].lower().strip() in self.cleanAddressStr.lower()):
-                    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
+                    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
                     if (token.lower().strip() == 'section' or token.lower().strip() == 'sector') and len(self.tempArray)-1 > idx:
                         if token.lower().strip()+" "+self.tempArray[idx+1] == subarea[1].lower():
                             print("for section 12.......")
@@ -280,7 +281,7 @@ class Address(object):
                     else:
                         if "section" in subarea[1].lower() or "sector" in subarea[1].lower():
                             continue
-                        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$2   "+token)
+                        #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$2   "+token)
                         self.matched[self.subareakey] = subarea[1].lower()
                         self.matched[self.areakey] = subarea[0].lower()
 
@@ -1674,6 +1675,7 @@ class Address(object):
             datas = r.json()
             # print("got it")
             data = datas
+            self.get_geo_obj = data
             pass
         except Exception as e:
             print("Failed to get data...................")
@@ -2181,27 +2183,31 @@ class Address(object):
         # print(self.matched)
         # print('.....at search..........')
         # print(qstring)
-        url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
-        # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
-        if(thana_param == "yes" and district_param != 'yes'):
-            r = requests.post(url, params={'q': qstring, 'thana': thana_param})
-        elif(thana_param != "yes" and district_param == 'yes'):
-            r = requests.post(
-                url, params={'q': qstring, 'district': district_param})
-        elif(thana_param == 'yes' and district_param == 'yes'):
-            r = requests.post(
-                url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
-        elif(thana_param != "yes" and district_param != 'yes'):
-            r = requests.post(url, params={'q': qstring})
+        # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
+        # # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
+        # if(thana_param == "yes" and district_param != 'yes'):
+        #     r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+        # elif(thana_param != "yes" and district_param == 'yes'):
+        #     r = requests.post(
+        #         url, params={'q': qstring, 'district': district_param})
+        # elif(thana_param == 'yes' and district_param == 'yes'):
+        #     r = requests.post(
+        #         url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
+        # elif(thana_param != "yes" and district_param != 'yes'):
+        #     r = requests.post(url, params={'q': qstring})
 
-        try:
-            datas = r.json()
-            # print("got it")
-            data = datas
-            pass
-        except Exception as e:
-            print("Failed to get data...................")
+        # try:
+        #     datas = r.json()
+        #     # print("got it")
+        #     data = datas
+        #     pass
+        # except Exception as e:
+        #     print("Failed to get data...................")
+        #     return {}
+        if len(self.get_geo_obj) == 0:
             return {}
+        datas = self.get_geo_obj
+        data = datas
 
         unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s", "ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d",
                                "ra+(i*|y*)e*r\s*ba+(z|j|g)(a|e)+r", "b(a+|o+)r(a+|o+|u+)\s*ba+gh*", "sh*(e|a|i)r\s*(e|a)\s*b(a|e)nga*la\s*n(a+|o+)g(a+|o+)re*", "sh*(ya+|a+y|e)mo+l(i+|e+|y)", "k(a+|o+)l+y*a+n\s*p(o+|u+)r", "p(i+|e+)re+r+\s*ba+gh*", "paic*k\s*pa+ra+", "k(o+|u+)r(e+|i+)l+", "(v|bh)a+ta+ra+", "(j|z|g)oa*r\s*sh*a+ha+ra+", "ka+la+\s*(ch|s)a+n*d*\s*p(o+|u+)r", "n(a+|o+)r*d+a+", "gh*o+ra+n"]
