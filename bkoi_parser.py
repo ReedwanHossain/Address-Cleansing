@@ -1485,6 +1485,8 @@ class Address(object):
         if self.matched[self.areakey] == None:
             self.matched[self.areakey] = ''
         if (self.matched[self.areakey] != '' and self.matched[self.areakey] != None) or (self.matched[self.subareakey] != '' and self.matched[self.subareakey] != None):
+            print('this...........area sec')
+            check_first = 0
             for i in data:
                 match_counter = 0
                 fuzzy_match_counter = 0
@@ -1535,6 +1537,30 @@ class Address(object):
                         print(i['new_address'])
                         similar_addr.append(geocoded_holding)
 
+                elif (geocoded_holding != None or geocoded_holding.strip() != ''):
+                    if len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
+                        match_counter += 1
+                        p = 1
+                    for comp in geocoded_holding.split(' '):
+                        if p == 0 and comp != '' and (comp in qstring):
+                            match_counter += 1
+                            # print(match_counter)
+                        elif p == 0 and comp != '' and (any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] for st in temp_qstring)):
+                            match_counter += 0.5
+                            fuzzy_match_counter += 1
+                    cnt.append(match_counter)
+                    if match_counter_max < match_counter:
+                        match_counter_max = match_counter
+                        match_address_max = i['new_address'].lower()
+                        geocoded_addr_name_len = len(
+                            geocoded_holding.split(' '))
+                        fuzzy_matches = fuzzy_match_counter
+                        match_obj_max = i
+
+                        p = 1
+                    if match_counter_max == match_counter:
+                        # print(i['new_address'])
+                        similar_addr.append(geocoded_holding)
         else:
             cnt = []
             for i in data:
