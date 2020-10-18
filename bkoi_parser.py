@@ -1626,6 +1626,10 @@ class Address(object):
         print(match_obj_max['match_fuzzy'])
         match_obj_max['score'] = (
             100*match_counter_max)//geocoded_addr_name_len
+        if match_obj_max['match_freq'] == 1:
+            match_obj_max['score'] = 100
+        # print(match_obj_max['score'])
+        # print(match_obj_max['match_freq'])
         return match_obj_max
 
     def search_addr_bkoi(self, data, qstring):
