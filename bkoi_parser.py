@@ -1479,6 +1479,7 @@ class Address(object):
         fuzzy_matches = 0
         geocoded_addr_name_len = 0
         p = 0
+        q = 0
         cnt = []
         if self.matched[self.subareakey] == None:
             self.matched[self.subareakey] = ''
@@ -1499,6 +1500,8 @@ class Address(object):
                 # print(geocoded_addr_comp)
                 # print(geocoded_area)
                 geocoded_holding = geocoded_addr_comp['holding'].strip()
+                geocoded_holding = re.sub(
+                    r'\([^)]*\)', '', geocoded_holding).strip()
                 geocoded_subarea = geocoded_addr_comp['subarea'].strip()
                 # print('***************** Geo ** ************')
                 # print(geocoded_holding)
@@ -1517,11 +1520,16 @@ class Address(object):
                 # if exact_matched == 1:
                 #     continue
                 if (geocoded_holding != None or geocoded_holding != '') and ((self.matched[self.areakey] != '' and self.matched[self.areakey] in geocoded_area) or (self.matched[self.areakey] != '' and geocoded_area in self.matched[self.areakey]) or (self.matched[self.subareakey] != '' and self.matched[self.subareakey] in geocoded_subarea) or (self.matched[self.subareakey] != '' and geocoded_subarea in self.matched[self.subareakey]) or (self.matched[self.subareakey] != '' and geocoded_area in self.matched[self.subareakey]) or (self.matched[self.areakey] != '' and geocoded_subarea in self.matched[self.areakey])):
+                    qstring = qstring.replace(
+                        self.matched[self.areakey], "").strip()
+                    if qstring == geocoded_holding:
+                        match_counter += len(qstring.strip().split(' '))
+                        p = 1
                     for comp in geocoded_holding.split(' '):
 
-                        if comp != '' and (comp in qstring):
+                        if comp != '' and (comp in qstring) and p == 0:
                             match_counter += 1
-                        elif comp != '' and any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] and len(comp) >= 5 for st in temp_qstring):
+                        elif comp != '' and any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] and len(comp) >= 5 for st in temp_qstring) and p == 0:
                             match_counter += 0.5
                             fuzzy_match_counter += 1
                             # print(match_counter)
@@ -1538,7 +1546,10 @@ class Address(object):
                         similar_addr.append(geocoded_holding)
 
                 elif (geocoded_holding != None or geocoded_holding.strip() != ''):
-                    if len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
+                    if qstring == geocoded_holding:
+                        match_counter += len(qstring.strip().split(' '))
+                        p = 1
+                    elif len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
                         match_counter += 1
                         p = 1
                     for comp in geocoded_holding.split(' '):
@@ -1576,6 +1587,8 @@ class Address(object):
                 # print(geocoded_area)
                 geocoded_holding = geocoded_addr_comp['holding'].strip(
                 ).lower()
+                geocoded_holding = re.sub(
+                    r'\([^)]*\)', '', geocoded_holding).strip()
                 geocoded_subarea = geocoded_addr_comp['subarea'].strip(
                 ).lower()
                 # print('***************** Geo ** ************')
@@ -1591,9 +1604,13 @@ class Address(object):
                 # print(qstring)
                 print('********************')
                 if (geocoded_holding != None or geocoded_holding.strip() != ''):
-                    if len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
+                    if qstring == geocoded_holding:
+                        match_counter += len(qstring.strip().split(' '))
+                        p = 1
+                    elif len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
                         match_counter += 1
                         p = 1
+
                     for comp in geocoded_holding.split(' '):
                         if p == 0 and comp != '' and (comp in qstring):
                             match_counter += 1
@@ -1626,8 +1643,10 @@ class Address(object):
         print(match_obj_max['match_fuzzy'])
         match_obj_max['score'] = (
             100*match_counter_max)//geocoded_addr_name_len
-        if match_obj_max['match_freq'] == 1:
-            match_obj_max['score'] = 100
+
+        # if len(cnt)>0 and (i==largest or i==0 for i in cnt)
+        # if match_obj_max['match_freq'] == 1:
+        #     match_obj_max['score'] = 100
         # print(match_obj_max['score'])
         # print(match_obj_max['match_freq'])
         return match_obj_max
