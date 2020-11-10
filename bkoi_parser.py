@@ -633,6 +633,7 @@ class Address(object):
         print(input_address)
         input_address = " "+input_address
         input_address = input_address.lower()
+
         self.globalAddress = input_address
         self.extraHomeKeys = self.check_all_home_keys(self.globalAddress)
         input_address = self.globalAddress
@@ -643,6 +644,13 @@ class Address(object):
                 'address': input_address,
                 'input_address': saveTortnAddr,
             }
+
+        # ******************barikoi keyword seacrh*************
+        barikoi_search = re.match(
+            '((bari\s*(-)*koi)\s*(technolog(ies|y))*\s*(limited|ltd\.*)*(office)*)|((bari\s*(-)*koi|bkoi)\s*(-)*2017)', input_address.strip())
+        print(barikoi_search)
+        if barikoi_search:
+            return self.barikoi_office_search('barikoi')
 
         # remove hash, comma, qoutation marks from the address and add extra space after the address
         input_address = re.sub(r',', ' ', input_address)
@@ -1650,6 +1658,31 @@ class Address(object):
         # print(match_obj_max['score'])
         # print(match_obj_max['match_freq'])
         return match_obj_max
+
+    def barikoi_office_search(self, qstring):
+        url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
+        r = requests.post(url, params={'q': qstring})
+        data = r.json()
+        final_addr = data[0]
+        prop_filter = {
+            'Address': final_addr['new_address'],
+            'latitude': final_addr['latitude'],
+            'longitude': final_addr['longitude'],
+            'city': final_addr['city'],
+            'area': final_addr['area'],
+            'postCode': final_addr['postCode'],
+            'pType': final_addr['pType'],
+            'uCode': final_addr['uCode']
+        }
+        obT = ReverseTransformer()
+        obj = {
+            "address": qstring,
+            "address_bn": obT.english_to_bangla(qstring)['address_bn'],
+            "confidence_score_percentage": 98,
+            "status": "complete"
+        }
+        obj['geocoded'] = prop_filter
+        return obj
 
     def search_addr_bkoi(self, data, qstring):
         # print('.....at search..........')
