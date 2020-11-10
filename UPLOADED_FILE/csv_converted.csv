@@ -1,0 +1,3 @@
+input_address,fixed_address,geocoded_address,latitude,longitude,confidence_score_percentage,status
+h3 r5 mirpur 2,"house 3, road 5, section 2, mirpur","House 3, Road 5, Block A, Section 2, Mirpur, Dhaka",23.803331766936957,90.35413795795455,52,incomplete
+rupangar basa 40 rod#29,"house 40, road 29, rupnagar, mirpur","House 40, Road 29, Rupnagar, Mirpur, Dhaka",23.8184532,90.355307,98,complete

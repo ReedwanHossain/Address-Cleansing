@@ -1,9 +1,12 @@
 from flask_cors import CORS
 import json
-from flask import Flask, request, send_from_directory, make_response
+from flask import Flask, request, jsonify, send_file, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
+import pandas as pd
 import urllib
 import re
+import os
+from werkzeug.utils import secure_filename
 # import io
 import codecs
 import csv
@@ -14,15 +17,103 @@ from bkoi_e2b import ReverseTransformer
 from dbconf.db_operations import Operations
 import similarity
 
-
+import shutil
 app = Flask(__name__)
 CORS(app)
+BASE_PATH = os.getcwd()
+print(BASE_PATH)
+if not os.path.exists(BASE_PATH+'/UPLOADED_FILE'):
+    os.makedirs(BASE_PATH+'/UPLOADED_FILE')
+UPLOAD_FOLDER = BASE_PATH + '/UPLOADED_FILE'
+# shutil.rmtree(UPLOAD_FOLDER)
+ALLOWED_EXTENSIONS = set(['txt', 'json', 'csv'])
 
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+app.secret_key = "secret key"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 add_parse = Address()
 
 
-@app.route('/uploader', methods=['POST'])
+@app.route('/file/upload', methods=['GET', 'POST'])
 def upload_file():
+    try:
+        shutil.rmtree(UPLOAD_FOLDER)
+        os.makedirs(UPLOAD_FOLDER)
+    except:
+        pass
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        resp = jsonify({'message': 'No file part in the request'})
+        resp.status_code = 400
+        return resp
+    file = request.files['file']
+    if file.filename == '':
+        resp = jsonify({'message': 'No file selected for uploading'})
+        resp.status_code = 400
+        return resp
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        print(type(filename))
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        if filename.rsplit('.', 1)[1].lower() == 'csv':
+            file_status = "None"
+            try:
+                file_status = run_csv(filename)
+                if file_status == "None":
+                    resp = jsonify(
+                        {'message': 'Something Went wrong!'})
+                    resp.status_code = 403
+                    return resp
+                # return 'ok'
+                # resp = jsonify({'message': 'File successfully uploaded'})
+                #resp.status_code = 200
+                return send_from_directory(directory=UPLOAD_FOLDER, filename=filename.rsplit('.')[1]+'_converted.csv', as_attachment=True)
+            except Exception as e:
+                print(e)
+                resp = jsonify(
+                    {'message': 'Make sure input_address column exist in file !'})
+                resp.status_code = 203
+                return resp
+    else:
+        resp = jsonify({'message': 'Allowed file types are txt, json, csv'})
+        resp.status_code = 400
+        return resp
+
+
+def run_csv(filename):
+    thana_param = "yes"
+    district_param = "yes"
+    add_trans = Transformer()
+    add_parse = Address()
+    df = pd.read_csv(UPLOAD_FOLDER + "/" + filename)
+    if "input_address" not in df:
+        return "None"
+
+    with open(UPLOAD_FOLDER+'/'+filename.rsplit('.')[1]+'_converted.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["input_address", "fixed_address", "geocoded_address",
+                         "latitude", "longitude", "confidence_score_percentage", "status"])
+        for i in df['input_address']:
+            print(i)
+            res = add_parse.parse_address(
+                add_trans.bangla_to_english(i), thana_param, district_param)
+            try:
+                writer.writerow([i, res['address'], res['geocoded']
+                                 ['Address'], res['geocoded']['latitude'], res['geocoded']['longitude'], res['confidence_score_percentage'], res['status']])
+            except Exception as e:
+                print(e)
+                writer.writerow([i, res])
+        file.close()
+    return "Done"
+
+
+@app.route('/uploader', methods=['POST'])
+def uploading_file():
     if request.method == 'POST':
         result_array = []
         # f = request.files['file']
@@ -78,8 +169,8 @@ def matcher():
     addr2 = add_trans.bangla_to_english(addr2)
     addr1 = similarity.bkoi_addess_cleaner(addr1)
     addr2 = similarity.bkoi_addess_cleaner(addr2)
-    #print(addr1+"   "+addr2)
-    #print (similarity.bkoi_address_matcher(addr1,addr2,inadd1,inadd2))
+    # print(addr1+"   "+addr2)
+    # print (similarity.bkoi_address_matcher(addr1,addr2,inadd1,inadd2))
 
     return similarity.bkoi_address_matcher(addr1, addr2, inAdd1, inAdd2)
 
