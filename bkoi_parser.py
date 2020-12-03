@@ -1676,6 +1676,7 @@ class Address(object):
         }
         obT = ReverseTransformer()
         obj = {
+            "input_address": qstring,
             "address": qstring,
             "address_bn": obT.english_to_bangla(qstring)['address_bn'],
             "confidence_score_percentage": 98,

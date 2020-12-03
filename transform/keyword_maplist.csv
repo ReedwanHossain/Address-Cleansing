@@ -710,6 +710,7 @@ Celosia,Celosia
 Center,কেন্দ্র
 Centre,কেন্দ্র
 Century,শতাব্দী
+Central,কেন্দ্রীয়
 Chairmanbari,চেয়ারম্যানবাড়ি
 Chaklader,চাকলাদার
 Chalet,কাষ্ঠনির্মিত কুটীর
@@ -1234,16 +1235,15 @@ Living,জীবিত
 Lobelia,Lobelia
 Lodge,বীবর
 Lokman,লোকমান
-Loskor,Loskor
+Loskor,লস্কর
 Lota,লোটা
-Lotas,Lotas
-Lotif,Lotif
+Lotas,লোটাস
 Lotus,পদ্ম
 Lounge,লাউঞ্জ
 Lovely,সুদৃশ্য
 Loy,লয়
-Loze,Loze
-Ltd,LTD হল Limited
+Loze,লজ
+Ltd,লিমিটেড
 Lubdhok,Lubdhok
 Lucky,লাকি
 Lulu,লুলু
@@ -2173,6 +2173,8 @@ Area,এলাকা
 Center,সেন্টার
 Shoping,শপিং
 Landview,ল্যান্ডভিউ
+Hospital,হাসপাতাল
+Bank,ব্যাংক
 A,এ
 B,বি
 C,সি
