@@ -37,6 +37,8 @@ class Transformer(object):
         address = address.split()
         # print(address)
         for word in address:
+            if word[-1] == u'\u09CD':
+                word = word[:-1]
             getmylist = 0
             # word=word.decode('utf-8')
             word = word.strip()
