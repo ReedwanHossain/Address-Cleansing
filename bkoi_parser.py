@@ -1156,7 +1156,7 @@ class Address(object):
 
         }
 
-        unique_area = 0
+        unique_area_flag = 0
         unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s", "ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d",
                                "ra+(i*|y*)e*r\s*ba+(z|j|g)(a|e)+r", "b(a+|o+)r(a+|o+|u+)\s*ba+gh*", "sh*(e|a|i)r\s*(e|a)\s*b(a|e)nga*la\s*n(a+|o+)g(a+|o+)re*", "sh*(ya+|a+y|e)mo+l(i+|e+|y)", "k(a+|o+)l+y*a+n\s*p(o+|u+)r", "p(i+|e+)re+r+\s*ba+gh*", "paic*k\s*pa+ra+", "k(o+|u+)r(e+|i+)l+", "(v|bh)a+ta+ra+", "(j|z|g)oa*r\s*sh*a+ha+ra+", "ka+la+\s*(ch|s)a+n*d*\s*p(o+|u+)r", "n(a+|o+)r*d+a+", "gh*o+ra+n"]
         for unique_area in unique_area_pattern:
@@ -1164,7 +1164,7 @@ class Address(object):
                 obj['geocoded'] = self.search_addr_bkoi2_unique(
                     final_address, thana_param, district_param)
                 print("considered as unique holding")
-                unique_area = 1
+                unique_area_flag = 1
                 break
         try:
             print('927 ................')
@@ -1178,7 +1178,7 @@ class Address(object):
             print('930 ................')
             print(e)
             obj['confidence_score_percentage'] = 2
-        if unique_area == 1:
+        if unique_area_flag == 1:
             obj['confidence_score_percentage'] = self.confScore
         obj['input_address'] = saveTortnAddr
         if obj['confidence_score_percentage'] == 100:
@@ -2355,7 +2355,7 @@ class Address(object):
             if any(char.isdigit() for char in geocoded_house):
                 geocoded_house = re.findall('\d+', geocoded_house)[0]
             # if (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip()==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea.strip()==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip()== subareas.strip().strip(',').strip() for subareas in  geocoded_addr_comp['multiple_subarea'] )) and self.matched[self.subareakey].strip().strip(',').strip()!='':
-            if ((geocoded_area.strip() == self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip() in self.matched[self.subareakey].strip().strip(',').strip() or geocoded_subarea.strip() in self.matched[self.areakey].strip().strip(',').strip()) or (geocoded_subarea.lower().strip() in self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip() in subareas.strip().strip(',').strip() for subareas in geocoded_addr_comp['multiple_subarea']))) and (self.matched[self.subareakey].strip().strip(',').strip() != ''and self.matched[self.subareakey].strip().strip(',').strip() != None and geocoded_area.strip().lower() != '' and geocoded_area != None and geocoded_subarea.strip().lower() != "" and geocoded_subarea != None) and ((re.search(unique_area.strip(), self.matched[self.areakey].strip().strip(',').strip()) or re.search(unique_area.strip(), self.matched[self.subareakey].strip().strip(',').strip()) for unique_area in unique_area_pattern)):
+            if (((geocoded_area.strip() == self.matched[self.areakey].strip().strip(',').strip() and geocoded_subarea.strip() == self.matched[self.subareakey].strip().strip(',').strip()) or geocoded_area.strip() in self.matched[self.subareakey].strip().strip(',').strip() or geocoded_subarea.strip() in self.matched[self.areakey].strip().strip(',').strip()) or (geocoded_subarea.lower().strip() in self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip() in subareas.strip().strip(',').strip() for subareas in geocoded_addr_comp['multiple_subarea']))) and (self.matched[self.subareakey].strip().strip(',').strip() != ''and self.matched[self.subareakey].strip().strip(',').strip() != None and geocoded_area.strip().lower() != '' and geocoded_area != None and geocoded_subarea.strip().lower() != "" and geocoded_subarea != None) and ((re.search(unique_area_p.strip(), self.matched[self.areakey].strip().strip(',').strip()) or re.search(unique_area_p.strip(), self.matched[self.subareakey].strip().strip(',').strip()) for unique_area_p in unique_area_pattern)):
                 print(self.matched[self.subareakey].strip().strip(',').strip())
                 similarity = fuzz.ratio(
                     self.matched[self.housekey].strip().strip(',').strip(), geocoded_house)
