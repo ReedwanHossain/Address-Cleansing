@@ -10,6 +10,7 @@ import csv
 import enchant
 import similarity
 from bkoi_e2b import ReverseTransformer
+import get_geo_search_data
 
 
 from dbconf.initdb import DBINIT
@@ -254,11 +255,11 @@ class Address(object):
                         self.subarea_flag = True
 
         elif self.area_flag == False:
-            #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
+            # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
             subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
                 if (token.lower().strip() in subarea[1].lower().strip() and subarea[1].lower().strip() in self.cleanAddressStr.lower()):
-                    #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
+                    # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
                     if (token.lower().strip() == 'section' or token.lower().strip() == 'sector') and len(self.tempArray)-1 > idx:
                         if token.lower().strip()+" "+self.tempArray[idx+1] == subarea[1].lower():
                             print("for section 12.......")
@@ -281,7 +282,7 @@ class Address(object):
                     else:
                         if "section" in subarea[1].lower() or "sector" in subarea[1].lower():
                             continue
-                        #print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$2   "+token)
+                        # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$2   "+token)
                         self.matched[self.subareakey] = subarea[1].lower()
                         self.matched[self.areakey] = subarea[0].lower()
 
@@ -801,7 +802,7 @@ class Address(object):
         print('////////////////////')
         # print("574-----------------"+input_address)
         # remove dots if string has no domain name like xyz.com
-        print(input_address)
+        input_address = input_address.replace(' ctg ', ' chittagong ')
         if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu|\d+\.\d+', input_address) == None):
             input_address = input_address.replace(".", "  ")
             print(input_address)
@@ -1659,10 +1660,195 @@ class Address(object):
         # print(match_obj_max['match_freq'])
         return match_obj_max
 
+    def matcher_addr_bkoi_all(self, data, qstring):
+        similar_addr = []
+        mp = MiniParser()
+        temp_qstring = qstring.split(' ')
+        isAreapoint = 0
+        match_address_max = {}
+        match_counter_max = -1
+        match_obj_max = {}
+        numOfmatches = 0
+        fuzzy_matches = 0
+        geocoded_addr_name_len = 0
+        p = 0
+        q = 0
+        cnt = []
+        if self.matched[self.subareakey] == None:
+            self.matched[self.subareakey] = ''
+        if self.matched[self.areakey] == None:
+            self.matched[self.areakey] = ''
+        if (self.matched[self.areakey] != '' and self.matched[self.areakey] != None) or (self.matched[self.subareakey] != '' and self.matched[self.subareakey] != None):
+            print('this...........area sec')
+            check_first = 0
+            for i in data:
+                match_counter = 0
+                fuzzy_match_counter = 0
+                geocoded_area = i['area']
+                geocoded_area = geocoded_area.strip().lower()
+                # geocoded_address_with_area=i['address']+", "+geocoded_area
+                geocoded_address_with_area = i['new_address']
+                geocoded_addr_comp = mp.parse(
+                    geocoded_address_with_area.lower(), i['pType'])
+                # print(geocoded_addr_comp)
+                # print(geocoded_area)
+                geocoded_holding = geocoded_addr_comp['holding'].strip()
+                geocoded_holding = re.sub(
+                    r'\([^)]*\)', '', geocoded_holding).strip()
+                geocoded_subarea = geocoded_addr_comp['subarea'].strip()
+                # print('***************** Geo ** ************')
+                # print(geocoded_holding)
+                # print(geocoded_area)
+                # print(geocoded_subarea)
+                # print('***************** parsed ** ************')
+                # print(self.matched[self.areakey])
+                # print(self.matched[self.subareakey])
+                # if (geocoded_holding != None or geocoded_holding != '') and geocoded_holding in qstring:
+                #     numOfmatches_exact += 1
+                #     exact_matched.append(i)
+                #     print(qstring)
+                #     print(i['new_address'])
+                #     exact_check = 1
+                #     continue
+                # if exact_matched == 1:
+                #     continue
+                if (geocoded_holding != None or geocoded_holding != '') and ((self.matched[self.areakey] != '' and self.matched[self.areakey] in geocoded_area) or (self.matched[self.areakey] != '' and geocoded_area in self.matched[self.areakey]) or (self.matched[self.subareakey] != '' and self.matched[self.subareakey] in geocoded_subarea) or (self.matched[self.subareakey] != '' and geocoded_subarea in self.matched[self.subareakey]) or (self.matched[self.subareakey] != '' and geocoded_area in self.matched[self.subareakey]) or (self.matched[self.areakey] != '' and geocoded_subarea in self.matched[self.areakey])):
+                    qstring = qstring.replace(
+                        self.matched[self.areakey], "").strip()
+                    if qstring == geocoded_holding:
+                        match_counter += len(qstring.strip().split(' '))
+                        p = 1
+                    for comp in geocoded_holding.split(' '):
+
+                        if comp != '' and (comp in qstring) and p == 0:
+                            match_counter += 1
+                        elif comp != '' and any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] and len(comp) >= 5 for st in temp_qstring) and p == 0:
+                            match_counter += 0.5
+                            fuzzy_match_counter += 1
+                            # print(match_counter)
+                    cnt.append(match_counter)
+                    if match_counter_max < match_counter:
+                        match_counter_max = match_counter
+                        match_address_max = i['new_address'].lower()
+                        geocoded_addr_name_len = len(
+                            geocoded_holding.split(' '))
+                        match_obj_max = i
+                        p = 1
+                    if match_counter_max == match_counter:
+                        print(i['new_address'])
+                        similar_addr.append(geocoded_holding)
+
+                elif (geocoded_holding != None or geocoded_holding.strip() != ''):
+                    if qstring == geocoded_holding:
+                        match_counter += len(qstring.strip().split(' '))
+                        p = 1
+                    elif len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
+                        match_counter += 1
+                        p = 1
+                    for comp in geocoded_holding.split(' '):
+                        if p == 0 and comp != '' and (comp in qstring):
+                            match_counter += 1
+                            # print(match_counter)
+                        elif p == 0 and comp != '' and (any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] for st in temp_qstring)):
+                            match_counter += 0.5
+                            fuzzy_match_counter += 1
+                    cnt.append(match_counter)
+                    if match_counter_max < match_counter:
+                        match_counter_max = match_counter
+                        match_address_max = i['new_address'].lower()
+                        geocoded_addr_name_len = len(
+                            geocoded_holding.split(' '))
+                        fuzzy_matches = fuzzy_match_counter
+                        match_obj_max = i
+
+                        p = 1
+                    if match_counter_max == match_counter:
+                        # print(i['new_address'])
+                        similar_addr.append(geocoded_holding)
+        else:
+            cnt = []
+            for i in data:
+                match_counter = 0
+                fuzzy_match_counter = 0
+                geocoded_area = i['area']
+                geocoded_area = geocoded_area.strip().lower()
+                # geocoded_address_with_area=i['address']+", "+geocoded_area
+                geocoded_address_with_area = i['new_address']
+                geocoded_addr_comp = mp.parse(
+                    geocoded_address_with_area.lower(), i['pType'])
+                # print(geocoded_addr_comp)
+                # print(geocoded_area)
+                geocoded_holding = geocoded_addr_comp['holding'].strip(
+                ).lower()
+                geocoded_holding = re.sub(
+                    r'\([^)]*\)', '', geocoded_holding).strip()
+                geocoded_subarea = geocoded_addr_comp['subarea'].strip(
+                ).lower()
+                # print('***************** Geo ** ************')
+                # print(geocoded_holding)
+                # print(geocoded_area)
+                # print(geocoded_subarea)
+                # print('***************** parsed ** ************')
+                # print(self.matched[self.areakey])
+                # print(self.matched[self.subareakey])
+                print('********************')
+                print(geocoded_address_with_area)
+                print(geocoded_holding)
+                # print(qstring)
+                print('********************')
+                if (geocoded_holding != None or geocoded_holding.strip() != ''):
+                    if qstring == geocoded_holding:
+                        match_counter += len(qstring.strip().split(' '))
+                        p = 1
+                    elif len(qstring.strip().split(' ')) == 1 and qstring in geocoded_holding:
+                        match_counter += 1
+                        p = 1
+
+                    for comp in geocoded_holding.split(' '):
+                        if p == 0 and comp != '' and (comp in qstring):
+                            match_counter += 1
+                            # print(match_counter)
+                        elif p == 0 and comp != '' and (any(fuzz.ratio(comp, st) >= 80 and st[0] == comp[0] for st in temp_qstring)):
+                            match_counter += 0.5
+                            fuzzy_match_counter += 1
+                    cnt.append(match_counter)
+                    if match_counter_max < match_counter:
+                        match_counter_max = match_counter
+                        match_address_max = i['new_address'].lower()
+                        geocoded_addr_name_len = len(
+                            geocoded_holding.split(' '))
+                        fuzzy_matches = fuzzy_match_counter
+                        match_obj_max = i
+
+                        p = 1
+                    if match_counter_max == match_counter:
+                        # print(i['new_address'])
+                        similar_addr.append(geocoded_holding)
+        # for addr in similar_addr:
+        #     print(self.lcs(qstring, addr, len(qstring), len(addr)))
+        print('same addr: ')
+        print(cnt)
+        largest = max(cnt)
+        match_obj_max['match_freq'] = cnt.count(largest)
+        match_obj_max['matching_diff'] = abs(
+            geocoded_addr_name_len - match_counter_max)
+        match_obj_max['match_fuzzy'] = fuzzy_matches
+        print(match_obj_max['match_fuzzy'])
+        match_obj_max['score'] = (
+            100*match_counter_max)//geocoded_addr_name_len
+
+        # if len(cnt)>0 and (i==largest or i==0 for i in cnt)
+        # if match_obj_max['match_freq'] == 1:
+        #     match_obj_max['score'] = 100
+        # print(match_obj_max['score'])
+        # print(match_obj_max['match_freq'])
+        return match_obj_max
+
     def barikoi_office_search(self, qstring):
-        url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
-        r = requests.post(url, params={'q': qstring})
-        data = r.json()
+        final_addr = get_geo_search_data.get_geo_data(qstring)
+        # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
+        # r = requests.post(url, params={'q': qstring})
+        # data = r.json()
         final_addr = data[0]
         prop_filter = {
             'Address': final_addr['new_address'],
@@ -1741,23 +1927,23 @@ class Address(object):
         # print(self.matched)
         # print('.....at search..........')
         # print(qstring)
-        url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
-        # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
-        if(thana_param == "yes" and district_param != 'yes'):
-            r = requests.post(url, params={'q': qstring, 'thana': thana_param})
-        elif(thana_param != "yes" and district_param == 'yes'):
-            r = requests.post(
-                url, params={'q': qstring, 'district': district_param})
-        elif(thana_param == 'yes' and district_param == 'yes'):
-            r = requests.post(
-                url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
-        elif(thana_param != "yes" and district_param != 'yes'):
-            r = requests.post(url, params={'q': qstring})
+        # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
+        # # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
+        # if(thana_param == "yes" and district_param != 'yes'):
+        #     r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+        # elif(thana_param != "yes" and district_param == 'yes'):
+        #     r = requests.post(
+        #         url, params={'q': qstring, 'district': district_param})
+        # elif(thana_param == 'yes' and district_param == 'yes'):
+        #     r = requests.post(
+        #         url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
+        # elif(thana_param != "yes" and district_param != 'yes'):
+        #     r = requests.post(url, params={'q': qstring})
 
         try:
-            datas = r.json()
+            # datas = r.json()
             # print("got it")
-            data = datas
+            data = get_geo_search_data.get_geo_data(qstring)
             self.get_geo_obj = data
             pass
         except Exception as e:
@@ -1817,7 +2003,7 @@ class Address(object):
                         geocoded_subarea = sarea.strip()
             print(
                 '=============================================================================')
-            #print('Geocoded Subarea '+geocoded_subarea)
+            # print('Geocoded Subarea '+geocoded_subarea)
             print(geocoded_address_with_area)
             print(geocoded_area+'    ' +
                   self.matched[self.areakey].strip().strip(',').strip())
@@ -2395,7 +2581,7 @@ class Address(object):
         if matched_house_key.strip().strip(',').strip() != '' and matched_house_key.strip().strip(',').strip() != None and len(holding_dict) > 0:
             search_addr = self.bkoi_search_holding(
                 matched_house_key.strip().strip(',').strip(), holding_dict)
-            #print("search .....")
+            # print("search .....")
             # print(search_addr)
             ChangedAddr = ''
             if len(search_addr[0]) != 0:
@@ -2470,21 +2656,22 @@ class Address(object):
 
     def get_geo_data(self, qstring, thana_param, district_param):
 
-        url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
-        # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
-        if(thana_param == "yes" and district_param != 'yes'):
-            r = requests.post(url, params={'q': qstring, 'thana': thana_param})
-        elif(thana_param != "yes" and district_param == 'yes'):
-            r = requests.post(
-                url, params={'q': qstring, 'district': district_param})
-        elif(thana_param == 'yes' and district_param == 'yes'):
-            r = requests.post(
-                url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
-        elif(thana_param != "yes" and district_param != 'yes'):
-            r = requests.post(url, params={'q': qstring})
+        # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
+        # # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
+        # if(thana_param == "yes" and district_param != 'yes'):
+        #     r = requests.post(url, params={'q': qstring, 'thana': thana_param})
+        # elif(thana_param != "yes" and district_param == 'yes'):
+        #     r = requests.post(
+        #         url, params={'q': qstring, 'district': district_param})
+        # elif(thana_param == 'yes' and district_param == 'yes'):
+        #     r = requests.post(
+        #         url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
+        # elif(thana_param != "yes" and district_param != 'yes'):
+        #     r = requests.post(url, params={'q': qstring})
 
         try:
-            data = r.json()
+            # data = r.json()
+            data = get_geo_search_data.get_geo_data(qstring)
             return data
         except Exception as e:
             print("Failed to get data...................")
