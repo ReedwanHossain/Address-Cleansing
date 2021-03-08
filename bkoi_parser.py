@@ -584,6 +584,7 @@ class Address(object):
             if dict_sub_areakey.strip() == sub_area_name.strip() and area_name.strip() != dict_areakey.strip() and assignaddress == 1:
                 same_sub_area_count += 1
                 if same_sub_area_count >= 2:
+                    # print(status)
                     checkst = 1
                     break
 
@@ -649,7 +650,7 @@ class Address(object):
         # ******************barikoi keyword seacrh*************
         barikoi_search = re.match(
             '((bari\s*(-)*koi)\s*(technolog(ies|y))*\s*(limited|ltd\.*)*(office)*)|((bari\s*(-)*koi|bkoi)\s*(-)*2017)', input_address.strip())
-        print(barikoi_search)
+        # print(barikoi_search)
         if barikoi_search:
             return self.barikoi_office_search('barikoi')
 
@@ -1845,11 +1846,11 @@ class Address(object):
         return match_obj_max
 
     def barikoi_office_search(self, qstring):
-        final_addr = get_geo_search_data.get_geo_data(qstring)
+        final_addr_list = get_geo_search_data.get_geo_data(qstring)
         # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
         # r = requests.post(url, params={'q': qstring})
         # data = r.json()
-        final_addr = data[0]
+        final_addr = final_addr_list[0]
         prop_filter = {
             'Address': final_addr['new_address'],
             'latitude': final_addr['latitude'],
