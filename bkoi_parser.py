@@ -1859,7 +1859,10 @@ class Address(object):
             'area': final_addr['area'],
             'postCode': final_addr['postCode'],
             'pType': final_addr['pType'],
-            'uCode': final_addr['uCode']
+            'uCode': final_addr['uCode'],
+            'district': final_addr['district'],
+            'thana': final_addr['thana'],
+            'unions': final_addr['unions']
         }
         obT = ReverseTransformer()
         obj = {
@@ -2408,7 +2411,10 @@ class Address(object):
                 'area': final_addr['area'],
                 'postCode': final_addr['postCode'],
                 'pType': final_addr['pType'],
-                'uCode': final_addr['uCode']
+                'uCode': final_addr['uCode'],
+                'district': final_addr['district'],
+                'thana': final_addr['thana'],
+                'unions': final_addr['unions']
             }
         except Exception as e:
             return {}
@@ -2637,7 +2643,10 @@ class Address(object):
                 'area': final_addr['area'],
                 'postCode': final_addr['postCode'],
                 'pType': final_addr['pType'],
-                'uCode': final_addr['uCode']
+                'uCode': final_addr['uCode'],
+                'district': final_addr['district'],
+                'thana': final_addr['thana'],
+                'unions': final_addr['unions']
             }
             if self.fixed_addr != '':
                 import similarity
