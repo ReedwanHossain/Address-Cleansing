@@ -184,7 +184,6 @@ class Address(object):
                 return True
 
     def check_sub_area(self, token, idx):
-
         if self.area_flag == True:
             area = self.matched[self.areakey].lower()
             if (idx-self.area_pos == 1 and any(char.isdigit() for char in self.tempArray[idx])):
@@ -822,14 +821,12 @@ class Address(object):
         subarea_list = self.dbinit.get_subarea()
         for j, subarea in enumerate(subarea_list):
             try:
-                input_address = re.sub(subarea[7].strip().lower(
-                ), subarea[0].strip().lower(), input_address)
-                input_address = re.sub(subarea[8].strip().lower(
-                ), subarea[1].strip().lower(), input_address)
+                input_address = re.sub(subarea[7].strip().lower(), subarea[0].strip().lower(), input_address)
+                input_address = re.sub(subarea[8].strip().lower(), subarea[1].strip().lower(), input_address)
             except Exception as e:
                 print(e)
                 pass
-
+        #print(input_address)
         # can be changed
         if 'block' in input_address and 'sector' in input_address:
             input_address = input_address.replace('sector', 'section')
