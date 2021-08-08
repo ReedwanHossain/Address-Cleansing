@@ -19,7 +19,7 @@ class ReverseTransformer(object):
 
     def __init__(self):
         super(ReverseTransformer, self).__init__()
-        self.conn= sqlite3.connect("dbconf/testDB.db")
+        self.conn= sqlite3.connect("dbconf/TestDB.db")
 
     def english_to_bangla(self, input_address):
         final_address = ""
