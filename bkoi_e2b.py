@@ -1,5 +1,6 @@
 import csv
 import re
+import sqlite3
 import sys
 import requests
 # reload(sys)
@@ -18,6 +19,7 @@ class ReverseTransformer(object):
 
     def __init__(self):
         super(ReverseTransformer, self).__init__()
+        self.conn= sqlite3.connect("dbconf/testDB.db")
 
     def english_to_bangla(self, input_address):
         final_address = ""
@@ -47,30 +49,19 @@ class ReverseTransformer(object):
                 getmylist = 0
                 # word=word.decode('utf-8')
                 word = word.strip()
-                with open('./keyword_maplist.csv', 'r')as f:
-                    data_list = csv.reader(f)
-                    for j, keyword in enumerate(data_list):
-                        # keyword[0]=keyword[0].decode('utf-8') #english
-                        # keyword[1]=keyword[1].decode('utf-8') #bangla
-                        keyword[0] = keyword[0].strip()
-                        keyword[0] = keyword[0].lower()
-                        word = word.lower()
-                        if word == '/' or word == '-':
-                            bangla_address = bangla_address+' '+word
-                            getmylist = 1
-                            break
-                        if word == keyword[0]:
-                            # print("matched")
-                            # bangla_address.append(keyword[0])
-                            bangla_address = bangla_address+' '+keyword[1]
-                            getmylist = 1
-                            #print(keyword[1]+'   paise')
-                            break
+                word = word.lower()
+                if word == '/' or word == '-':
+                    bangla_address = bangla_address + ' ' + word
+                    getmylist = 1
+                if getmylist==0:
+                    rows=self.conn.cursor().execute("SELECT * FROM keywords where english like ? limit 1",[word]).fetchall()
+                    if len(rows)>0:
+                        bangla_address = bangla_address + ' ' + rows[0][1]
+                        getmylist = 1
 
                 if getmylist == 0:
-                    response = requests.get("https://www.google.com/inputtools/request?text="+word +
-                                            "&ime=transliteration_en_bn&num=1&cp=0&cs=0&ie=utf-8&oe=utf-8&app=jsapi&uv=e%3A%E0%A6%8F-0-1%3A%3B0%3B0")
-                    print(response.status_code)
+                    response = requests.get("https://www.google.com/inputtools/request?text="+word +"&ime=transliteration_en_bn&num=1&cp=0&cs=0&ie=utf-8&oe=utf-8&app=jsapi&uv=e%3A%E0%A6%8F-0-1%3A%3B0%3B0")
+                    # print(response.status_code)
                     dictionary = response.json()
                     try:
                         # print(dictionary[1][0][1][0])
@@ -90,8 +81,8 @@ class ReverseTransformer(object):
         final_address = final_address.rstrip()
         final_address = final_address.rstrip(',')
         # print(final_address)
-        obj = {'address_bn': final_address}
-        return obj
+
+        return {'address_bn':final_address}
 
 
 '''
