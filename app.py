@@ -16,7 +16,7 @@ from custom_banglish_transformer.bkoi_transformer import Transformer
 from bkoi_e2b import ReverseTransformer
 from dbconf.db_operations import Operations
 import similarity
-
+import shopup_hub_area
 import shutil
 app = Flask(__name__)
 CORS(app)
@@ -282,6 +282,40 @@ def transform_parse():
 
     return obj
 
+
+
+@app.route('/shopup/verify', methods=['POST'])
+def shopup_parse():
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
+    add_trans = Transformer()
+    add_parse = Address()
+    addr = request.form.get('addr')
+    print(addr)
+    try:
+        thana_param = request.form.get('thana')
+    except Exception as e:
+        thana_param = None
+
+    try:
+        district_param = request.form.get('district')
+    except Exception as e:
+        district_param = None
+    obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
+    try:
+        del obj['matched_keys']
+    except Exception as e:
+        print(e)
+        pass
+    try:
+        obj['RedX info']=shopup_hub_area.gethub_area(obj['geocoded'])
+    except Exception as e:
+        print(e)
+        pass
+
+    return obj
 
 @app.route('/matchparse', methods=['POST'])
 def match_parse():
