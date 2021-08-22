@@ -1083,6 +1083,16 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
+        try:
+            if self.matched[self.roadkey]!=None or self.matched[self.roadkey]!='':
+                temp_road_list=self.matched[self.roadkey].split(',')
+                temp_road=''
+                for rd in temp_road_list:
+                    if rd.strip() not in temp_road:
+                        temp_road+=', '+rd
+                self.matched[self.roadkey]=temp_road.strip(',').strip()
+        except:
+            pass
         parsed_addr = {
 
             'area': self.matched[self.areakey],

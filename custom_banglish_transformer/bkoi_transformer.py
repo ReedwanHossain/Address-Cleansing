@@ -18,6 +18,15 @@ class Transformer(object):
     def bangla_to_english(self, address):
         # if (re.sub('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu|.\u0995\u09AE', address) == None):
         #     address=address.replace('.','')
+        address=' '+address+' '
+        address = address.replace(u' \u09E7\u09AE ', ' 1st ')
+        address = address.replace(u' \u09E8\u09DFF ', ' 2nd ')
+        address = address.replace(u' \u09E9\u09DF ', ' 3rd ')
+        address = address.replace(u' \u09EA\u09B0\u09CD\u09A5 ', ' 4th ')
+        address = address.replace(u' \u09EB\u09AE ', ' 5th ')
+        address = address.replace(u' \u09EC\u09B7\u09CD\u09A0 ', ' 6th ')
+        address = address.replace(u' \u09ED\u09AE ', ' 7th ')
+        address = address.strip()
         address = address.replace('.\u0995\u09AE', ' .com')
         address = address.replace('.\u09A8\u09C7\u099F', ' .net')
         address = address.replace('.\u09AC\u09BF\u09A1\u09BF', ' .bd')
