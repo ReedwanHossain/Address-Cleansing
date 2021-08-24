@@ -1,5 +1,6 @@
 import sqlite3
 import requests
+from miniparser import MiniParser
 def getcon():
     try:
         conn = sqlite3.connect('dbconf/outfile.db')
@@ -26,15 +27,27 @@ def get_subarea(lat,lon):
         resp=None
         pass
     return resp
+def get_subarea_by_parsing(geocoded):
+    subarea=None
+    try:
+        obj=MiniParser()
+        subarea=obj.parse(geocoded['address_short'],geocoded['pType'])['subarea']
+        subarea=subarea
+    except Exception as e:
+        print(e)
+        pass
+    return subarea
 
+    
 def gethub_area(geo_address):
-    subarea=get_subarea(geo_address['latitude'],geo_address['longitude'])
+    #subarea=get_subarea(geo_address['latitude'],geo_address['longitude'])
+    subarea=get_subarea_by_parsing(geo_address)
     area_info={'RedX Area':None,'RedX Area ID':None}
     check_result=[]
     try:
         conn=getcon()
         c = conn.cursor()
-        c.execute("SELECT `RedX Area`, `RedX Area ID` from Mapping where `city`='"+geo_address['city']+"' and `area`='"+geo_address['area']+"' and  `subarea`='"+subarea+"' ")
+        c.execute("SELECT `RedX Area`, `RedX Area ID` from Mapping where `city` like '%"+geo_address['city']+"%' and `area` like '%"+geo_address['area']+"%' and  `subarea` like '%"+subarea+"%' ")
         check_result = c.fetchall() 
         #print(check_result)
     except Exception as e:
@@ -74,4 +87,4 @@ if __name__ == "__main__":
         "uCode": "LOLM9148",
         "unions": None
     }
-    gethub_area(geo_address)
+    #get_subarea_by_parsing(geo_address)
