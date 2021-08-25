@@ -286,7 +286,7 @@ def transform_parse():
 
 @app.route('/shopup/verify', methods=['POST'])
 def shopup_parse():
-    shopup_obj={'geocoded':{'Address':None,'area':None},'confidence_score_percentage':0,'input_address':None}
+    shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'confidence_score_percentage':0,'input_address':None}
     add_trans = None
     add_parse = None
     thana_param = None
@@ -319,6 +319,8 @@ def shopup_parse():
     try:
         shopup_obj['geocoded']['Address']=obj['geocoded']['Address']
         shopup_obj['geocoded']['area']=obj['geocoded']['area']
+        shopup_obj['geocoded']['latitude']=obj['geocoded']['latitude']
+        shopup_obj['geocoded']['longitude']=obj['geocoded']['longitude']
         shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
         shopup_obj['input_address']=obj['input_address']
     except Exception as e:
