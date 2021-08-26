@@ -106,3 +106,7 @@ class MiniParser(object):
         self.subareakey = ""
         self.multiple_subarea = []
         return obj
+
+# obj=MiniParser()
+# res=obj.parse('Priyanka Beauty Parlour, Motaleb Tower, Paribagh','Shop')
+# print(res)

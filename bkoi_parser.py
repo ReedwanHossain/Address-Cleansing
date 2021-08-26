@@ -1083,6 +1083,16 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
+        try:
+            if self.matched[self.roadkey]!=None or self.matched[self.roadkey]!='':
+                temp_road_list=self.matched[self.roadkey].split(',')
+                temp_road=''
+                for rd in temp_road_list:
+                    if rd.strip() not in temp_road:
+                        temp_road+=', '+rd
+                self.matched[self.roadkey]=temp_road.strip(',').strip()
+        except:
+            pass
         parsed_addr = {
 
             'area': self.matched[self.areakey],
@@ -1490,7 +1500,7 @@ class Address(object):
                 geocoded_area = i['area']
                 geocoded_area = geocoded_area.strip().lower()
                 # geocoded_address_with_area=i['address']+", "+geocoded_area
-                geocoded_address_with_area = i['new_address']
+                geocoded_address_with_area = i['Address']
                 geocoded_addr_comp = mp.parse(
                     geocoded_address_with_area.lower(), i['pType'])
                 # print(geocoded_addr_comp)
@@ -1674,7 +1684,7 @@ class Address(object):
                 geocoded_area = i['area']
                 geocoded_area = geocoded_area.strip().lower()
                 # geocoded_address_with_area=i['address']+", "+geocoded_area
-                geocoded_address_with_area = i['new_address']
+                geocoded_address_with_area = i['Address']
                 geocoded_addr_comp = mp.parse(
                     geocoded_address_with_area.lower(), i['pType'])
                 # print(geocoded_addr_comp)
@@ -1839,6 +1849,7 @@ class Address(object):
         final_addr = final_addr_list[0]
         prop_filter = {
             'Address': final_addr['new_address'],
+            'address_short': final_addr['Address'],
             'latitude': final_addr['latitude'],
             'longitude': final_addr['longitude'],
             'city': final_addr['city'],
@@ -1974,7 +1985,7 @@ class Address(object):
             geocoded_area = i['area']
             geocoded_area = geocoded_area.strip().lower()
             # geocoded_address_with_area=i['address']+", "+geocoded_area
-            geocoded_address_with_area = i['new_address']
+            geocoded_address_with_area = i['Address']
             geocoded_addr_comp = mp.parse(
                 geocoded_address_with_area.lower(), i['pType'])
             # print(geocoded_addr_comp)
@@ -2388,6 +2399,7 @@ class Address(object):
         try:
             prop_filter = {
                 'Address': final_addr['new_address'],
+                'address_short': final_addr['Address'],
                 'latitude': final_addr['latitude'],
                 'longitude': final_addr['longitude'],
                 'city': final_addr['city'],
@@ -2501,7 +2513,7 @@ class Address(object):
             geocoded_area = i['area']
             geocoded_area = geocoded_area.strip().lower()
             # geocoded_address_with_area=i['address']+", "+geocoded_area
-            geocoded_address_with_area = i['new_address']
+            geocoded_address_with_area = i['Address']
             geocoded_addr_comp = mp.parse(
                 geocoded_address_with_area.lower(), i['pType'])
 
@@ -2618,6 +2630,7 @@ class Address(object):
         try:
             prop_filter = {
                 'Address': final_addr['new_address'],
+                'address_short': final_addr['Address'],
                 'latitude': final_addr['latitude'],
                 'longitude': final_addr['longitude'],
                 'city': final_addr['city'],

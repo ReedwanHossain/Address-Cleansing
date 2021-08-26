@@ -286,6 +286,7 @@ def transform_parse():
 
 @app.route('/shopup/verify', methods=['POST'])
 def shopup_parse():
+    shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'confidence_score_percentage':0,'input_address':None}
     add_trans = None
     add_parse = None
     thana_param = None
@@ -293,7 +294,7 @@ def shopup_parse():
     add_trans = Transformer()
     add_parse = Address()
     addr = request.form.get('addr')
-    print(addr)
+    #print(addr)
     try:
         thana_param = request.form.get('thana')
     except Exception as e:
@@ -310,12 +311,22 @@ def shopup_parse():
         print(e)
         pass
     try:
-        obj['RedX info']=shopup_hub_area.gethub_area(obj['geocoded'])
+        shopup_obj['RedX info']=shopup_hub_area.gethub_area(obj['geocoded'])
     except Exception as e:
         print(e)
         pass
-
-    return obj
+    
+    try:
+        shopup_obj['geocoded']['Address']=obj['geocoded']['Address']
+        shopup_obj['geocoded']['area']=obj['geocoded']['area']
+        shopup_obj['geocoded']['latitude']=obj['geocoded']['latitude']
+        shopup_obj['geocoded']['longitude']=obj['geocoded']['longitude']
+        shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
+        shopup_obj['input_address']=obj['input_address']
+    except Exception as e:
+        print(e)
+        pass
+    return jsonify(shopup_obj)
 
 @app.route('/matchparse', methods=['POST'])
 def match_parse():
