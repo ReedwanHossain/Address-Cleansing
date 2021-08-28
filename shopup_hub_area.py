@@ -40,38 +40,56 @@ def get_subarea_by_parsing(geocoded):
 
     
 def gethub_area(geo_address):
-    #subarea=get_subarea(geo_address['latitude'],geo_address['longitude'])
-    subarea=get_subarea_by_parsing(geo_address)
+    print(geo_address)
     area_info={'RedX Area':None,'RedX Area ID':None}
-    check_result=[]
-    try:
-        conn=getcon()
-        c = conn.cursor()
-        c.execute("SELECT `RedX Area`, `RedX Area ID` from Mapping where `city` like '%"+geo_address['city']+"%' and `area` like '%"+geo_address['area']+"%' and  `subarea` like '%"+subarea+"%' ")
-        check_result = c.fetchall() 
+    metro_cities=['Dhaka','Sylhet','Chittagong']
+    conn=getcon()
+    if geo_address['city'] in metro_cities:
+        #subarea=get_subarea(geo_address['latitude'],geo_address['longitude'])
+        subarea=get_subarea_by_parsing(geo_address)
+        check_result=[]
+        try:
+            c = conn.cursor()
+            c.execute("SELECT `RedX Area`, `RedX Area ID` from Mapping where `city` like '%"+geo_address['city']+"%' and `area` like '%"+geo_address['area']+"%' and  `subarea` like '%"+subarea+"%' ")
+            check_result = c.fetchall() 
+            #print(check_result)
+        except Exception as e:
+            print(e)
+            pass
+        
+        # if geo_address['thana']!=None and len(check_result)==0:
+        #     try:
+        #         conn=getcon()
+        #         c = conn.cursor()
+        #         c.execute("SELECT `RedX Area Name`, `RedX Area ID` from Unions where district='"+geo_address['district']+"' and subdistrict='"+geo_address['thana']+"' ")
+        #         check_result = c.fetchall()
+        #     except Exception as e:
+        #         print(e)
+        #         pass
         #print(check_result)
-    except Exception as e:
-        print(e)
-        pass
-    
-    # if geo_address['thana']!=None and len(check_result)==0:
-    #     try:
-    #         conn=getcon()
-    #         c = conn.cursor()
-    #         c.execute("SELECT `RedX Area Name`, `RedX Area ID` from Unions where district='"+geo_address['district']+"' and subdistrict='"+geo_address['thana']+"' ")
-    #         check_result = c.fetchall()
-    #     except Exception as e:
-    #         print(e)
-    #         pass
-    #print(check_result)
-    try:
-        area_info['RedX Area']=check_result[0][0]
-        area_info['RedX Area ID']=check_result[0][1]
-    except Exception as e:
-        print(e)
-        pass
+        try:
+            area_info['RedX Area']=check_result[0][0]
+            area_info['RedX Area ID']=check_result[0][1]
+        except Exception as e:
+            print(e)
+            pass
 
-    #print(area_info)
+    if area_info['RedX Area']==None:
+        check_result=[]
+        try:
+            if geo_address['unions']!=None:
+                c = conn.cursor()
+                c.execute("SELECT `RedX Area Name`, `RedX Area ID` from dsu_shopup_mapping where `district` like '%"+geo_address['district']+"%' and `Barikoi unions` like '%"+geo_address['unions']+"%' ")
+                check_result = c.fetchall() 
+            if len(check_result)==0:
+                c = conn.cursor()
+                c.execute("SELECT `RedX Area Name`, `RedX Area ID` from dsu_shopup_mapping where `district` like '%"+geo_address['district']+"%' and `Barikoi subdistrict` like '%"+geo_address['thana']+"%' ")
+                check_result = c.fetchall() 
+            area_info['RedX Area']=check_result[0][0]
+            area_info['RedX Area ID']=check_result[0][1]
+        except Exception as e:
+            print(e)
+            pass
     return area_info
 if __name__ == "__main__":
     geo_address={
