@@ -1,6 +1,7 @@
 import sqlite3
 import requests
 from miniparser import MiniParser
+import fill_up_null_data
 def getcon():
     try:
         conn = sqlite3.connect('dbconf/outfile.db')
@@ -75,6 +76,12 @@ def gethub_area(geo_address):
             pass
 
     if area_info['RedX Area']==None:
+        try:
+            geo_address= fill_up_null_data.fillUp(geo_address,'MTQ4MToxS1U5UlBQM043')
+        except Exception as e:
+            pass
+
+
         check_result=[]
         try:
             if geo_address['unions']!=None:
