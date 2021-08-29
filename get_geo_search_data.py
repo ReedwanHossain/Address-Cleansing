@@ -65,6 +65,7 @@ def get_dsu_comp(addr):
     return r.json()
 
 def get_geo_data(raw_input_addr,q):
+    #print(raw_input_addr)
     data=[]
     comp={'district':None,'sub_district':None,'union':None}
     try:
@@ -88,6 +89,7 @@ def get_geo_data(raw_input_addr,q):
             print('data from subdistrict boundary')
     except:
         pass
+    #print(comp)
     
     try:
         if comp['district']!=None and len(data)==0:
@@ -103,6 +105,7 @@ def get_geo_data(raw_input_addr,q):
         #url = 'https://admin.barikoi.xyz:8090/v2/search/autocomplete/web?q=' + q
         try:
             data= requests.get(url).json()['places']
+            print('data from raw search')
         except Exception as e:
             print(e)
     

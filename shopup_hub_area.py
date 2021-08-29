@@ -41,7 +41,7 @@ def get_subarea_by_parsing(geocoded):
 
     
 def gethub_area(geo_address):
-    print(geo_address)
+    #print(geo_address)
     area_info={'RedX Area':None,'RedX Area ID':None}
     metro_cities=['Dhaka','Sylhet','Chittagong']
     conn=getcon()
@@ -78,6 +78,7 @@ def gethub_area(geo_address):
     if area_info['RedX Area']==None:
         try:
             geo_address= fill_up_null_data.fillUp(geo_address,'MTQ4MToxS1U5UlBQM043')
+            #print(geo_address)
         except Exception as e:
             pass
 

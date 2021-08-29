@@ -1112,7 +1112,7 @@ class Address(object):
             #print('no addr comp exist')
             #print(saveTortnAddr)
             ob = {}
-            data = self.get_geo_data(input_address,input_address, thana_param, district_param)
+            data = self.get_geo_data(saveTortnAddr,input_address, thana_param, district_param)
             # print(data)
             # fin_addr = self.search_addr_bkoi(data, saveTortnAddr)
             fin_addr = self.matcher_addr_bkoi(data, input_address)
