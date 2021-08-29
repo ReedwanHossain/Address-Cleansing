@@ -12,7 +12,8 @@ def getdb(host, username, password, db):
     )
     return mydb
 def polygon_search(q, polygon):
-    url = "https://rupantor.barikoi.com/autosearch/autocomplete/polygon"
+    #url = "https://rupantor.barikoi.com/autosearch/autocomplete/polygon"
+    url="http://elastic.barikoi.com/bkoi/autocomplete/polygon"
     myobj = {'q': q, 'polygon': polygon}
     try:
         x = requests.post(url, data=myobj)
@@ -96,12 +97,15 @@ def get_geo_data(raw_input_addr,q):
         pass
     
     if len(data)==0:
+        
+        url = 'http://elastic.barikoi.com/bkoi/autocomplete/search?q=' + q
 
-        url = 'https://admin.barikoi.xyz:8090/v2/search/autocomplete/web?q=' + q
+        #url = 'https://admin.barikoi.xyz:8090/v2/search/autocomplete/web?q=' + q
         try:
             data= requests.get(url).json()['places']
         except Exception as e:
             print(e)
+    
     return data
 
 
@@ -163,5 +167,5 @@ def get_db_data_subdis(district, subdistrict):
     gotAddress = querycursor.fetchall()
     return gotAddress
 
-if __name__ == "__main__":
-    print(get_geo_data('mirpur'))
+# if __name__ == "__main__":
+#     print(get_geo_data('mirpur'))
