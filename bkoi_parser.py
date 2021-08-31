@@ -1062,6 +1062,15 @@ class Address(object):
                 self.matched[self.subareakey] = self.reverse_pattern['sector']
 
         print('------------------------------------------=====================================')
+        #if house will be null if no digit
+        try:
+            if self.matched[self.housekey]!=None:
+                if not any(i.isdigit() for i in self.matched[self.housekey]):
+                    self.matched[self.housekey]=None
+        except Exception as e:
+            print(e)
+            pass
+
         # print(self.subarea_list_pattern)
         # print(self.get_multiple_area)
         # print(self.get_multiple_subarea)
@@ -1109,8 +1118,9 @@ class Address(object):
             'pattern': s_pattern,
         }
         if (self.matched[self.housekey] == None or self.matched[self.housekey] == "") and (self.matched[self.roadkey] == None or self.matched[self.roadkey] == "") and (self.matched[self.blockkey] == None or self.matched[self.blockkey] == ""):
-            #print('no addr comp exist')
+            print('no addr comp exist')
             #print(saveTortnAddr)
+            print(input_address)
             ob = {}
             data = self.get_geo_data(saveTortnAddr,input_address, thana_param, district_param)
             # print(data)
