@@ -311,7 +311,7 @@ def shopup_parse():
         print(e)
         pass
     try:
-        shopup_obj['RedX info']=shopup_hub_area.gethub_area(obj['geocoded'])
+        shopup_obj['redx_info']=shopup_hub_area.gethub_area(obj['geocoded'])
     except Exception as e:
         print(e)
         pass

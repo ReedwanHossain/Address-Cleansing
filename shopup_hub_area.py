@@ -42,7 +42,7 @@ def get_subarea_by_parsing(geocoded):
     
 def gethub_area(geo_address):
     #print(geo_address)
-    area_info={'RedX Area':None,'RedX Area ID':None}
+    area_info={'redx_area':None,'redx_area_id':None}
     metro_cities=['Dhaka','Sylhet','Chittagong']
     conn=getcon()
     if geo_address['city'] in metro_cities:
@@ -69,13 +69,13 @@ def gethub_area(geo_address):
         #         pass
         #print(check_result)
         try:
-            area_info['RedX Area']=check_result[0][0]
-            area_info['RedX Area ID']=check_result[0][1]
+            area_info['redx_area']=check_result[0][0]
+            area_info['redx_area_id']=check_result[0][1]
         except Exception as e:
             print(e)
             pass
 
-    if area_info['RedX Area']==None:
+    if area_info['redx_area']==None:
         try:
             geo_address= fill_up_null_data.fillUp(geo_address,'MTQ4MToxS1U5UlBQM043')
             #print(geo_address)
@@ -93,8 +93,8 @@ def gethub_area(geo_address):
                 c = conn.cursor()
                 c.execute("SELECT `RedX Area Name`, `RedX Area ID` from dsu_shopup_mapping where `district` like '%"+geo_address['district']+"%' and `Barikoi subdistrict` like '%"+geo_address['thana']+"%' ")
                 check_result = c.fetchall() 
-            area_info['RedX Area']=check_result[0][0]
-            area_info['RedX Area ID']=check_result[0][1]
+            area_info['redx_area']=check_result[0][0]
+            area_info['redx_area_id']=check_result[0][1]
         except Exception as e:
             print(e)
             pass

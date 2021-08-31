@@ -99,7 +99,7 @@ def get_geo_data(raw_input_addr,q):
         pass
     
     if len(data)==0:
-        
+        #print(q)
         url = 'http://elastic.barikoi.com/bkoi/autocomplete/search?q=' + q
 
         #url = 'https://admin.barikoi.xyz:8090/v2/search/autocomplete/web?q=' + q

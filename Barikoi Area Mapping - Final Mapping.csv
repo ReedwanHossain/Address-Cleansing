@@ -171,7 +171,7 @@ Barikoi id,Barikoi unions,district,RedX Area Name,Barikoi subdistrict,RedX Area 
 170,Kashipur,Barisal,Barisal Sadar,Kotwali,932,Barishal Hub
 171,Agarpur,Barisal,Babuganj,Babuganj,929,Barishal Hub
 172,Mahilara,Barisal,Gournadi (Barisal),Gaurnadi,933,Gournadi HUB
-173,Kalaskati,Barisal,Bakerganj,,930,Barishal Hub
+173,Kalaskati,Barisal,Bakerganj,Bakerganj,930,Barishal Hub
 174,Kabai,Barisal,Bakerganj,Bakerganj,930,Barishal Hub
 175,Alimabad,Barisal,Mehendiganj,Mehendiganj,935,Barishal Hub
 176,Mehendiganj,Barisal,Mehendiganj,Mehendiganj,935,Barishal Hub
@@ -3250,16 +3250,16 @@ Barikoi id,Barikoi unions,district,RedX Area Name,Barikoi subdistrict,RedX Area 
 3249,Panchdona,Narsingdi,Pachdona More,Narsingdi Sadar,1507,Narsingdi Hub
 3250,Chak Radha,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
 3251,Gotashia,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
-3252,Char Aralia,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3253,Raipura,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3252,Char Aralia,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3253,Roypura,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3254,Paikar Char,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3255,Danga,Narsingdi,Palash,Palash,714,Narsingdi Hub
-3256,Raipura Paurashava,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3256,Roypura Paurashava,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3257,Ekduaria,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3258,Chandanbari,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3259,Bara Chapa,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3260,Kanchikata,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
-3261,Nilakhya,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3261,Nilakhya,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3262,Manohardi Paurashava,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3263,Narayanpur,Narsingdi,Belabo,Belabo,711,Bhairab Hub
 3264,Gazaria,Narsingdi,Palash,Palash,714,Narsingdi Hub
@@ -3269,11 +3269,11 @@ Barikoi id,Barikoi unions,district,RedX Area Name,Barikoi subdistrict,RedX Area 
 3268,Kathalia,Narsingdi,Madhabdi,Madhabdi,1505,Narsingdi Hub
 3269,Marjal,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
 3270,Sadhar Char,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
-3271,Maheshpur,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3271,Maheshpur,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3272,Bajnaba,Narsingdi,Belabo,Belabo,711,Bhairab Hub
-3273,Adiabad,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3273,Adiabad,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3274,Karimpur,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
-3275,Chanderkandi,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3275,Chanderkandi,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3276,Sallabad,Narsingdi,Belabo,Belabo,711,Bhairab Hub
 3277,Masimpur,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
 3278,Putia,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
@@ -3282,20 +3282,20 @@ Barikoi id,Barikoi unions,district,RedX Area Name,Barikoi subdistrict,RedX Area 
 3281,Amlaba,Narsingdi,Belabo,Belabo,711,Bhairab Hub
 3282,Khidirpur,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3283,Amirganj,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
-3284,Alipura,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3284,Alipura,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3285,Silmandi,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
 3286,Char Mandalia,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
-3287,Mirzanagar,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3288,Mirzapur,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3289,Radhanagar,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3290,Mirzar Char,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3291,Hairmara,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3287,Mirzanagar,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3288,Mirzapur,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3289,Radhanagar,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3290,Mirzar Char,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3291,Hairmara,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3292,Shukundi,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3293,Jinardi,Narsingdi,Palash,Palash,714,Narsingdi Hub
 3294,Daulatpur,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3295,Char Ujilaba,Narsingdi,Belabo,Belabo,711,Bhairab Hub
-3296,Chandpur,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3297,Char Madhua,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3296,Chandpur,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3297,Char Madhua,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3298,Meher Para,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
 3299,Joynagar,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
 3300,Madhabdi Paurashava,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
@@ -3303,7 +3303,7 @@ Barikoi id,Barikoi unions,district,RedX Area Name,Barikoi subdistrict,RedX Area 
 3302,Patuli,Narsingdi,Belabo,Belabo,711,Bhairab Hub
 3303,Baghaba,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
 3304,Dulalpur,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
-3305,Daukar Char,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3305,Daukar Char,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3306,Nuralla Pur U/C,Narsingdi,Madhabdi,Madhabdi,1505,Narsingdi Hub
 3307,Shibpur Paurashava,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
 3308,Chinishpur,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
@@ -3311,15 +3311,15 @@ Barikoi id,Barikoi unions,district,RedX Area Name,Barikoi subdistrict,RedX Area 
 3310,Nazarpur,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
 3311,Ayubpur,Narsingdi,Shibpur,Shibpur,716,Narsingdi Hub
 3312,Alokbali,Narsingdi,Velanogor (Norshingdi),Narsingdi Sadar,713,Narsingdi Hub
-3313,Paratali,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3314,Char Subuddi,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3313,Paratali,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3314,Char Subuddi,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3315,Char Sindur,Narsingdi,Palash,Palash,714,Narsingdi Hub
 3316,Ghorashal Paurashava,Narsingdi,Palash,Palash,714,Narsingdi Hub
-3317,Musapur,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3318,Sreenagar,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3319,Palashtali,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3320,Banshgari,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
-3321,Uttar Bakharnagar,Narsingdi,Raipura (Norshingdi),Raipura,715,Bhairab Hub
+3317,Musapur,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3318,Sreenagar,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3319,Palashtali,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3320,Banshgari,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
+3321,Uttar Bakharnagar,Narsingdi,Raipura (Norshingdi),Roypura,715,Bhairab Hub
 3322,Chalak Char,Narsingdi,Monohardi,Manohardi,712,Narsingdi Hub
 3323,Binyabaid,Narsingdi,Belabo,Belabo,711,Bhairab Hub
 3324,Natore Paurashava,Natore,Natore Sadar,Natore Sadar,855,Natore Hub
@@ -4921,3 +4921,22 @@ Barikoi id,Barikoi unions,district,RedX Area Name,Barikoi subdistrict,RedX Area 
 4921,,Dhaka,Tejgaon,Tejgaon,98,Mohakhali Hub
 4922,,Dhaka,Tejgaon,Tejgaon Ind. Area,98,Mohakhali Hub
 4923,,Dhaka,Uttara,Uttara,46,Uttara Hub
+4924,,Barisal,,Barisal Sadar (Kotwali),,
+4925,,Dhaka,,Chawk Bazar,,
+4926,,Dhaka,,Wari,,
+4927,,Dhaka,,Mugda,,
+4928,,Dhaka,,Adabor,,
+4929,,Dhaka,,Mohammadpur,,
+4930,,Dhaka,,Mirpur,,
+4931,,Dhaka,,Rupnagar,,
+4932,,Dhaka,,Kafrul,,
+4933,,Dhaka,,Bhashantek,,
+4934,,Dhaka,,Shere E Bangla Nagar,,
+4935,,Dhaka,,Shahbagh,,
+4936,,Dhaka,,Paltan,,
+4937,,Dhaka,,Rampura,,
+4938,,Dhaka,,Shahjahanpur,,
+4939,,Dhaka,,Vatara,,
+4940,,Dhaka,,Uttara East,,
+4941,,Dhaka,,Uttara West,,
+4942,,Dhaka,,Banani,,
