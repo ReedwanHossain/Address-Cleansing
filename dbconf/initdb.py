@@ -5,6 +5,7 @@ class DBINIT(object):
 
 	def __init__(self):
 		self.AREA = None
+		self.AREA_REGEX = None
 		self.SUBAREA = None
 		self.DSU = None
 		self.EBL = None
@@ -33,6 +34,15 @@ class DBINIT(object):
 		''')
 		self.SUBAREA = c.fetchall()
 		self.SUBAREA = [i for i in self.SUBAREA]
+	def load_area_with_regex(self):
+		conn = sqlite3.connect('dbconf/TestDB.db')  
+		c = conn.cursor()
+		c.execute('''
+		SELECT DISTINCT area, area_regex
+		FROM SUBAREA
+		''')
+		self.AREA_REGEX = c.fetchall()
+		self.AREA_REGEX = [i for i in self.AREA_REGEX]
 
 	def load_dsu(self):
 		conn = sqlite3.connect('dbconf/TestDB.db')  
@@ -108,6 +118,8 @@ class DBINIT(object):
 
 	def get_area(self):
 		return self.AREA
+	def get_area_with_regex(self):
+		return self.AREA_REGEX
 
 	def get_subarea(self):
 		return self.SUBAREA

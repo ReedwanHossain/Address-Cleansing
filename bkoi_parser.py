@@ -77,6 +77,7 @@ class Address(object):
         self.subarea_list_pattern = []
         self.GeoTrueFor = {}
         self.dbinit = DBINIT()
+        self.dbinit.load_area_with_regex()
         self.dbinit.load_area()
         self.dbinit.load_subarea()
         self.dbinit.load_dsu()
@@ -173,14 +174,14 @@ class Address(object):
         # area_token = word_tokenize(area_token)
         area_token = area_token.split()
 
-        area_list = self.dbinit.get_area()
+        area_list = self.dbinit.get_area_with_regex()
         for j, area in enumerate(area_list):
-            if (area_token[0].lower() == area.lower() and area_token[0].lower() in self.cleanAddressStr.lower()):
-                self.matched[self.areakey] = area.lower()
+            if (area_token[0].lower() == area[0].lower() and area_token[0].lower() in self.cleanAddressStr.lower()):
+                self.matched[self.areakey] = area[0].lower()
                 # matched_array.append(area[0].lower())
                 self.area_flag = True
                 self.area_pos = idx
-                self.get_multiple_area.append(area.lower())
+                self.get_multiple_area.append(area[0].lower())
                 return True
 
     def check_sub_area(self, token, idx):
@@ -625,6 +626,509 @@ class Address(object):
         if response != 'None':
             homeKeys += response
         return homeKeys
+
+
+    def get_component(self, input_address):
+        # adding extra space before inputted address and convert it into lowercase
+        saveTortnAddr = input_address
+
+
+        print(input_address)
+        input_address = " "+input_address
+        input_address = input_address.lower()
+
+        self.globalAddress = input_address
+        # checking if address is blank , return
+        if input_address.strip().lstrip(',').rstrip(',') == '':
+            return {
+                'status': 'Not An Address',
+                'address': input_address,
+                'input_address': saveTortnAddr,
+            }
+
+        # ******************barikoi keyword seacrh*************
+        # barikoi_search = re.match(
+        #     '((bari\s*(-)*koi)\s*(technolog(ies|y))*\s*(limited|ltd\.*)*(office)*)|((bari\s*(-)*koi|bkoi)\s*(-)*2017)', input_address.strip())
+        # # print(barikoi_search)
+        # if barikoi_search:
+        #     return self.barikoi_office_search('barikoi')
+
+        # remove hash, comma, qoutation marks from the address and add extra space after the address
+        input_address = re.sub(r',', ' ', input_address)
+        input_address = re.sub(r'#|"', ' ', input_address)
+        input_address = input_address.lower()+"  "
+        input_address = "  "+input_address.lower()
+        input_address = re.sub(
+            r'\s*flat\s*(no)*(:)*(-)*\s*[a-z]{1}\d{1}\s+', ' ', input_address)
+        # remove the section inside the first brakets() as considered as a comments or hints of an address
+        input_address = re.sub(r'\([^)]*\)', '', input_address)
+        # insert space between 'no' and digits
+        input_address = re.sub(r'(\d+)(no\s+)', r'\1 \2', input_address)
+        input_address = re.sub(r'(\s+no)(\d+)', r'\1 \2', input_address)
+        input_address = "  "+input_address
+        # replace the short abbreviated keywords into full form with rep1 dictionary
+        input_address = self.multiple_replace(self.rep1, input_address.lower())
+        # Check Reverse pattern like 3 no house
+        self.Check_Reverse_Key(input_address)
+        # remove 5 digits value
+        if re.search('\d{5}', input_address):
+            temp_input_address = input_address.split()
+            for i, t in enumerate(temp_input_address):
+                if re.search('\d{5}', t):
+                    temp_input_address[i] = ""
+            input_address = ' '.join(str(e) for e in temp_input_address)
+        '''
+        decimal_find=re.search(r'\d(.)\d',input_address)
+        if  not re.search(r'\d(.)\d',input_address):
+            input_address=input_address.replace("."," ")
+        '''
+        # replace the following characters with space
+        input_address = input_address.replace(";", " ")
+        # input_address=input_address.replace("\r\n"," ")
+        input_address = input_address.replace("\\n", " ")
+        # input_address=input_address.replace("\t"," ")
+        # input_address=input_address.replace("\\"," ")
+        input_address = input_address.replace("=", " ")
+        input_address = input_address.replace("-", " ")
+        input_address = input_address.replace("–", " ")
+        input_address = input_address.replace(":", " ")
+        input_address = input_address.replace("#", " ")
+        input_address = input_address.replace(" no ", " ")
+        #print("508-----------------"+input_address)
+        # some address contains 'street' or 'address' keyword at the begining of the address. so remove them
+        try:
+            first_street = re.match(r'\W*(\w[^,. !?"]*)', input_address).groups()[0]
+        except:
+            first_street = ""
+        if 'street' in first_street or 'street:' in first_street or first_street == 'street' or first_street == 'street:' or first_street == 'office:' or first_street == 'address:' or first_street == 'address':
+            input_address = input_address.replace(first_street, " ")
+
+        # remove the string like 'near xyz hospitals' etc
+        input_address = re.sub(
+            r'(behind|nearby|near|near by|near to|opposite|opposite of|beside)[^)]*(building|plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|mall|monjil|manjil|building|headquarter|bhaban|mosque|masjid|mosjid|hospital|university|school|mandir|mondir|police station|park)', '', input_address)
+        # delete flat no. or etc
+        temp_input_address = input_address.split()
+        if 'flat' in input_address:
+            temp_input_address = input_address.split()
+            for i, t in enumerate(temp_input_address):
+                if i < len(temp_input_address)-1:
+                    if t == 'flat' and any(char.isdigit() for char in temp_input_address[i+1]):
+                        temp_input_address.remove(temp_input_address[i])
+                        temp_input_address.remove(temp_input_address[i])
+                        break
+            input_address = ' '.join(str(e) for e in temp_input_address)
+
+        # remove postal codes
+        input_address = re.sub(r'(post code|post|zip code|postal code|postcode|zipcode|postalcode|dhaka)(\s*)(-|:)*(\s*)(\d{4})(\s*)', '', input_address)
+        # remove apt, room level no etc
+        # flat floor stroing
+        flat = None
+        flat = re.search(r'((\s+)(apt|apartment|floor|room|flat|level|flr|suite|suit)(\s+(no)*[.]*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit))(\s*)|(((\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)(\d+[a-z]{1}\s+)))(\s*)|(\s+)(((apt|apartment|floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)))(\s*)',  input_address)
+
+        input_address = re.sub(r'((\s+)(apt|apartment|floor|room|flat|level|flr|suite|suit)(\s+(no)*[.]*(:)*\s*(-)*\s*)(([0-9]+|\d+)((th|rd|st|nd))))(\s*)|(\s*)((\s*)(([0-9]+|\d+)(th|rd|st|nd))(\s*(:)*\s*(-)*\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit))(\s*)|(((\s+)(apt|apartment|floor|flat|level|room|flr|suite|suit)(\s*(:)*\s*(-)*\s*)(\d+[a-z]{1}\s+)))(\s*)|(\s+)(((apt|apartment|floor|flat|level|room|flr|suite|suit)(no)*(\s*)(([0-9]+|\d+))(th|rd|st|nd)))(\s*)', '  ', input_address)
+        input_address = re.sub(r'(\s+[1-9]+|\d+)(th|rd|st|nd)\s+', ' ', input_address)
+        input_address = input_address.replace(',', ' ')
+        # remove the number greater than 3000
+        all_num_list = re.findall(r'\d+', input_address)
+        if len(all_num_list) > 0:
+            max_num_in_string = max(map(int, all_num_list))
+            if max_num_in_string > 3000:
+                max_num_in_string = str(max_num_in_string)
+                input_address = input_address.replace(max_num_in_string, '')
+        # HBRS updated as (hbrs)rrrr and cut so that it can't change into house road block sector since these hbrs as a value not key
+        cut_hbrs = re.search(r'(house(\s+)(-|/|:)*(\s*))((h|b|r|s)(\s+))', input_address)
+        check_hbrs = 0
+        if(cut_hbrs):
+            check_hbrs = 1
+            cut_hbrs = cut_hbrs.group(5)
+            input_address = re.sub(
+                r'(house(\s+)(-|/|:)*(\s*))((h|b|r|s)(\s+))', r'\1rrrr ', input_address)
+
+        input_address = re.sub(
+            '(h|b|r|s)((\s*)(plaza|market|villa|cottage|mansion|vila|tower|place|complex|center|centremall|monjil|manjil|building|headquarter))', r'\1. \2', input_address)
+        block_h = re.search('block(\s*)(no)*(:)*(-)*(\s*)(h )', input_address)
+        if block_h:
+            self.matched[self.blockkey] = 'h'
+            input_address = re.sub(
+                'block(\s*)(no)*(:)*(-)*(\s*)(h )', ' ', input_address)
+
+        block_b = re.search('block(\s*)(no)*(:)*(-)*(\s*)(b )', input_address)
+        if block_b:
+            self.matched[self.blockkey] = 'b'
+            input_address = re.sub(
+                'block(\s*)(no)*(:)*(-)*(\s*)(b )', ' ', input_address)
+
+        block_r = re.search('block(\s*)(no)*(:)*(-)*(\s*)(r )', input_address)
+        if block_r:
+            self.matched[self.blockkey] = 'r'
+            input_address = re.sub(
+                'block(\s*)(no)*(:)*(-)*(\s*)(r )', ' ', input_address)
+
+        block_s = re.search('block(\s*)(no)*(:)*(-)*(\s*)(s )', input_address)
+        if block_s:
+            self.matched[self.blockkey] = 's'
+            input_address = re.sub(
+                'block(\s*)(no)*(:)*(-)*(\s*)(s )', ' ', input_address)
+
+        b_block = re.search('\s+b(\s*)(:)*(-)*(\s*)block', input_address)
+        if b_block:
+            self.matched[self.blockkey] = 'b'
+            input_address = re.sub(
+                '\s+b(\s*)(:)*(-)*(\s*)block', ' ', input_address)
+        print(input_address + ".....................................610")
+
+        h_block = re.search('\s+h(\s*)(:)*(-)*(\s*)block', input_address)
+        if h_block:
+            # print("treu...........")
+            self.matched[self.blockkey] = 'h'
+            input_address = re.sub(
+                '\s+h(\s*)(:)*(-)*(\s*)block', ' ', input_address)
+        # insert extra hyphen(-) between digits and aphabetic strings
+        # insert a '-' between letters and number
+        input_address = re.sub(r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address)
+        # insert a '-' between letters and number
+        input_address = re.sub(r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address)
+        # pre-processing...........................................................
+
+        # input_address = re.sub( r'h\s+tower','h* tower', input_address)
+        #print('////////////////////')
+        # print("574-----------------"+input_address)
+        # remove dots if string has no domain name like xyz.com
+        input_address = input_address.replace(' ctg ', ' chittagong ')
+        if (re.search('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu|\d+\.\d+', input_address) == None):
+            input_address = input_address.replace(".", "  ")
+            #print(input_address)
+            #print('##############################')
+        input_address = "  "+input_address
+        # replace the short abbreviated keywords into full form with rep2 dictionary
+        expand = self.multiple_replace(self.rep2, input_address.lower())
+        expand = self.multiple_replace(self.area_dict, expand.lower())
+        # print("579-----------------"+input_address)
+        # unknown char remove
+        expand = re.sub(r'#|"', ' ', expand)
+        # replace rrrr with cut_hbrs which contains h or b r or s
+        if(check_hbrs == 1):
+            expand = expand.replace('rrrr', cut_hbrs.strip())
+        input_address = expand
+
+        # regex to correct spell of area and subarea
+        sec_input_address = input_address
+        input_address = re.sub(
+            'sh*id+h*es+h*\s*w*(o+|a+)r(i|y)', 'siddheshwari', input_address)
+        input_address = re.sub(
+            'n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*', 'nikunja', input_address)
+        subarea_list = self.dbinit.get_subarea()
+        for j, subarea in enumerate(subarea_list):
+            try:
+                input_address = re.sub(subarea[7].strip().lower(), subarea[0].strip().lower(), input_address)
+                input_address = re.sub(subarea[8].strip().lower(), subarea[1].strip().lower(), input_address)
+            except Exception as e:
+                print(e)
+                pass
+        #print(input_address)
+        # can be changed
+        if 'block' in input_address and 'sector' in input_address:
+            input_address = input_address.replace('sector', 'section')
+        #print(input_address+"  "+sec_input_address)
+
+        input_address = re.sub(r'([a-zA-Z])(\d)', r'\1*\2', input_address)
+        #print('INPUT ADDRESS............')
+        #print(input_address)
+        #print(input_address)
+        x = input_address.split("*")
+        input_address = " "
+
+        # spell_checker
+        # print('before spellcheck '+expand)
+
+        spell_check = SpellCheck('area-list.txt')
+        for i in x:
+            i = i.strip()
+            if len(i) > 5:
+                spell_check.check(i)
+                i = str(spell_check.correct())
+            input_address += i
+        print('after spellcheck '+input_address)
+
+        # replace string with 'mirpur dohs' if conains such as 'dohs mirpur'
+        input_address = re.sub('dohs\s*(,)*\s*mirpur',
+                               'mirpur dohs', input_address)
+        input_address = re.sub('dohs\s*(,)*\s*mohakhali',
+                               'mohakhali dohs', input_address)
+        input_address = re.sub('dohs\s*(,)*\s*baridhara',
+                               'baridhara dohs', input_address)
+        input_address = re.sub('dohs\s*(,)*\s*banani',
+                               'banani dohs', input_address)
+        expand = input_address
+        self.clone_input_address = input_address
+
+        expand = expand.lower()+"  "
+        # expand=re.sub(r'((\s*)(floor|flat|level)(\s*(:)*\s*(-)*\s*)([0-9]+((th|rd|st|nd)))) | ((\s*)([0-9]+(th|rd|st|nd))(\s*(:)*\s*(-)*\s*)(floor|flat|level)(\s*))  | ((floor|flat|level)[0-9]+(th|rd|st|nd)*[a-z]+) ', ' ', expand)
+        # addresscomponents = word_tokenize(expand)
+        # insert space between english road name like greenroad to green road to fix 'abroad' problem
+        addresscomponents = expand.split()
+        # print(addresscomponents)
+        temp_str_address = ''
+        for i, comp in enumerate(addresscomponents):
+            # print(comp)
+            # print(enchant.Dict("en_US").check(comp))
+
+            if 'road' in comp and enchant.Dict("en_US").check(comp) == False and comp != 'road':
+                comp = comp.replace('road', ' road')
+            temp_str_address += " "+comp
+
+        # print('....................................................')
+        # print(temp_str_address)
+        if re.search('sector\s+\d+\s+mirpur', temp_str_address):
+            temp_str_address = temp_str_address.replace('sector', 'section')
+        if 'road' not in temp_str_address:
+            temp_str_address = self.check_dhanmondi_road(temp_str_address)
+        addresscomponents = temp_str_address.split()
+        for i, comp in enumerate(addresscomponents):
+            comp = comp.strip()
+            if comp == "," or comp == "":
+                continue
+
+            temp = comp.lstrip('[0:|!@#$-=+.]')
+            temp = temp.rstrip('[:|!@#$-]=+.')
+            temp = temp.strip(" ")
+            if(temp != ""):
+                self.tempArray.append(temp)
+        self.cleanAddressStr = ' '.join(self.tempArray)
+        self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
+        if 'mirpur' in self.cleanAddressStr and 'sector' in self.cleanAddressStr:
+            self.cleanAddressStr = self.cleanAddressStr.replace(
+                "sector", "section")
+        if 'uttara' in self.cleanAddressStr and 'section' in self.cleanAddressStr:
+            self.cleanAddressStr = self.cleanAddressStr.replace(
+                "section", "sector")
+
+        # self.tempArray = word_tokenize(self.cleanAddressStr)
+
+            # self.cleanAddressStr="mrpr s2"
+
+        # Parsing..............................
+        for i, comp in enumerate(self.tempArray):
+            comp = comp.strip()
+            # print(comp)
+
+            if (self.check_sub_area(comp, i)):
+                # print('in check sub area')
+                # print(comp)
+                self.matched_array.append(self.matched[self.subareakey])
+                continue
+            if (self.check_area(comp, i)):
+                self.matched_array.append(self.matched[self.areakey])
+                continue
+            # if (self.check_super_sub_area(comp, i)):
+            #     self.matched_array.append(self.matched[self.ssareakey])
+            #     continue
+            if (self.check_road(comp, i)):
+                # print('in check road')
+                # print(comp)
+                self.matched_array.append(self.matched[self.roadkey])
+                continue
+            if (self.check_block(comp, i)):
+                # print('in check block')
+                # print(comp)
+                self.matched_array.append(self.matched[self.blockkey])
+                continue
+            if (self.check_holding(comp, i)):
+                # print('in check holding')
+                # print(comp)
+                self.matched_array.append(self.matched[self.housekey])
+                continue
+            if (self.check_holding_name(comp, i)):
+                # print('in check holding name'+ comp)
+                self.matched_array.append(self.matched[self.buildingkey])
+                continue
+            if (self.check_district(comp, i)):
+                if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
+                    self.matched_array.append(self.matched[self.districtkey])
+
+                continue
+            if (self.check_sub_district(comp, i)):
+                if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
+                    self.matched_array.append(
+                        self.matched[self.sub_districtkey])
+                continue
+            if (self.check_union(comp, i)):
+                if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
+                    self.matched_array.append(self.matched[self.unionkey])
+                continue
+
+        try:
+            self.matched[self.roadkey] = self.matched[self.roadkey].replace(
+                '-', '/')
+        except Exception as e:
+            print(e)
+            pass
+        #print('******************************')
+        #print(self.get_multiple_area)
+        #print('******************************')
+        # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
+        #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
+        getsubarea = list(set(self.get_multiple_subarea))
+        subarea_min = ''
+        subarea_high = ''
+        max_H = -1
+        min_H = 5
+        if len(getsubarea) >= 2:
+            for j, subarea in enumerate(self.subarea_list_pattern):
+
+                if max_H < subarea['pattern'].count('H') and subarea['subarea'].strip() not in self.get_multiple_area:
+                    max_H = subarea['pattern'].count('H')
+                    subarea_high = subarea['subarea']
+                if min_H > subarea['pattern'].count('H') and subarea['subarea'].strip() not in self.get_multiple_area:
+                    min_H = subarea['pattern'].count('H')
+                    subarea_min = subarea['subarea']
+
+            self.matched[self.subareakey] = subarea_high
+            for j, subarea in enumerate(self.subarea_list_pattern):
+                if (subarea['subarea'].strip() == subarea_high.strip()) and (((subarea['pattern'][0]) == 'H' and self.matched[self.housekey] == None) or ((subarea['pattern'][0]) == 'H' and self.matched[self.housekey] == '') or ((subarea['pattern'][1]) == 'H' and self.matched[self.roadkey] == None) or ((subarea['pattern'][1]) == 'H' and self.matched[self.roadkey] == '') or ((subarea['pattern'][2]) == 'H' and self.matched[self.blockkey] == None) or ((subarea['pattern'][2]) == 'H' and self.matched[self.blockkey] == '') or ((subarea['pattern'][3]) == 'H' and self.matched[self.ssareakey] == None) or ((subarea['pattern'][3]) == 'H' and self.matched[self.ssareakey] == '')):
+                    self.matched[self.subareakey] = subarea_min
+                    break
+
+        # if len(getsubarea)>=2:
+        #     for subarea in getsubarea:
+        #         if subarea not in self.get_multiple_area:
+        #             self.matched[self.subareakey]=subarea.lower()
+
+        # subarea_list = self.dbinit.get_subarea()
+
+        getarea = list(set(self.get_multiple_area))
+        avail_area = getarea
+        if len(getarea) >= 2:
+            chk = 0
+            for area in getarea:
+                subarea_list = self.dbinit.get_subarea()
+                try:
+                    if self.matched[self.subareakey] in self.matched[self.roadkey]:
+                        self.matched[self.subareakey] = ""
+                except Exception as e:
+                    print('Subarea key marked safe from road name')
+
+                try:
+                    if self.matched[self.subareakey]in self.matched[self.buildingkey]:
+                        self.matched[self.subareakey] = ""
+                except Exception as e:
+                    print('Subarea key marked safe from building name')
+                for j, subarea in enumerate(subarea_list):
+                    if subarea[0].lower() == area and subarea[1].lower() == self.matched[self.subareakey] and area in self.tempArray:
+                        self.matched[self.areakey] = area.lower()
+                        chk = 1
+                        break
+                    if subarea[0].lower() == area and subarea[1].lower() == self.matched[self.subareakey] and chk == 0:
+                        # area=area.rstrip(',')
+                        self.matched[self.areakey] = area.lower()
+                        break
+        amgs_area = 0
+        if len(getarea) >= 2:
+            for area in getarea:
+                try:
+                    if area in self.matched[self.roadkey] or area in self.matched[self.buildingkey]:
+                        avail_area.remove(area)
+                        # print('removing...')
+                except Exception as e:
+                    print(e)
+                    pass
+
+        # print('******************************')
+        # print(avail_area)
+        # print(getsubarea)
+        # print('******************************')
+        if len(avail_area) >= 2 and len(getsubarea) < 2 and self.matched[self.areakey] not in self.cleanAddressStr:
+            self.ambiguous_area = True
+
+        # if self.reverse_pattern['road']!=self.matched[self.roadkey]:
+        #     self.matched[self.roadkey]=self.reverse_pattern['road']
+        if self.reverse_house_pattern == True and self.reverse_pattern['house'] != self.matched[self.housekey]:
+            self.matched[self.housekey] = self.reverse_pattern['house']
+        if self.reverse_road_pattern == True and self.reverse_pattern['road'] != self.matched[self.roadkey]:
+            self.matched[self.roadkey] = self.reverse_pattern['road']
+        if self.reverse_goli_pattern == True and self.reverse_pattern['goli'] != self.matched[self.roadkey]:
+            self.matched[self.roadkey] = self.reverse_pattern['goli']
+        if self.reverse_lane_pattern == True and self.reverse_pattern['lane'] != self.matched[self.roadkey]:
+            self.matched[self.roadkey] = self.reverse_pattern['lane']
+        if self.reverse_block_pattern == True and self.reverse_pattern['block'] != self.matched[self.blockkey]:
+            self.matched[self.blockkey] = self.reverse_pattern['block']
+        if self.reverse_sector_pattern == True and self.reverse_pattern['sector'] != self.matched[self.subareakey]:
+            if self.matched[self.areakey] == 'mirpur':
+                self.reverse_pattern['sector'] = self.reverse_pattern['sector'].replace(
+                    'sector', 'section')
+                self.matched[self.subareakey] = self.reverse_pattern['sector']
+            elif self.matched[self.areakey] == 'uttara':
+                self.matched[self.subareakey] = self.reverse_pattern['sector']
+
+        print('------------------------------------------=====================================')
+        #if house will be null if no digit
+        try:
+            if self.matched[self.housekey]!=None:
+                if not any(i.isdigit() for i in self.matched[self.housekey]):
+                    self.matched[self.housekey]=None
+        except Exception as e:
+            print(e)
+            pass
+
+        # print(self.subarea_list_pattern)
+        # print(self.get_multiple_area)
+        # print(self.get_multiple_subarea)
+        s_pattern = []
+        if len(self.subarea_list_pattern) > 0:
+            for patterns in self.subarea_list_pattern:
+                if patterns['subarea'] == self.matched[self.subareakey]:
+                    s_pattern = patterns['pattern']
+                    self.matched[self.subarea_pattern] = s_pattern
+                    break
+        # if area has no block remove it though given by address
+        # areas_with_block = ['mirpur', 'basundhara', 'banani', 'banasree',
+        #                     'aftabnagar', 'khilgaon', 'mohammadpur', 'niketon', 'turag', 'baridhara','lalmatia']
+        # if (self.matched[self.areakey] != "" and self.matched[self.areakey] != None and self.matched[self.areakey] not in areas_with_block):
+        #     self.matched[self.blockkey] = None
+        try:
+            if self.matched[self.subarea_pattern][2] != 'H' and self.matched[self.subarea_pattern][2] != 'M':
+                self.matched[self.blockkey] = None
+        except Exception as e:
+            print(e)
+            pass
+        try:
+            if self.matched[self.roadkey]!=None or self.matched[self.roadkey]!='':
+                temp_road_list=self.matched[self.roadkey].split(',')
+                temp_road=''
+                for rd in temp_road_list:
+                    if rd.strip() not in temp_road:
+                        temp_road+=', '+rd
+                self.matched[self.roadkey]=temp_road.strip(',').strip()
+        except:
+            pass
+        parsed_addr = {
+
+            'area': self.matched[self.areakey],
+            'parsed_house': self.matched[self.housekey],
+            'parsed_building_name': self.matched[self.buildingkey],
+            'parsed_road': self.matched[self.roadkey],
+            'parsed_block': self.matched[self.blockkey],
+            'parsed_super_subarea': self.matched[self.ssareakey],
+            'parsed_subarea': self.matched[self.subareakey],
+            'parsed_area': self.matched[self.areakey],
+            'parsed_district': self.matched[self.districtkey],
+            'parsed_sub_district': self.matched[self.sub_districtkey],
+            'parsed_union': self.matched[self.unionkey],
+            'pattern': s_pattern,
+        }
+        # if (self.matched[self.housekey] == None or self.matched[self.housekey] == "") and (self.matched[self.roadkey] == None or self.matched[self.roadkey] == "") and (self.matched[self.blockkey] == None or self.matched[self.blockkey] == ""):
+        #     print('no addr comp exist')
+        #     #print(saveTortnAddr)
+        #     print(input_address)
+        #     ob = {}
+        #     data = self.get_geo_data(saveTortnAddr,input_address, thana_param, district_param)
+        #     # print(data)
+        #     # fin_addr = self.search_addr_bkoi(data, saveTortnAddr)
+        #     fin_addr = self.matcher_addr_bkoi(data, input_address)
+        return  parsed_addr
+
+
+
 
     # Start parsing...
 
@@ -1858,6 +2362,7 @@ class Address(object):
         # r = requests.post(url, params={'q': qstring})
         # data = r.json()
         final_addr = final_addr_list[0]
+        
         prop_filter = {
             'Address': final_addr['new_address'],
             'address_short': final_addr['Address'],
@@ -1881,6 +2386,7 @@ class Address(object):
             "status": "complete"
         }
         obj['geocoded'] = prop_filter
+        obj['parsed_address']={'area':None,'parsed_subarea':None}
         return obj
 
     def search_addr_bkoi(self, data, qstring):

@@ -39,6 +39,43 @@ def get_subarea_by_parsing(geocoded):
         pass
     return subarea
 
+def gethub_area_from_parsed(parsed):
+    #print(parsed)
+    parsed['city']='Dhaka'
+    area_info={'redx_area':None,'redx_area_id':None}
+    metro_cities=['Dhaka','Sylhet','Chittagong']
+    conn=getcon()
+    if parsed['city'] in metro_cities and parsed['parsed_subarea']!=None and parsed['area']!=None:
+        #subarea=get_subarea(geo_address['latitude'],geo_address['longitude'])
+        #subarea=get_subarea_by_parsing(geo_address)
+        #print(parsed['parsed_subarea'])
+        check_result=[]
+        try:
+            c = conn.cursor()
+            c.execute("SELECT `RedX Area`, `RedX Area ID` from Mapping where `city` like '%"+parsed['city']+"%' and `area` like '%"+parsed['area']+"%' and  `subarea` like '%"+parsed['parsed_subarea']+"%' ")
+            check_result = c.fetchall() 
+            #print(check_result)
+        except Exception as e:
+            print(e)
+            pass
+        
+        if parsed['area']!=None and len(check_result)==0:
+            try:
+                conn=getcon()
+                c = conn.cursor()
+                c.execute("SELECT `RedX Area`, `RedX Area ID` from Mapping where `city` like '%"+parsed['city']+"%' and `area` like '%"+parsed['area']+"%' ")
+                check_result = c.fetchall()
+            except Exception as e:
+                print(e)
+                pass
+        #print(check_result)
+        try:
+            area_info['redx_area']=check_result[0][0]
+            area_info['redx_area_id']=check_result[0][1]
+        except Exception as e:
+            print(e)
+            pass
+    return area_info
     
 def gethub_area(geo_address):
     #print(geo_address)
@@ -48,6 +85,7 @@ def gethub_area(geo_address):
     if geo_address['city'] in metro_cities:
         #subarea=get_subarea(geo_address['latitude'],geo_address['longitude'])
         subarea=get_subarea_by_parsing(geo_address)
+        #print(subarea)
         check_result=[]
         try:
             c = conn.cursor()

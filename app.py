@@ -282,16 +282,38 @@ def transform_parse():
 
     return obj
 
-
-
-@app.route('/shopup/verify', methods=['POST'])
-def shopup_parse():
-    shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'confidence_score_percentage':0,'input_address':None}
+@app.route('/shopup/area', methods=['POST'])
+def shopup_area_match():
+    shopup_obj={'input_address':None}
     add_trans = None
     add_parse = None
     thana_param = None
     district_param = None
-    add_trans = Transformer()
+    add_parse = Address()
+    addr = request.form.get('addr')
+    shopup_obj['input_address']=addr
+    addr_en=addr
+    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
+        try:
+            add_trans = Transformer()
+            addr_en=add_trans.bangla_to_english(addr)
+        except Exception as e:
+            pass
+    try:
+        obj = add_parse.get_component(addr_en)
+        print(obj)
+        shopup_obj['redx_info']=shopup_hub_area.gethub_area_from_parsed(obj)
+    except Exception as e:
+        print(e)
+    return jsonify(shopup_obj)
+
+@app.route('/shopup/verify', methods=['POST'])
+def shopup_parse():
+    shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'strength':0,'input_address':None}
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
     add_parse = Address()
     addr = request.form.get('addr')
     #print(addr)
@@ -304,7 +326,14 @@ def shopup_parse():
         district_param = request.form.get('district')
     except Exception as e:
         district_param = None
-    obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
+    addr_en=addr
+    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
+        try:
+            add_trans = Transformer()
+            addr_en=add_trans.bangla_to_english(addr)
+        except Exception as e:
+            pass
+    obj = add_parse.parse_address(addr_en, thana_param, district_param)
     try:
         del obj['matched_keys']
     except Exception as e:
@@ -315,14 +344,21 @@ def shopup_parse():
     except Exception as e:
         print(e)
         pass
+    print(obj)
+    try:
+        if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and shopup_obj['redx_info']['redx_area']!=None:
+            shopup_obj['strength']=1
+    except Exception as e:
+        print(e)
+        pass
     
     try:
         shopup_obj['geocoded']['Address']=obj['geocoded']['Address']
         shopup_obj['geocoded']['area']=obj['geocoded']['area']
         shopup_obj['geocoded']['latitude']=obj['geocoded']['latitude']
         shopup_obj['geocoded']['longitude']=obj['geocoded']['longitude']
-        shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
-        shopup_obj['input_address']=obj['input_address']
+        #shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
+        shopup_obj['input_address']=addr
     except Exception as e:
         print(e)
         pass
