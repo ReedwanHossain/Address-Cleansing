@@ -108,5 +108,5 @@ class MiniParser(object):
         return obj
 
 # obj=MiniParser()
-# res=obj.parse('Priyanka Beauty Parlour, Motaleb Tower, Paribagh','Shop')
+# res=obj.parse('uttarkhan goverment secondary school, uttarkhan mazar road, uttarkhan','Education')
 # print(res)
