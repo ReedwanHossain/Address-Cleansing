@@ -87,6 +87,7 @@ class Address(object):
         self.name_search = None
         self.fixed_addr = ''
         self.get_geo_obj = []
+        self.nonsubarea_areas=['Paltan', 'Mugda', 'Kotwali', 'Sher E Bangla Nagar', 'New Market', 'Malibagh', 'Babu Bazar', 'Dayaganj', 'Shantinagar', 'Gendaria', 'Islampur', 'Chawkbazar', 'Keraniganj', 'Dhaka University Campus', 'Shegunbagicha', 'Darussalam', 'Kadamtali', 'Panthapath', 'Ramna', 'Eskaton', 'Shahbagh', 'Bangshal', 'Kamalapur', 'Shahjadpur', 'Siddheshwari', 'New Eskaton', 'Katabon', 'Fakirapul', 'Shahjahanpur', 'Rajarbagh', 'Nadda', 'Kallyanpur', 'Nilkhet', 'Hatirpool', 'Khilkhet', 'Azimpur', 'Bakshi Bazar', 'Chankharpul', 'Fulbaria', 'Nawab Katra', 'Nawabpur', 'Sutrapur', 'Shyampur', 'Tikatuli', 'Shamibagh', 'Kathalbagan', 'Bangla Motor', 'Gulisthan', 'Sadarghat', 'Shantibagh', 'Shahidbagh', 'Dholairpar', 'Gabtoli', 'Kalachandpur', 'Sayedabad', 'Paribagh','Gopibagh']
 
     reverse_pattern = {
         'house': '',
@@ -1061,6 +1062,7 @@ class Address(object):
                 self.matched[self.subareakey] = self.reverse_pattern['sector']
 
         print('------------------------------------------=====================================')
+
         #if house will be null if no digit
         try:
             if self.matched[self.housekey]!=None:
@@ -1085,6 +1087,16 @@ class Address(object):
         #                     'aftabnagar', 'khilgaon', 'mohammadpur', 'niketon', 'turag', 'baridhara','lalmatia']
         # if (self.matched[self.areakey] != "" and self.matched[self.areakey] != None and self.matched[self.areakey] not in areas_with_block):
         #     self.matched[self.blockkey] = None
+
+        #for baridhara dohs road will be lane
+        try:
+            if self.matched[self.subareakey]=='baridhara dohs' and self.matched[self.roadkey]!=None:
+                convert_road=re.search('^road\s*\d+$',self.matched[self.roadkey])
+                if convert_road:
+                    self.matched[self.roadkey]=self.matched[self.roadkey].replace('road','lane')
+        except Exception as e:
+            print(e)
+            pass
         try:
             if self.matched[self.subarea_pattern][2] != 'H' and self.matched[self.subarea_pattern][2] != 'M':
                 self.matched[self.blockkey] = None
@@ -1566,9 +1578,23 @@ class Address(object):
                 self.matched[self.subareakey] = self.reverse_pattern['sector']
 
         print('------------------------------------------=====================================')
+
+
+        #for baridhara dohs road will be lane
+        try:
+            if self.matched[self.subareakey]=='baridhara dohs' and self.matched[self.roadkey]!=None:
+                convert_road=re.search('^road\s*\d+$',self.matched[self.roadkey])
+                if convert_road:
+                    self.matched[self.roadkey]=self.matched[self.roadkey].replace('road','lane')
+        except Exception as e:
+            print(e)
+            pass
+
+
         #if house will be null if no digit
         try:
             if self.matched[self.housekey]!=None:
+                self.matched[self.housekey]=self.matched[self.housekey].replace('&','')
                 if not any(i.isdigit() for i in self.matched[self.housekey]):
                     self.matched[self.housekey]=None
         except Exception as e:
@@ -1683,6 +1709,7 @@ class Address(object):
                     final_address, thana_param, district_param)
                 print("considered as unique holding")
                 unique_area_flag = 1
+                #print('from unique')
                 break
         try:
 
@@ -2015,9 +2042,12 @@ class Address(object):
                 geocoded_area = i['area']
                 geocoded_area = geocoded_area.strip().lower()
                 # geocoded_address_with_area=i['address']+", "+geocoded_area
-                geocoded_address_with_area = i['Address']
-                geocoded_addr_comp = mp.parse(
-                    geocoded_address_with_area.lower(), i['pType'])
+                if i['area'] in self.nonsubarea_areas:
+                    geocoded_address_with_area = i['new_address']
+                else:
+                    geocoded_address_with_area = i['Address']
+
+                geocoded_addr_comp = mp.parse(geocoded_address_with_area.lower(), i['pType'])
                 # print(geocoded_addr_comp)
                 # print(geocoded_area)
                 geocoded_holding = geocoded_addr_comp['holding'].strip()
@@ -2101,9 +2131,11 @@ class Address(object):
                 geocoded_area = i['area']
                 geocoded_area = geocoded_area.strip().lower()
                 # geocoded_address_with_area=i['address']+", "+geocoded_area
-                geocoded_address_with_area = i['new_address']
-                geocoded_addr_comp = mp.parse(
-                    geocoded_address_with_area.lower(), i['pType'])
+                if i['area'] in self.nonsubarea_areas:
+                    geocoded_address_with_area = i['new_address']
+                else:
+                    geocoded_address_with_area = i['Address']
+                geocoded_addr_comp = mp.parse(geocoded_address_with_area.lower(), i['pType'])
                 # print(geocoded_addr_comp)
                 # print(geocoded_area)
                 geocoded_holding = geocoded_addr_comp['holding'].strip(
@@ -2199,9 +2231,11 @@ class Address(object):
                 geocoded_area = i['area']
                 geocoded_area = geocoded_area.strip().lower()
                 # geocoded_address_with_area=i['address']+", "+geocoded_area
-                geocoded_address_with_area = i['Address']
-                geocoded_addr_comp = mp.parse(
-                    geocoded_address_with_area.lower(), i['pType'])
+                if i['area'] in self.nonsubarea_areas:
+                    geocoded_address_with_area = i['new_address']
+                else:
+                    geocoded_address_with_area = i['Address']
+                geocoded_addr_comp = mp.parse(geocoded_address_with_area.lower(), i['pType'])
                 # print(geocoded_addr_comp)
                 # print(geocoded_area)
                 geocoded_holding = geocoded_addr_comp['holding'].strip()
@@ -2285,9 +2319,11 @@ class Address(object):
                 geocoded_area = i['area']
                 geocoded_area = geocoded_area.strip().lower()
                 # geocoded_address_with_area=i['address']+", "+geocoded_area
-                geocoded_address_with_area = i['new_address']
-                geocoded_addr_comp = mp.parse(
-                    geocoded_address_with_area.lower(), i['pType'])
+                if i['area'] in self.nonsubarea_areas:
+                    geocoded_address_with_area = i['new_address']
+                else:
+                    geocoded_address_with_area = i['Address']
+                geocoded_addr_comp = mp.parse(geocoded_address_with_area.lower(), i['pType'])
                 # print(geocoded_addr_comp)
                 # print(geocoded_area)
                 geocoded_holding = geocoded_addr_comp['holding'].strip(
@@ -2459,8 +2495,12 @@ class Address(object):
         #     r = requests.post(url, params={'q': qstring})
 
         try:
-            # datas = r.json()
-            # print("got it")
+            # blacklisted=['parsed_house','subarea_pattern','flat','building']
+            # #print(self.matched)
+            # if not any(value for key, value in self.matched.items() if (key not in blacklisted and value=='' or value==None)):
+            #     print('search by raw string')
+            #     data = get_geo_search_data.get_geo_data(raw_input_address,raw_input_address)
+            # else:
             data = get_geo_search_data.get_geo_data(raw_input_address,qstring)
             self.get_geo_obj = data
             pass
@@ -2502,9 +2542,11 @@ class Address(object):
             geocoded_area = i['area']
             geocoded_area = geocoded_area.strip().lower()
             # geocoded_address_with_area=i['address']+", "+geocoded_area
-            geocoded_address_with_area = i['Address']
-            geocoded_addr_comp = mp.parse(
-                geocoded_address_with_area.lower(), i['pType'])
+            if i['area'] in self.nonsubarea_areas:
+                geocoded_address_with_area = i['new_address']
+            else:
+                geocoded_address_with_area = i['Address']
+            geocoded_addr_comp = mp.parse(geocoded_address_with_area.lower(), i['pType'])
             # print(geocoded_addr_comp)
             # print(geocoded_area)
             geocoded_holding = geocoded_addr_comp['holding'].strip()
@@ -2519,8 +2561,7 @@ class Address(object):
                     # print(sarea)
                     if sarea.strip() != geocoded_area.strip() and sarea in geocoded_address_with_area.lower():
                         geocoded_subarea = sarea.strip()
-            print(
-                '=============================================================================')
+            print('=============================================================================')
             # print('Geocoded Subarea '+geocoded_subarea)
             print(geocoded_address_with_area)
             print(geocoded_area+'    ' +
@@ -3030,11 +3071,13 @@ class Address(object):
             geocoded_area = i['area']
             geocoded_area = geocoded_area.strip().lower()
             # geocoded_address_with_area=i['address']+", "+geocoded_area
-            geocoded_address_with_area = i['Address']
-            geocoded_addr_comp = mp.parse(
-                geocoded_address_with_area.lower(), i['pType'])
+            if i['area'] in self.nonsubarea_areas:
+                geocoded_address_with_area = i['new_address']
+            else:
+                geocoded_address_with_area = i['Address']
+            geocoded_addr_comp = mp.parse(geocoded_address_with_area.lower(), i['pType'])
 
-            # print(geocoded_area)
+            #print(geocoded_addr_comp)
             geocoded_holding = geocoded_addr_comp['holding'].strip()
             geocoded_house = geocoded_addr_comp['house'].strip()
             geocoded_floor = geocoded_addr_comp['floor'].strip()
@@ -3059,10 +3102,11 @@ class Address(object):
             if any(char.isdigit() for char in geocoded_house):
                 geocoded_house = re.findall('\d+', geocoded_house)[0]
             # if (geocoded_area.strip()==self.matched[self.areakey].strip().strip(',').strip() or geocoded_area.strip()==self.matched[self.subareakey].strip().strip(',').strip()  or geocoded_subarea.strip()==self.matched[self.areakey].strip().strip(',').strip()  ) and (geocoded_subarea.lower().strip()== self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip()== subareas.strip().strip(',').strip() for subareas in  geocoded_addr_comp['multiple_subarea'] )) and self.matched[self.subareakey].strip().strip(',').strip()!='':
-            if (((geocoded_area.strip() == self.matched[self.areakey].strip().strip(',').strip() and geocoded_subarea.strip() == self.matched[self.subareakey].strip().strip(',').strip()) or geocoded_area.strip() in self.matched[self.subareakey].strip().strip(',').strip() or geocoded_subarea.strip() in self.matched[self.areakey].strip().strip(',').strip()) or (geocoded_subarea.lower().strip() in self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip() in subareas.strip().strip(',').strip() for subareas in geocoded_addr_comp['multiple_subarea']))) and (self.matched[self.subareakey].strip().strip(',').strip() != ''and self.matched[self.subareakey].strip().strip(',').strip() != None and geocoded_area.strip().lower() != '' and geocoded_area != None and geocoded_subarea.strip().lower() != "" and geocoded_subarea != None) and ((re.search(unique_area_p.strip(), self.matched[self.areakey].strip().strip(',').strip()) or re.search(unique_area_p.strip(), self.matched[self.subareakey].strip().strip(',').strip()) for unique_area_p in unique_area_pattern)):
+            if (((geocoded_area.strip() == self.matched[self.areakey].strip().strip(',').strip() and geocoded_subarea.strip() == self.matched[self.subareakey].strip().strip(',').strip()) or geocoded_area.strip() == self.matched[self.subareakey].strip().strip(',').strip() or geocoded_subarea.strip() in self.matched[self.areakey].strip().strip(',').strip()) or (geocoded_subarea.lower().strip() in self.matched[self.subareakey].strip().strip(',').strip() or any(self.matched[self.subareakey].strip().strip(',').strip() in subareas.strip().strip(',').strip() for subareas in geocoded_addr_comp['multiple_subarea']))) and (self.matched[self.subareakey].strip().strip(',').strip() != ''and self.matched[self.subareakey].strip().strip(',').strip() != None and geocoded_area.strip().lower() != '' and geocoded_area != None and geocoded_subarea.strip().lower() != "" and geocoded_subarea != None) and ((re.search(unique_area_p.strip(), self.matched[self.areakey].strip().strip(',').strip()) or re.search(unique_area_p.strip(), self.matched[self.subareakey].strip().strip(',').strip()) for unique_area_p in unique_area_pattern)):
+                print(geocoded_area.strip()+' '+self.matched[self.areakey].strip().strip(',').strip())
+                print(geocoded_subarea.strip()+' '+self.matched[self.subareakey].strip().strip(',').strip())
                 #print(self.matched[self.subareakey].strip().strip(',').strip())
-                similarity = fuzz.ratio(
-                    self.matched[self.housekey].strip().strip(',').strip(), geocoded_house)
+                similarity = fuzz.ratio(self.matched[self.housekey].strip().strip(',').strip(), geocoded_house)
                 #print(self.matched[self.housekey].strip().strip(',').strip() + "  and  "+geocoded_house)
                 gotHoldings.append(holding)
                 #print("holding matched result")

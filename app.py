@@ -18,6 +18,7 @@ from dbconf.db_operations import Operations
 import similarity
 import shopup_hub_area
 import shutil
+import geo_distance
 app = Flask(__name__)
 CORS(app)
 BASE_PATH = os.getcwd()
@@ -255,6 +256,7 @@ def test():
 
 @app.route('/transparse', methods=['POST'])
 def transform_parse():
+    obj={}
     add_trans = None
     add_parse = None
     thana_param = None
@@ -272,15 +274,25 @@ def transform_parse():
         district_param = request.form.get('district')
     except Exception as e:
         district_param = None
-    obj = add_parse.parse_address(
-        add_trans.bangla_to_english(addr), thana_param, district_param)
+    try:
+        obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
+    except Exception as e:
+        import get_geo_search_data
+        obj['geocoded']=get_geo_search_data.get_geo_data(addr,addr)[0]
+        obj['address']=addr
+        obj['confidence_score_percentage']=0
+        obj['address_bn']=""
+        obj['input_address']=addr
+        obj['parsed_address']={}
+        obj['status']='incomplete'
+
     try:
         del obj['matched_keys']
     except Exception as e:
         print(e)
         pass
 
-    return obj
+    return jsonify(obj)
 
 @app.route('/shopup/area', methods=['POST'])
 def shopup_area_match():
@@ -358,6 +370,64 @@ def shopup_parse():
         shopup_obj['geocoded']['latitude']=obj['geocoded']['latitude']
         shopup_obj['geocoded']['longitude']=obj['geocoded']['longitude']
         #shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
+        shopup_obj['input_address']=addr
+    except Exception as e:
+        print(e)
+        pass
+    return jsonify(shopup_obj)
+
+
+@app.route('/shopup/geofence', methods=['POST'])
+def shopup_geofence():
+    shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'confidence_score_percentage':0,'input_address':None,'distance_m':None}
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
+    add_parse = Address()
+    addr = request.form.get('addr')
+    latitude=request.form.get('lat')
+    longitude=request.form.get('lon')
+    lat_lon_p='^-?(([-+]?)([\d]{1,3})((\.)(\d+))?)'
+    if latitude==None or longitude==None:
+        return {"message": "Try with correct lat lon format"},422 
+    if not re.match(lat_lon_p,latitude) or not re.match(lat_lon_p,longitude):
+        return {"message": "Try with correct lat lon format"},422 
+    try:
+        thana_param = request.form.get('thana')
+    except Exception as e:
+        thana_param = None
+
+    try:
+        district_param = request.form.get('district')
+    except Exception as e:
+        district_param = None
+    addr_en=addr
+    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
+        try:
+            add_trans = Transformer()
+            addr_en=add_trans.bangla_to_english(addr)
+        except Exception as e:
+            pass
+    obj = add_parse.parse_address(addr_en, thana_param, district_param)
+    try:
+        del obj['matched_keys']
+    except Exception as e:
+        print(e)
+        pass
+    try:
+        shopup_obj['distance_m']=geo_distance.Distance(float(latitude),float(longitude),float(obj['geocoded']['latitude']),float(obj['geocoded']['longitude']))*1000
+    except Exception as e:
+        print(e)
+        pass
+
+    
+    try:
+        shopup_obj['geocoded']['Address']=obj['geocoded']['Address']
+        shopup_obj['geocoded']['area']=obj['geocoded']['area']
+        shopup_obj['geocoded']['latitude']=obj['geocoded']['latitude']
+        shopup_obj['geocoded']['longitude']=obj['geocoded']['longitude']
+        shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
         shopup_obj['input_address']=addr
     except Exception as e:
         print(e)
@@ -510,7 +580,7 @@ def subarea_insert():
 @app.route('/subarea/update', methods=['POST'])
 def subarea_update():
     con = Operations()
-    subarea_id = None
+    subarea_id = None 
     area = None
     subarea = None
     fhouse = None
