@@ -409,7 +409,11 @@ def shopup_geofence():
             addr_en=add_trans.bangla_to_english(addr)
         except Exception as e:
             pass
-    obj = add_parse.parse_address(addr_en, thana_param, district_param)
+    try:
+        obj = add_parse.parse_address(addr_en, thana_param, district_param)
+    except Exception as e:
+        print(e)
+        pass
     try:
         del obj['matched_keys']
     except Exception as e:
