@@ -2016,6 +2016,7 @@ class Address(object):
         return None
 
     def matcher_addr_bkoi(self, data, qstring):
+        ignore_comp=['area','district','division','code']
         similar_addr = []
         mp = MiniParser()
         temp_qstring = qstring.split(' ')
@@ -2077,6 +2078,8 @@ class Address(object):
                         match_counter += len(qstring.strip().split(' '))
                         p = 1
                     for comp in geocoded_holding.split(' '):
+                        if comp in ignore_comp:
+                            continue
 
                         if comp != '' and (comp in qstring) and p == 0:
                             match_counter += 1
@@ -2104,6 +2107,9 @@ class Address(object):
                         match_counter += 1
                         p = 1
                     for comp in geocoded_holding.split(' '):
+                        #print(comp)
+                        if comp in ignore_comp:
+                            continue
                         if p == 0 and comp != '' and (comp in qstring):
                             match_counter += 1
                             # print(match_counter)
@@ -2165,6 +2171,9 @@ class Address(object):
                         p = 1
 
                     for comp in geocoded_holding.split(' '):
+                        #print(comp)
+                        if comp in ignore_comp:
+                            continue
                         if p == 0 and comp != '' and (comp in qstring):
                             match_counter += 1
                             # print(match_counter)
