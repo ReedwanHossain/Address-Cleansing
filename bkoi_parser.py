@@ -87,7 +87,7 @@ class Address(object):
         self.name_search = None
         self.fixed_addr = ''
         self.get_geo_obj = []
-        self.nonsubarea_areas=['Paltan', 'Mugda', 'Kotwali', 'Sher E Bangla Nagar', 'New Market', 'Malibagh', 'Babu Bazar', 'Dayaganj', 'Shantinagar', 'Gendaria', 'Islampur', 'Chawkbazar', 'Keraniganj', 'Dhaka University Campus', 'Shegunbagicha', 'Darussalam', 'Kadamtali', 'Panthapath', 'Ramna', 'Eskaton', 'Shahbagh', 'Bangshal', 'Kamalapur', 'Shahjadpur', 'Siddheshwari', 'New Eskaton', 'Katabon', 'Fakirapul', 'Shahjahanpur', 'Rajarbagh', 'Nadda', 'Kallyanpur', 'Nilkhet', 'Hatirpool', 'Khilkhet', 'Azimpur', 'Bakshi Bazar', 'Chankharpul', 'Fulbaria', 'Nawab Katra', 'Nawabpur', 'Sutrapur', 'Shyampur', 'Tikatuli', 'Shamibagh', 'Kathalbagan', 'Bangla Motor', 'Gulisthan', 'Sadarghat', 'Shantibagh', 'Shahidbagh', 'Dholairpar', 'Gabtoli', 'Kalachandpur', 'Sayedabad', 'Paribagh','Gopibagh']
+        self.nonsubarea_areas=['Paltan', 'Mugda', 'Kotwali', 'Sher E Bangla Nagar', 'New Market', 'Malibagh', 'Babu Bazar', 'Dayaganj', 'Shantinagar', 'Gendaria', 'Islampur', 'Chawkbazar', 'Keraniganj', 'Dhaka University Campus', 'Shegunbagicha', 'Darussalam', 'Kadamtali', 'Panthapath', 'Ramna', 'Eskaton', 'Shahbagh', 'Bangshal', 'Kamalapur', 'Shahjadpur', 'Siddheshwari', 'New Eskaton', 'Katabon', 'Fakirapul', 'Shahjahanpur', 'Rajarbagh', 'Nadda', 'Kallyanpur', 'Nilkhet', 'Hatirpool', 'Khilkhet', 'Azimpur', 'Bakshi Bazar', 'Chankharpul', 'Fulbaria', 'Nawab Katra', 'Nawabpur', 'Sutrapur', 'Shyampur', 'Tikatuli', 'Shamibagh', 'Kathalbagan', 'Bangla Motor', 'Gulisthan', 'Sadarghat', 'Shantibagh', 'Shahidbagh', 'Dholairpar', 'Gabtoli', 'Kalachandpur', 'Sayedabad', 'Paribagh','Gopibagh','Dhanmondi']
 
     reverse_pattern = {
         'house': '',
@@ -212,11 +212,9 @@ class Address(object):
                 token = token.rstrip('[:!@#$-=+.]')
                 prefix_flag = False
                 if ((token.lower() == 'section' or token.lower() == 'sector') and token.lower() in self.cleanAddressStr.lower() and idx < len(self.tempArray)-1):
-                    self.matched[self.subareakey] = token + \
-                        ' ' + self.tempArray[idx+1]
+                    self.matched[self.subareakey] = token + ' ' + self.tempArray[idx+1]
                     if (area.lower() == 'mirpur'):
-                        self.matched[self.subareakey] = 'section' + \
-                            ' ' + self.tempArray[idx+1]
+                        self.matched[self.subareakey] = 'section' + ' ' + self.tempArray[idx+1]
                         self.get_multiple_subarea.append(
                             'section' + ' ' + self.tempArray[idx+1])
                         tempObj = {
@@ -226,8 +224,7 @@ class Address(object):
                         }
                         self.subarea_list_pattern.append(tempObj)
                     elif(area.lower() == 'uttara'):
-                        self. matched[self.subareakey] = 'sector' + \
-                            ' ' + self.tempArray[idx+1]
+                        self. matched[self.subareakey] = 'sector' +  ' ' + self.tempArray[idx+1]
                         self.get_multiple_subarea.append(
                             'sector' + ' ' + self.tempArray[idx+1])
                         tempObj = {
@@ -315,12 +312,10 @@ class Address(object):
                 #print('holding token 267')
                 #print(token)
                 if ((any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList)) and idx < len(self.tempArray)-2:
-                    self.matched[self.housekey] = self.matched[self.housekey] + \
-                        "-"+self.tempArray[idx+1]
+                    self.matched[self.housekey] = self.matched[self.housekey] +  "-"+self.tempArray[idx+1]
                     if idx < len(self.tempArray)-3:
                         if ((any(char.isdigit() for char in self.tempArray[idx+2])) or re.match(r'^[a-z]$', self.tempArray[idx+2]) or (self.tempArray[idx+2] in tempList)):
-                            self.matched[self.housekey] = self.matched[self.housekey] + \
-                                "-"+self.tempArray[idx+2]
+                            self.matched[self.housekey] = self.matched[self.housekey] +  "-"+self.tempArray[idx+2]
                 return True
 
             if self.tempArray[idx-1].lower() not in self.address_component:
@@ -338,11 +333,9 @@ class Address(object):
                     self.matched[self.housekey] = token
                     #print('290----------- '+self.matched[self.housekey])
                     if ((any(char.isdigit() for char in self.tempArray[idx+1])) or re.match(r'^[a-z]$', self.tempArray[idx+1]) or (self.tempArray[idx+1] in tempList)) and idx < len(self.tempArray)-2:
-                        self.matched[self.housekey] = self.matched[self.housekey] + \
-                            "-"+self.tempArray[idx+1]
+                        self.matched[self.housekey] = self.matched[self.housekey] +  "-"+self.tempArray[idx+1]
                         if ((any(char.isdigit() for char in self.tempArray[idx+2])) or re.match(r'^[a-z]$', self.tempArray[idx+2]) or (self.tempArray[idx+2] in tempList)) and idx < len(self.tempArray)-3:
-                            self.matched[self.housekey] = self.matched[self.housekey] + \
-                                "-"+self.tempArray[idx+2]
+                            self.matched[self.housekey] = self.matched[self.housekey] +  "-"+self.tempArray[idx+2]
                     return True
             return True
 
@@ -358,12 +351,10 @@ class Address(object):
                     p2 = re.match(r'^[a-z]$', self.tempArray[idx+2])
                     p3 = re.match(r'^[A-Z]$', self.tempArray[idx+2])
                     if p1 or p2 or p3 or (self.tempArray[idx+2] in tempList):
-                        self.matched[self.housekey] = self.tempArray[idx+1] + \
-                            "-"+self.tempArray[idx+2]
+                        self.matched[self.housekey] = self.tempArray[idx+1] +  "-"+self.tempArray[idx+2]
                         if idx < len(self.tempArray)-3:
                             if ((any(char.isdigit() for char in self.tempArray[idx+3])) or re.match(r'^[a-z]$', self.tempArray[idx+3]) or (self.tempArray[idx+3] in tempList)):
-                                self.matched[self.housekey] = self.matched[self.housekey] + \
-                                    "-"+self.tempArray[idx+3]
+                                self.matched[self.housekey] = self.matched[self.housekey] +  "-"+self.tempArray[idx+3]
 
                     # matched_array.append(tempArray[idx+1])
                 return True
@@ -381,15 +372,13 @@ class Address(object):
                         break
                     if not i == 0 and (self.tempArray[i-1] in self.address_component or self.tempArray[i-1] in tempList):
                         if not any(char.isdigit() for char in self.tempArray[i]):
-                            building_str = self.tempArray[i] + \
-                                " " + building_str
+                            building_str = self.tempArray[i] +  " " + building_str
                             break
 
                         break
                     building_str = self.tempArray[i] + " " + building_str
                     i = i-1
-                self.matched[self.buildingkey] = self.matched[self.buildingkey] + \
-                    ", "+building_str + token
+                self.matched[self.buildingkey] = self.matched[self.buildingkey] +  ", "+building_str + token
                 return True
 
     def check_block(self, token, idx):
@@ -437,15 +426,13 @@ class Address(object):
                     num = re.findall(r'\d+', self.tempArray[idx+1])
                     num = max(map(int, num))
                     if(self.matched[self.roadkey] == None and num < 1000):
-                        self.matched[self.roadkey] = road + \
-                            " "+self.tempArray[idx+1]
+                        self.matched[self.roadkey] = road +  " "+self.tempArray[idx+1]
                         return True
                     # road x avenue y
                     if self.matched[self.roadkey] == None:
                         self.matched[self.roadkey] = ''
                     if num < 1000:
-                        self.matched[self.roadkey] = self.matched[self.roadkey] + \
-                            ", "+road+" " + self.tempArray[idx+1]
+                        self.matched[self.roadkey] = self.matched[self.roadkey] +  ", "+road+" " + self.tempArray[idx+1]
                     return True
             if idx != 0:
                 if (not any(char.isdigit() for char in self.tempArray[idx-1])):
@@ -468,8 +455,7 @@ class Address(object):
                     if(self.matched[self.roadkey] == None):
                         self.matched[self.roadkey] = road_str + road
                         return True
-                    self.matched[self.roadkey] = self.matched[self.roadkey] + \
-                        ", "+road_str + road
+                    self.matched[self.roadkey] = self.matched[self.roadkey] +  ", "+road_str + road
                     # matched_array.append(matched[roadkey])
                     return True
 
@@ -1925,9 +1911,7 @@ class Address(object):
                     if self.matched[self.housekey] != "":
                         score += 10-(self.GeoTrueFor['roadkey']*2)
                     else:
-                        score += 10 - \
-                            (self.GeoTrueFor['roadkey']) * \
-                            (self.GeoTrueFor['roadkey'])
+                        score += 10 -  (self.GeoTrueFor['roadkey']) *  (self.GeoTrueFor['roadkey'])
                 elif self.matched[self.subarea_pattern][2] != 'H':
                     score += 30
                     if self.matched[self.subarea_pattern][1] == 'H' and self.GeoTrueFor['roadkey'] == 1:
@@ -3266,8 +3250,7 @@ class Address(object):
             self.matched[self.housekey] = self.matched[self.housekey].strip(
                 '-')
             if any(char.isdigit() for char in self.matched[self.housekey]):
-                self.matched[self.housekey] = "house " + \
-                    self.matched[self.housekey]+", "
+                self.matched[self.housekey] = "house " +  self.matched[self.housekey]+", "
             else:
                 self.matched[self.housekey] = ''
         except Exception as e:
@@ -3278,8 +3261,7 @@ class Address(object):
         except Exception as e:
             self.matched[self.roadkey] = ''
         try:
-            self.matched[self.blockkey] = "block " + \
-                self.matched[self.blockkey]+", "
+            self.matched[self.blockkey] = "block " +  self.matched[self.blockkey]+", "
         except Exception as e:
             self.matched[self.blockkey] = ''
 
@@ -3340,15 +3322,9 @@ class Address(object):
         if self.matched[self.subareakey] == self.matched[self.areakey]:
             # print('982......same AS')
             #print(self.matched)
-            full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + \
-                self.matched[self.areakey] + self.matched[self.unionkey] + \
-                self.matched[self.sub_districtkey] + \
-                self.matched[self.districtkey]
+            full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] +  self.matched[self.areakey] + self.matched[self.unionkey] +  self.matched[self.sub_districtkey] +  self.matched[self.districtkey]
         else:
-            full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] + \
-                self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] + \
-                self.matched[self.sub_districtkey] + \
-                self.matched[self.districtkey]
+            full_address = self.matched[self.buildingkey] + self.matched[self.housekey] + self.matched[self.roadkey] + self.matched[self.blockkey] +  self.matched[self.subareakey] + self.matched[self.areakey] + self.matched[self.unionkey] +  self.matched[self.sub_districtkey] +  self.matched[self.districtkey]
 
         full_address = full_address.lstrip(' ,')
         full_address = full_address.rstrip(' ,')

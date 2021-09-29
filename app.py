@@ -1,5 +1,5 @@
 from flask_cors import CORS
-import json
+#import json
 from flask import Flask, request, jsonify, send_file, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
 import pandas as pd
@@ -254,6 +254,57 @@ def test():
     return add_parse.check_room(add_trans.bangla_to_english(addr))
 
 
+
+
+@app.route('/geocoder', methods=['POST'])
+def geocoder():
+    return_obj={'Address':None,'area':None,'latitude':None,'longitude':None}
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
+    add_trans = Transformer()
+    add_parse = Address()
+    addr = request.form.get('addr')
+    raw_input=addr
+    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
+        try:
+            add_trans = Transformer()
+            addr=add_trans.bangla_to_english(addr)
+        except Exception as e:
+            pass
+
+    try:
+        obj = add_parse.parse_address(addr, thana_param, district_param)
+    except Exception as e:
+        import get_geo_search_data
+        obj['geocoded']=get_geo_search_data.get_geo_data(addr,addr)[0]
+        obj['address']=addr
+        obj['confidence_score_percentage']=0
+        obj['address_bn']=""
+        obj['input_address']=raw_input
+        obj['parsed_address']={}
+        obj['status']='incomplete'
+
+    try:
+        print(obj['geocoded']['Address'])
+        #print(type(return_obj['Address']))
+        return_obj['Address']=obj['geocoded']['Address']
+        return_obj['area']=obj['geocoded']['area']
+        return_obj['latitude']=obj['geocoded']['latitude']
+        return_obj['longitude']=obj['geocoded']['longitude']
+        obj['geocoded']=return_obj
+        obj['input_address']=raw_input
+        obj['fixed_address']=obj['address']
+        del obj['address']
+        del obj['parsed_address']
+        del obj['matched_keys']
+    except Exception as e:
+        print(e)
+        pass
+    #print(return_obj)
+    return jsonify(obj)
+
 @app.route('/transparse', methods=['POST'])
 def transform_parse():
     obj={}
@@ -389,19 +440,11 @@ def shopup_geofence():
     latitude=request.form.get('lat')
     longitude=request.form.get('lon')
     lat_lon_p='^-?(([-+]?)([\d]{1,3})((\.)(\d+))?)'
-    if latitude==None or longitude==None:
+    if latitude==None or longitude==None or addr==None:
         return {"message": "Try with correct lat lon format"},422 
     if not re.match(lat_lon_p,latitude) or not re.match(lat_lon_p,longitude):
         return {"message": "Try with correct lat lon format"},422 
-    try:
-        thana_param = request.form.get('thana')
-    except Exception as e:
-        thana_param = None
 
-    try:
-        district_param = request.form.get('district')
-    except Exception as e:
-        district_param = None
     addr_en=addr
     if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
         try:

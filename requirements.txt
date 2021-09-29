@@ -1,7 +1,10 @@
-Flask==1.1.1
-Flask-Cors==3.0.8
-Flask-RESTful==0.3.8
-fuzzywuzzy==0.18.0
-requests==2.23.0
+Flask
+Flask-Cors
+Flask-RESTful
+fuzzywuzzy
+requests
 python-Levenshtein
 pyenchant
+mysql-connector-python
+pandas
+sklearn

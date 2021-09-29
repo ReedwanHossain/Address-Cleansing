@@ -63,9 +63,17 @@ def get_dsu_comp(addr):
     url = 'http://3.1.115.160/zone/dsu'
     r = requests.post(url, data={'addr': addr})
     return r.json()
-
+def modify_search_addr(q):
+    q='REDX Logistics HQ'
+    return q
 def get_geo_data(raw_input_addr,q):
-    #print(raw_input_addr)
+    try:
+        q=' '+q+' '
+        if ' redx ' in q and ' tejgaon ' in q:
+            q=modify_search_addr(q)
+            raw_input_addr=raw_input_addr.lower().replace('tejgaon','tejgaon industrial area')
+    except:
+        pass
     data=[]
     comp={'district':None,'sub_district':None,'union':None}
     try:
@@ -108,7 +116,7 @@ def get_geo_data(raw_input_addr,q):
             print('data from raw search')
         except Exception as e:
             print(e)
-    
+    #print(data)
     return data
 
 
