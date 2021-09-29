@@ -105,14 +105,13 @@ def gethub_area(geo_address):
         #     except Exception as e:
         #         print(e)
         #         pass
-        #print(check_result)
         try:
             area_info['redx_area']=check_result[0][0]
             area_info['redx_area_id']=check_result[0][1]
         except Exception as e:
             print(e)
             pass
-
+    
     if area_info['redx_area']==None:
         try:
             geo_address= fill_up_null_data.fillUp(geo_address,'MTQ4MToxS1U5UlBQM043')
@@ -136,6 +135,8 @@ def gethub_area(geo_address):
         except Exception as e:
             print(e)
             pass
+    print('redex area')
+    print(check_result)
     return area_info
 if __name__ == "__main__":
     geo_address={
