@@ -14,6 +14,7 @@ class Transformer(object):
         self.dbinit = DBINIT()
         self.dbinit.load_digit()
         self.dbinit.load_keyword_map()
+        self.conn=self.dbinit.get_conn()
 
     def bangla_to_english(self, address):
         # if (re.sub('.com|.xyz|.net|.co|.inc|.org|.bd.com|.edu|.\u0995\u09AE', address) == None):
@@ -51,17 +52,10 @@ class Transformer(object):
             getmylist = 0
             # word=word.decode('utf-8')
             word = word.strip()
-            data_list = self.dbinit.get_keyword_map()
-            for j, keyword in enumerate(data_list):
-                # keyword[0]=keyword[0].decode('utf-8') #english
-                # keyword[1]=keyword[1].decode('utf-8') #bangla
-                if word == keyword[1].strip():
-                    # print("matched")
-                    # eng_address.append(keyword[0])
-                    eng_address = eng_address+' '+keyword[0]
-                    getmylist = 1
-                    #print(keyword[1]+'   paise')
-                    break
+            rows=self.conn.cursor().execute("SELECT * FROM KEYWORD_MAPLIST where keybn like ? limit 1",[word]).fetchall()
+            if len(rows)>0:
+                eng_address = eng_address + ' ' + rows[0][1]
+                getmylist = 1
             if getmylist == 0:
                 custom_address = main(word)
                 custom_address = custom_address.replace('`', '')

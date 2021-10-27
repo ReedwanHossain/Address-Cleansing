@@ -20,9 +20,10 @@ import shopup_hub_area
 import shutil
 import geo_distance
 app = Flask(__name__)
+#CORS(app, resources={r"/*": {"origins": ["https://rupantor.barikoi.com", "http://localhost", "https://admin.barikoi.xyz"]}})
 CORS(app)
 BASE_PATH = os.getcwd()
-print(BASE_PATH)
+#print(BASE_PATH)
 if not os.path.exists(BASE_PATH+'/UPLOADED_FILE'):
     os.makedirs(BASE_PATH+'/UPLOADED_FILE')
 UPLOAD_FOLDER = BASE_PATH + '/UPLOADED_FILE'
@@ -101,8 +102,7 @@ def run_csv(filename):
                          "latitude", "longitude", "confidence_score_percentage", "status"])
         for i in df['input_address']:
             print(i)
-            res = add_parse.parse_address(
-                add_trans.bangla_to_english(i), thana_param, district_param)
+            res = add_parse.parse_address(add_trans.bangla_to_english(i), thana_param, district_param)
             try:
                 writer.writerow([i, res['address'], res['geocoded']
                                  ['Address'], res['geocoded']['latitude'], res['geocoded']['longitude'], res['confidence_score_percentage'], res['status']])
@@ -176,21 +176,6 @@ def matcher():
     return similarity.bkoi_address_matcher(addr1, addr2, inAdd1, inAdd2)
 
 
-@app.route('/parse', methods=['POST'])
-def parse_it():
-    addr = request.form.get('addr')
-    # de_addr = urllib.unquote(addr)
-    # print "address.........."+de_addr
-    return add_parse.parse_address(addr)
-
-
-@app.route('/parser', methods=['GET'])
-def parser():
-    addr = request.args.get('addr')
-    # de_addr = urllib.unquote(addr)
-    # print "address.........."+de_addr
-    return add_parse.parse_address(addr)
-
 
 @app.route('/transform', methods=['GET'])
 def transform_addr():
@@ -222,26 +207,6 @@ def transformer_addr():
     return add_trans.bangla_to_english(addr)
 
 
-@app.route('/rupantor/parse', methods=['POST'])
-def rupantor_parse():
-    ob_trans = None
-    ob_parse = None
-    thana_param = None
-    district_param = None
-    ob_trans = Transformer()
-    ob_parse = AddressParser()
-    addr = request.form.get('addr')
-    try:
-        thana_param = request.form.get('thana')
-    except Exception as e:
-        thana_param = None
-
-    try:
-        district_param = request.form.get('district')
-    except Exception as e:
-        district_param = None
-
-    return ob_parse.rupantor_parse_address(ob_trans.bangla_to_english(addr), thana_param, district_param)
 
 
 @app.route('/test', methods=['POST'])
@@ -307,6 +272,7 @@ def geocoder():
 
 @app.route('/transparse', methods=['POST'])
 def transform_parse():
+    #print (request.environ['HTTP_ORIGIN'])
     obj={}
     add_trans = None
     add_parse = None
@@ -345,30 +311,6 @@ def transform_parse():
 
     return jsonify(obj)
 
-@app.route('/shopup/area', methods=['POST'])
-def shopup_area_match():
-    shopup_obj={'input_address':None}
-    add_trans = None
-    add_parse = None
-    thana_param = None
-    district_param = None
-    add_parse = Address()
-    addr = request.form.get('addr')
-    shopup_obj['input_address']=addr
-    addr_en=addr
-    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
-        try:
-            add_trans = Transformer()
-            addr_en=add_trans.bangla_to_english(addr)
-        except Exception as e:
-            pass
-    try:
-        obj = add_parse.get_component(addr_en)
-        print(obj)
-        shopup_obj['redx_info']=shopup_hub_area.gethub_area_from_parsed(obj)
-    except Exception as e:
-        print(e)
-    return jsonify(shopup_obj)
 
 @app.route('/shopup/verify', methods=['POST'])
 def shopup_parse():
@@ -409,6 +351,7 @@ def shopup_parse():
         pass
     print(obj)
     try:
+        #print(obj['address'])
         if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and shopup_obj['redx_info']['redx_area']!=None:
             shopup_obj['strength']=1
     except Exception as e:

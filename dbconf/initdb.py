@@ -4,6 +4,7 @@ import sqlite3
 class DBINIT(object):
 
 	def __init__(self):
+		self.conn = sqlite3.connect('dbconf/TestDB.db')
 		self.AREA = None
 		self.AREA_REGEX = None
 		self.SUBAREA = None
@@ -15,8 +16,12 @@ class DBINIT(object):
 		self.DIGIT = None
 		self.KEYWORD_MAP = None
 
+
+	def get_conn(self):
+		return self.conn
+
 	def load_area(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT areaname
@@ -26,16 +31,16 @@ class DBINIT(object):
 		self.AREA = [i[0] for i in self.AREA]
 
 	def load_subarea(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT area, subarea, fhouse, froad, fblock, fsuparea, fsubarea, area_regex, subarea_regex
-		FROM SUBAREA
+		FROM SUBAREA where subarea is not null and subarea not like '%block%'
 		''')
 		self.SUBAREA = c.fetchall()
 		self.SUBAREA = [i for i in self.SUBAREA]
 	def load_area_with_regex(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT area, area_regex
@@ -45,7 +50,7 @@ class DBINIT(object):
 		self.AREA_REGEX = [i for i in self.AREA_REGEX]
 
 	def load_dsu(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT *
@@ -55,7 +60,7 @@ class DBINIT(object):
 		self.DSU = [i for i in self.DSU]
 
 	def load_ebl(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT eng, bn
@@ -66,7 +71,7 @@ class DBINIT(object):
 
 
 	def load_jbl(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT cbn, ceng
@@ -76,7 +81,7 @@ class DBINIT(object):
 		self.JBL = [i for i in self.JBL]
 
 	def load_bl(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT bn, eng
@@ -86,7 +91,7 @@ class DBINIT(object):
 		self.BL = [i for i in self.BL]
 
 	def load_bv(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT vbn
@@ -96,7 +101,7 @@ class DBINIT(object):
 		self.BV = [i[0] for i in self.BV]
 
 	def load_digit(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT deng, dbn
@@ -106,7 +111,7 @@ class DBINIT(object):
 		self.DIGITS = [i for i in self.DIGITS]
 
 	def load_keyword_map(self):
-		conn = sqlite3.connect('dbconf/TestDB.db')  
+		conn=self.conn  
 		c = conn.cursor()
 		c.execute('''
 		SELECT DISTINCT keyeng,keybn,corbang,blank
