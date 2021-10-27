@@ -22,6 +22,17 @@ def polygon_search(q, polygon):
         print(e)
         print('from polygon_search')
         return []
+def filter_search(q,filter_obj):
+    #url = "https://rupantor.barikoi.com/autosearch/autocomplete/polygon"
+    url="http://elastic.barikoi.com/bkoi/autocomplete/type?q="+q+"&area="+filter_obj['area']+"&city="+filter_obj['city']
+    try:
+        x = requests.get(url)
+        print('from filter search')
+        return x.json()['places']
+    except Exception as e:
+        print(e)
+        print('error from filter search')
+        return []
 def get_db_data(item, tablename, field, field_val):
     mydb=getdb('db.barikoi.com', 'barikoiadmin','Amitayef5.7', 'ethikana')
     data = []
@@ -66,7 +77,15 @@ def get_dsu_comp(addr):
 def modify_search_addr(q):
     q='REDX Logistics HQ'
     return q
-def get_geo_data(raw_input_addr,q):
+def get_geo_data(raw_input_addr,q,filter_obj):
+
+    data=[]
+    try:
+        if len(filter_obj)>1:
+            if 'area' in filter_obj:
+                data=filter_search(q,filter_obj)
+    except:
+        pass
     try:
         q=' '+q+' '
         if ' redx ' in q and ' tejgaon ' in q:
@@ -74,14 +93,14 @@ def get_geo_data(raw_input_addr,q):
             raw_input_addr=raw_input_addr.lower().replace('tejgaon','tejgaon industrial area')
     except:
         pass
-    data=[]
+    
     comp={'district':None,'sub_district':None,'union':None}
     try:
         comp=get_dsu_comp(raw_input_addr)[0]
     except:
         pass
     try:
-        if comp['union']!=None:
+        if comp['union']!=None and len(data)==0:
             polygon = get_db_data_union(comp['district'], comp['union'])
             # print(str(polygon.split()))
             data = polygon_search(q, str(polygon))

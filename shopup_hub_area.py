@@ -2,6 +2,17 @@ import sqlite3
 import requests
 from miniparser import MiniParser
 import fill_up_null_data
+
+
+
+
+def get_barikoi_comp_from_shopup(shopup_area):
+    conn=getcon()
+    c = conn.cursor()
+    c.execute("SELECT distinct city,area from Mapping where `RedX Area` like '%"+shopup_area+"%'  ")
+    check_result = c.fetchall()
+    return check_result
+    
 def getcon():
     try:
         conn = sqlite3.connect('dbconf/outfile.db')
@@ -135,8 +146,8 @@ def gethub_area(geo_address):
         except Exception as e:
             print(e)
             pass
-    print('redex area')
-    print(check_result)
+    #print('redex area')
+    #print(check_result)
     return area_info
 if __name__ == "__main__":
     geo_address={

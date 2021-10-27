@@ -1,10 +1,4 @@
-from flask_cors import CORS
-import requests
-from json import dumps
-from flask import Flask, request, send_from_directory, make_response
-from flask_restful import reqparse, abort, Api, Resource
 from fuzzywuzzy import fuzz
-import urllib
 import re
 import csv
 import enchant
@@ -619,7 +613,7 @@ class Address(object):
 
     # Start parsing...
 
-    def parse_address(self, input_address, thana_param, district_param):
+    def parse_address(self, input_address, thana_param, district_param,filter_obj):
         # adding extra space before inputted address and convert it into lowercase
         saveTortnAddr = input_address
         print(input_address)
@@ -1132,7 +1126,7 @@ class Address(object):
             #print(saveTortnAddr)
             print(input_address)
             ob = {}
-            data = self.get_geo_data(saveTortnAddr,input_address, thana_param, district_param)
+            data = self.get_geo_data(saveTortnAddr,input_address, filter_obj)
             # print(data)
             # fin_addr = self.search_addr_bkoi(data, saveTortnAddr)
             fin_addr = self.matcher_addr_bkoi(data, input_address)
@@ -1620,6 +1614,7 @@ class Address(object):
             for i in data:
                 match_counter = 0
                 fuzzy_match_counter = 0
+                print(i['area'])
                 geocoded_area = i['area']
                 geocoded_area = geocoded_area.strip().lower()
                 # geocoded_address_with_area=i['address']+", "+geocoded_area
@@ -1927,7 +1922,8 @@ class Address(object):
         return match_obj_max
 
     def barikoi_office_search(self, qstring):
-        final_addr_list = get_geo_search_data.get_geo_data(qstring,qstring)
+        filter_obj={}
+        final_addr_list = get_geo_search_data.get_geo_data(qstring,qstring,filter_obj)
         # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
         # r = requests.post(url, params={'q': qstring})
         # data = r.json()
@@ -2011,10 +2007,11 @@ class Address(object):
         # result=fuzz.ratio(qstring.lower(), i['Address'].lower())
 
     def search_addr_bkoi2(self, raw_input_address,qstring, thana_param, district_param):
+        filter_obj={}
 
 
         try:
-            data = get_geo_search_data.get_geo_data(raw_input_address,qstring)
+            data = get_geo_search_data.get_geo_data(raw_input_address,qstring,filter_obj)
             self.get_geo_obj = data
             pass
         except Exception as e:
@@ -2756,7 +2753,7 @@ class Address(object):
 
         return prop_filter
 
-    def get_geo_data(self, raw_input_address,qstring, thana_param, district_param):
+    def get_geo_data(self, raw_input_address,qstring, filter_obj):
 
         # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
         # # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
@@ -2773,7 +2770,7 @@ class Address(object):
 
         try:
             # data = r.json()
-            data = get_geo_search_data.get_geo_data(raw_input_address, qstring)
+            data = get_geo_search_data.get_geo_data(raw_input_address, qstring,filter_obj)
             return data
         except Exception as e:
             print("Failed to get data...................")

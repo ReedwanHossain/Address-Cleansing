@@ -19,6 +19,7 @@ import similarity
 import shopup_hub_area
 import shutil
 import geo_distance
+from string import capwords
 app = Flask(__name__)
 #CORS(app, resources={r"/*": {"origins": ["https://rupantor.barikoi.com", "http://localhost", "https://admin.barikoi.xyz"]}})
 CORS(app)
@@ -88,6 +89,7 @@ def upload_file():
 
 
 def run_csv(filename):
+    filter_obj={}
     thana_param = "yes"
     district_param = "yes"
     add_trans = Transformer()
@@ -102,7 +104,7 @@ def run_csv(filename):
                          "latitude", "longitude", "confidence_score_percentage", "status"])
         for i in df['input_address']:
             print(i)
-            res = add_parse.parse_address(add_trans.bangla_to_english(i), thana_param, district_param)
+            res = add_parse.parse_address(add_trans.bangla_to_english(i), thana_param, district_param,filter_obj)
             try:
                 writer.writerow([i, res['address'], res['geocoded']
                                  ['Address'], res['geocoded']['latitude'], res['geocoded']['longitude'], res['confidence_score_percentage'], res['status']])
@@ -223,6 +225,7 @@ def test():
 
 @app.route('/geocoder', methods=['POST'])
 def geocoder():
+    filter_obj={}
     return_obj={'Address':None,'area':None,'latitude':None,'longitude':None}
     add_trans = None
     add_parse = None
@@ -240,7 +243,7 @@ def geocoder():
             pass
 
     try:
-        obj = add_parse.parse_address(addr, thana_param, district_param)
+        obj = add_parse.parse_address(addr, thana_param, district_param,filter_obj)
     except Exception as e:
         import get_geo_search_data
         obj['geocoded']=get_geo_search_data.get_geo_data(addr,addr)[0]
@@ -273,6 +276,7 @@ def geocoder():
 @app.route('/transparse', methods=['POST'])
 def transform_parse():
     #print (request.environ['HTTP_ORIGIN'])
+    filter_obj={}
     obj={}
     add_trans = None
     add_parse = None
@@ -281,6 +285,10 @@ def transform_parse():
     add_trans = Transformer()
     add_parse = Address()
     addr = request.form.get('addr')
+    area = request.form.get('area')
+    if area!=None and area!="":
+        filter_obj['area']=[capwords(area)]
+    print(filter_obj)
     print(addr)
     try:
         thana_param = request.form.get('thana')
@@ -292,7 +300,7 @@ def transform_parse():
     except Exception as e:
         district_param = None
     try:
-        obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param)
+        obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param,filter_obj)
     except Exception as e:
         import get_geo_search_data
         obj['geocoded']=get_geo_search_data.get_geo_data(addr,addr)[0]
@@ -312,8 +320,79 @@ def transform_parse():
     return jsonify(obj)
 
 
+
+
+@app.route('/shopup/route', methods=['POST'])
+def shopup_route():
+    filter_obj={}
+    shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'strength':0,'input_address':None}
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
+    add_parse = Address()
+    addr = request.form.get('addr')
+    area = request.form.get('redx_area')
+    if area!=None and area!="":
+        barikoi_areas=shopup_hub_area.get_barikoi_comp_from_shopup(area)
+        filter_obj['city']=barikoi_areas[0][0]
+        filter_obj['area']=barikoi_areas[0][1]
+    print(filter_obj)
+    try:
+        thana_param = request.form.get('thana')
+    except Exception as e:
+        thana_param = None
+
+    try:
+        district_param = request.form.get('district')
+    except Exception as e:
+        district_param = None
+    addr_en=addr
+    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
+        try:
+            add_trans = Transformer()
+            addr_en=add_trans.bangla_to_english(addr)
+        except Exception as e:
+            pass
+    obj = add_parse.parse_address(addr_en, thana_param, district_param,filter_obj)
+    try:
+        del obj['matched_keys']
+    except Exception as e:
+        print(e)
+        pass
+    try:
+        shopup_obj['redx_info']=shopup_hub_area.gethub_area(obj['geocoded'])
+    except Exception as e:
+        print(e)
+        pass
+    print(obj)
+    try:
+        #print(obj['address'])
+        if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and shopup_obj['redx_info']['redx_area']!=None:
+            shopup_obj['strength']=1
+    except Exception as e:
+        print(e)
+        pass
+    
+    try:
+        shopup_obj['geocoded']['Address']=obj['geocoded']['Address']
+        shopup_obj['geocoded']['area']=obj['geocoded']['area']
+        shopup_obj['geocoded']['latitude']=obj['geocoded']['latitude']
+        shopup_obj['geocoded']['longitude']=obj['geocoded']['longitude']
+        #shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
+        shopup_obj['input_address']=addr
+    except Exception as e:
+        print(e)
+        pass
+    return jsonify(shopup_obj)
+
+
+
+
+
 @app.route('/shopup/verify', methods=['POST'])
 def shopup_parse():
+    filter_obj={}
     shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'strength':0,'input_address':None}
     add_trans = None
     add_parse = None
@@ -338,7 +417,7 @@ def shopup_parse():
             addr_en=add_trans.bangla_to_english(addr)
         except Exception as e:
             pass
-    obj = add_parse.parse_address(addr_en, thana_param, district_param)
+    obj = add_parse.parse_address(addr_en, thana_param, district_param,filter_obj)
     try:
         del obj['matched_keys']
     except Exception as e:
@@ -373,6 +452,7 @@ def shopup_parse():
 
 @app.route('/shopup/geofence', methods=['POST'])
 def shopup_geofence():
+    filter_obj={}
     shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'confidence_score_percentage':0,'input_address':None,'distance_m':None}
     add_trans = None
     add_parse = None
@@ -396,7 +476,7 @@ def shopup_geofence():
         except Exception as e:
             pass
     try:
-        obj = add_parse.parse_address(addr_en, thana_param, district_param)
+        obj = add_parse.parse_address(addr_en, thana_param, district_param,filter_obj)
     except Exception as e:
         print(e)
         pass
@@ -426,6 +506,7 @@ def shopup_geofence():
 
 @app.route('/matchparse', methods=['POST'])
 def match_parse():
+    filter_obj={}
     add_trans = None
     add_parse = None
     thana_param = None
@@ -444,8 +525,7 @@ def match_parse():
     except Exception as e:
         district_param = None
 
-    obj = add_parse.parse_address(
-        add_trans.bangla_to_english(addr), thana_param, district_param)
+    obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param,filter_obj)
     # if obj['confidence_score_percentage'] >= 75 and (obj['status'] == 'incomplete' or (obj['matched_keys']['housekey'] != 1 and obj['parsed_address']['pattern'][0] == 'H') or (obj['matched_keys']['roadkey'] != 1 and obj['parsed_address']['pattern'][1] == 'H') or (obj['matched_keys']['blockkey'] != 1 and obj['parsed_address']['pattern'][2] == 'H') or (obj['matched_keys']['subareakey'] != 1 and obj['parsed_address']['pattern'][4] == 'H')):
     if obj['confidence_score_percentage'] >= 75 and ((obj['matched_keys']['roadkey'] != 1 and obj['parsed_address']['pattern'][1] == 'H') or (obj['matched_keys']['blockkey'] != 1 and obj['parsed_address']['pattern'][2] == 'H') or (obj['matched_keys']['subareakey'] != 1 and obj['parsed_address']['pattern'][4] == 'H')):
         obj['FP'] = "yes"
