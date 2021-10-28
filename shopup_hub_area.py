@@ -9,7 +9,7 @@ import fill_up_null_data
 def get_barikoi_comp_from_shopup(shopup_area):
     conn=getcon()
     c = conn.cursor()
-    c.execute("SELECT distinct city,area from Mapping where `RedX Area` like '%"+shopup_area+"%'  ")
+    c.execute("SELECT distinct city,area from Mapping where `RedX Area` like '"+shopup_area+"'  ")
     check_result = c.fetchall()
     return check_result
     

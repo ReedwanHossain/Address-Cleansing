@@ -150,3 +150,7 @@ class DBINIT(object):
 	def get_keyword_map(self):
 		return self.KEYWORD_MAP
 
+# if __name__ == "__main__":
+# 	ob=DBINIT()
+# 	ob.load_dsu()
+# 	print(ob.get_dsu())

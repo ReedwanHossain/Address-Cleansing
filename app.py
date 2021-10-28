@@ -303,7 +303,7 @@ def transform_parse():
         obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param,filter_obj)
     except Exception as e:
         import get_geo_search_data
-        obj['geocoded']=get_geo_search_data.get_geo_data(addr,addr)[0]
+        obj['geocoded']=get_geo_search_data.get_geo_data(addr,addr,filter_obj)[0]
         obj['address']=addr
         obj['confidence_score_percentage']=0
         obj['address_bn']=""
@@ -334,9 +334,11 @@ def shopup_route():
     addr = request.form.get('addr')
     area = request.form.get('redx_area')
     if area!=None and area!="":
-        barikoi_areas=shopup_hub_area.get_barikoi_comp_from_shopup(area)
-        filter_obj['city']=barikoi_areas[0][0]
-        filter_obj['area']=barikoi_areas[0][1]
+        barikoi_areas=shopup_hub_area.get_barikoi_comp_from_shopup(area.strip())
+        print(barikoi_areas)
+        if len(barikoi_areas)>0:
+            filter_obj['city']=barikoi_areas[0][0]
+            filter_obj['area']=barikoi_areas[0][1]
     print(filter_obj)
     try:
         thana_param = request.form.get('thana')
@@ -360,12 +362,12 @@ def shopup_route():
     except Exception as e:
         print(e)
         pass
-    try:
-        shopup_obj['redx_info']=shopup_hub_area.gethub_area(obj['geocoded'])
-    except Exception as e:
-        print(e)
-        pass
-    print(obj)
+    # try:
+    #     shopup_obj['redx_info']=shopup_hub_area.gethub_area(obj['geocoded'])
+    # except Exception as e:
+    #     print(e)
+    #     pass
+    #print(obj)
     try:
         #print(obj['address'])
         if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and shopup_obj['redx_info']['redx_area']!=None:

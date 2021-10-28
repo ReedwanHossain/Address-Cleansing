@@ -1,7 +1,7 @@
 import requests
 import mysql.connector
 import json
-
+from string import capwords
 def getdb(host, username, password, db):
     mydb = mysql.connector.connect(
         host=host,
@@ -22,9 +22,32 @@ def polygon_search(q, polygon):
         print(e)
         print('from polygon_search')
         return []
+def filter_search_by_area_subarea(q,filter_obj):
+    print('trying to search by filtering parsed area')
+    #print(filter_obj)
+    data=[]
+    url1="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+capwords(filter_obj['area'])
+    if 'subarea' in filter_obj:
+        url2="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+capwords(filter_obj['area'])+"&subarea="+capwords(filter_obj['subarea'])
+    else:
+        url2=url1
+    try:
+        #print(url1)
+
+        x = requests.get(url2)
+        data=x.json()['places']
+        if len(data)==0:
+            x = requests.get(url1)
+            data=x.json()['places']
+        print('from area subarea filter search')
+        return data
+    except Exception as e:
+        print(e)
+        print('error from area subarea filter search')
+        return []
 def filter_search(q,filter_obj):
     #url = "https://rupantor.barikoi.com/autosearch/autocomplete/polygon"
-    url="http://elastic.barikoi.com/bkoi/autocomplete/type?q="+q+"&area="+filter_obj['area']+"&city="+filter_obj['city']
+    url="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+filter_obj['area']+"&city="+filter_obj['city']
     try:
         x = requests.get(url)
         print('from filter search')
@@ -80,9 +103,13 @@ def modify_search_addr(q):
 def get_geo_data(raw_input_addr,q,filter_obj):
 
     data=[]
+    print(filter_obj)
     try:
-        if len(filter_obj)>1:
-            if 'area' in filter_obj:
+        if len(filter_obj)>=1:
+            #print('Yeah')
+            if 'parsed' in filter_obj:
+                data=filter_search_by_area_subarea(q,filter_obj['parsed'])
+            if 'area' in filter_obj and len(data)==0:
                 data=filter_search(q,filter_obj)
     except:
         pass

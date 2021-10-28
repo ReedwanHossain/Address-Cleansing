@@ -6,7 +6,6 @@ import similarity
 from bkoi_e2b import ReverseTransformer
 import get_geo_search_data
 
-
 from dbconf.initdb import DBINIT
 
 
@@ -137,31 +136,30 @@ class Address(object):
 
         district_list = self.dbinit.get_dsu()
         for j, district in enumerate(district_list):
-            if (dist_token[0].lower() == district[2].lower() and dist_token[0].lower() in self.cleanAddressStr.lower()):
-                self.matched[self.districtkey] = district[2].lower()
+            #print(district)
+            if (dist_token[0].lower() == district[3].lower() and dist_token[0].lower() in self.cleanAddressStr.lower()):
+                self.matched[self.districtkey] = district[3].lower()
                 return True
 
     def check_sub_district(self, token, idx):
         sub_dist_token = self.multiple_replace(self.area_dict, token.lower())
         # sub_dist_token = word_tokenize(sub_dist_token)
         sub_dist_token = sub_dist_token.split()
-        with open('./dsu.csv', 'rt')as f:
-            sub_district_list = csv.reader(f)
-            for j, sub_district in enumerate(sub_district_list):
-                if (sub_dist_token[0].lower() == sub_district[1].lower() and sub_dist_token[0].lower() in self.cleanAddressStr.lower()):
-                    self.matched[self.sub_districtkey] = sub_district[1].lower()
-                    return True
+        sub_district_list = self.dbinit.get_dsu()
+        for j, sub_district in enumerate(sub_district_list):
+            if (sub_dist_token[0].lower() == sub_district[3].lower() and sub_dist_token[0].lower() in self.cleanAddressStr.lower()):
+                self.matched[self.sub_districtkey] = sub_district[3].lower()
+                return True
 
     def check_union(self, token, idx):
         union_token = self.multiple_replace(self.area_dict, token.lower())
         # union_token = word_tokenize(union_token)
         union_token = union_token.split()
-        with open('./dsu.csv', 'rt')as f:
-            union_list = csv.reader(f)
-            for j, union in enumerate(union_list):
-                if (union_token[0].lower() == union[0].lower() and union_token[0].lower() in self.cleanAddressStr.lower()):
-                    self.matched[self.unionkey] = union[0].lower()
-                    return True
+        union_list=self.dbinit.get_dsu()
+        for j, union in enumerate(union_list):
+            if (union_token[0].lower() == union[1].lower() and union_token[0].lower() in self.cleanAddressStr.lower()):
+                self.matched[self.unionkey] = union[1].lower()
+                return True
 
     def check_area(self, token, idx):
 
@@ -290,6 +288,8 @@ class Address(object):
                 # matched_array.append(matched[subareakey])
                         self.subarea_flag = True
                         break
+            # print(self.get_multiple_area)
+            # print(self.get_multiple_subarea)
 
     def check_super_sub_area(self, token, idx):
         if ('block' in self.cleanAddressStr and 'mirpur' in self.cleanAddressStr.lower() and token == 'block'):
@@ -809,7 +809,7 @@ class Address(object):
                 input_address = re.sub(subarea[7].strip().lower(), subarea[0].strip().lower(), input_address)
                 input_address = re.sub(subarea[8].strip().lower(), subarea[1].strip().lower(), input_address)
             except Exception as e:
-                print(subarea[7].strip().lower())
+                #print(subarea[7].strip().lower())
                 print(e)
                 pass
         #print(input_address)
@@ -950,12 +950,13 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
-        #print('******************************')
-        #print(self.get_multiple_area)
-        #print('******************************')
+        # print('******************************')
+        # print(self.get_multiple_area)
+        # print('******************************')
         # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
         #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
         getsubarea = list(set(self.get_multiple_subarea))
+        #print(self.get_multiple_subarea)
         subarea_min = ''
         subarea_high = ''
         max_H = -1
@@ -969,6 +970,7 @@ class Address(object):
                 if min_H > subarea['pattern'].count('H') and subarea['subarea'].strip() not in self.get_multiple_area:
                     min_H = subarea['pattern'].count('H')
                     subarea_min = subarea['subarea']
+                #print(subarea[0])
 
             self.matched[self.subareakey] = subarea_high
             for j, subarea in enumerate(self.subarea_list_pattern):
@@ -1126,9 +1128,17 @@ class Address(object):
             #print(saveTortnAddr)
             print(input_address)
             ob = {}
+
+            if self.matched[self.areakey]!=None and self.matched[self.areakey]!="":
+                filter_obj.update({'parsed':{'area':self.matched[self.areakey]}})
+            if self.matched[self.subareakey]!=None and self.matched[self.subareakey]!="":
+                if 'parsed' in filter_obj:
+                    filter_obj['parsed'].update({'subarea':self.matched[self.subareakey]})
+                else:
+                    filter_obj.update({'parsed':{'subarea':self.matched[self.subareakey]}})
+
             data = self.get_geo_data(saveTortnAddr,input_address, filter_obj)
-            # print(data)
-            # fin_addr = self.search_addr_bkoi(data, saveTortnAddr)
+
             fin_addr = self.matcher_addr_bkoi(data, input_address)
             # print(fin_addr)
             self.name_search = fin_addr
@@ -1170,7 +1180,7 @@ class Address(object):
 
             'status': self.check_address_status(),
             'address': final_address.strip(),
-            'geocoded': self.search_addr_bkoi2(saveTortnAddr,final_address, thana_param, district_param),
+            'geocoded': self.search_addr_bkoi2(saveTortnAddr,final_address, thana_param, district_param,filter_obj),
 
         }
 
@@ -2001,15 +2011,20 @@ class Address(object):
                     match_counter_max = match_counter
                     match_address_max = i['new_address'].lower()
                     match_obj_max = i
-
+        #print(match_obj_max)
         return match_obj_max
 
         # result=fuzz.ratio(qstring.lower(), i['Address'].lower())
 
-    def search_addr_bkoi2(self, raw_input_address,qstring, thana_param, district_param):
-        filter_obj={}
-
-
+    def search_addr_bkoi2(self, raw_input_address,qstring, thana_param, district_param,filter_obj):
+        if self.matched[self.areakey]!=None and self.matched[self.areakey]!="":
+            filter_obj.update({'parsed':{'area':self.matched[self.areakey]}})
+        if self.matched[self.subareakey]!=None and self.matched[self.subareakey]!="":
+            if 'parsed' in filter_obj:
+                filter_obj['parsed'].update({'subarea':self.matched[self.subareakey]})
+            else:
+                filter_obj.update({'parsed':{'subarea':self.matched[self.subareakey]}})
+        #print(filter_obj)
         try:
             data = get_geo_search_data.get_geo_data(raw_input_address,qstring,filter_obj)
             self.get_geo_obj = data
@@ -2450,7 +2465,7 @@ class Address(object):
         self.distance = distance
         if final_addr == "" or final_addr == None or final_addr == 0:
             print("from prev 1")
-            # print(self.matched)
+            #print(data)
             if len(filtered_data)>0:
                 data=filtered_data
             final_addr = self.search_addr_bkoi(data, qstring)
@@ -2558,6 +2573,7 @@ class Address(object):
             return {}
         datas = self.get_geo_obj
         data = datas
+        #print(data)
 
         unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s", "ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d",
                                "ra+(i*|y*)e*r\s*ba+(z|j|g)(a|e)+r", "b(a+|o+)r(a+|o+|u+)\s*ba+gh*", "sh*(e|a|i)r\s*(e|a)\s*b(a|e)nga*la\s*n(a+|o+)g(a+|o+)re*", "sh*(ya+|a+y|e)mo+l(i+|e+|y)", "k(a+|o+)l+y*a+n\s*p(o+|u+)r", "p(i+|e+)re+r+\s*ba+gh*", "paic*k\s*pa+ra+", "k(o+|u+)r(e+|i+)l+", "(v|bh)a+ta+ra+", "(j|z|g)oa*r\s*sh*a+ha+ra+", "ka+la+\s*(ch|s)a+n*d*\s*p(o+|u+)r", "n(a+|o+)r*d+a+", "gh*o+ra+n"]
@@ -2755,19 +2771,14 @@ class Address(object):
 
     def get_geo_data(self, raw_input_address,qstring, filter_obj):
 
-        # url = "http://elastic.barikoi.com/api/search/autocomplete/exact"
-        # # r = requests.post(url, params={'q': qstring, 'thana': thana_param, 'district' : district_param})
-        # if(thana_param == "yes" and district_param != 'yes'):
-        #     r = requests.post(url, params={'q': qstring, 'thana': thana_param})
-        # elif(thana_param != "yes" and district_param == 'yes'):
-        #     r = requests.post(
-        #         url, params={'q': qstring, 'district': district_param})
-        # elif(thana_param == 'yes' and district_param == 'yes'):
-        #     r = requests.post(
-        #         url, params={'q': qstring, 'thana': thana_param, 'district': district_param})
-        # elif(thana_param != "yes" and district_param != 'yes'):
-        #     r = requests.post(url, params={'q': qstring})
-
+        if self.matched[self.areakey]!=None and self.matched[self.areakey]!="":
+            filter_obj.update({'parsed':{'area':self.matched[self.areakey]}})
+        if self.matched[self.subareakey]!=None and self.matched[self.subareakey]!="":
+            if 'parsed' in filter_obj:
+                filter_obj['parsed'].update({'subarea':self.matched[self.subareakey]})
+            else:
+                filter_obj.update({'parsed':{'subarea':self.matched[self.subareakey]}})
+        #print(filter_obj)
         try:
             # data = r.json()
             data = get_geo_search_data.get_geo_data(raw_input_address, qstring,filter_obj)
