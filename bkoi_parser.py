@@ -169,7 +169,7 @@ class Address(object):
 
         area_list = self.dbinit.get_area_with_regex()
         for j, area in enumerate(area_list):
-            if (area_token[0].lower() == area[0].lower() and area_token[0].lower() in self.cleanAddressStr.lower()):
+            if (area_token[0].lower() == area[0].lower() or area[0].lower() in self.cleanAddressStr.lower()):
                 self.matched[self.areakey] = area[0].lower()
                 # matched_array.append(area[0].lower())
                 self.area_flag = True
@@ -812,7 +812,7 @@ class Address(object):
                 #print(subarea[7].strip().lower())
                 print(e)
                 pass
-        #print(input_address)
+        print('after Regex '+input_address)
         # can be changed
         if 'block' in input_address and 'sector' in input_address:
             input_address = input_address.replace('sector', 'section')
@@ -822,20 +822,19 @@ class Address(object):
         #print('INPUT ADDRESS............')
         #print(input_address)
         #print(input_address)
-        x = input_address.split("*")
-        input_address = " "
+        # x = input_address.split("*")
+        # input_address = " "
 
-        # spell_checker
-        # print('before spellcheck '+expand)
+        # # spell_checker
 
-        spell_check = SpellCheck('area-list.txt')
-        for i in x:
-            i = i.strip()
-            if len(i) > 5:
-                spell_check.check(i)
-                i = str(spell_check.correct())
-            input_address += i
-        print('after spellcheck '+input_address)
+        # spell_check = SpellCheck('area-list.txt')
+        # for i in x:
+        #     i = i.strip()
+        #     if len(i) > 5:
+        #         spell_check.check(i)
+        #         i = str(spell_check.correct())
+        #     input_address += i
+        # print('after spellcheck '+input_address)
 
         # replace string with 'mirpur dohs' if conains such as 'dohs mirpur'
         input_address = re.sub('dohs\s*(,)*\s*mirpur',
@@ -950,6 +949,7 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
+
         # print('******************************')
         # print(self.get_multiple_area)
         # print('******************************')
@@ -984,12 +984,18 @@ class Address(object):
                 self.matched[self.subareakey]='section 11'
             if 'pallabi' in getsubarea and ('section 12' in getsubarea or'section 11' in getsubarea ) and (self.matched[self.blockkey]==''or self.matched[self.blockkey]==None):
                 self.matched[self.subareakey]='pallabi'
+            for j, subarea in enumerate(self.subarea_list_pattern):
+                if subarea['subarea'] in self.cleanAddressStr and subarea['area'] in self.cleanAddressStr:
+                    self.matched[self.subareakey] = subarea['subarea']
+                    self.matched[self.areakey]=subarea['area']
+                
 
         #subarea_list = self.dbinit.get_subarea()
 
         getarea = list(set(self.get_multiple_area))
         avail_area = getarea
         if len(getarea) >= 2:
+            #print(self.subarea_list_pattern)
             chk = 0
             for area in getarea:
                 subarea_list = self.dbinit.get_subarea()
@@ -2891,6 +2897,10 @@ class Address(object):
         # print('......................................1090')
         # print(self.tempArray)
         # print(self.matched)
+        self.matched[self.subareakey]=self.matched[self.subareakey].strip().strip(',').strip()
+        self.matched[self.areakey]=self.matched[self.areakey].strip().strip(',').strip()
+        self.matched[self.roadkey]=self.matched[self.roadkey].strip().strip(',').strip()
+        self.matched[self.housekey]=self.matched[self.housekey].strip().strip(',').strip()
 
         return full_address
 
