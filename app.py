@@ -324,14 +324,17 @@ def transform_parse():
 
 @app.route('/shopup/route', methods=['POST'])
 def shopup_route():
+    route_info={'hub_name':None,'area_name':None,'route_name':None}
+    shopup_obj={'route_info':route_info,'geocoded':None,'strength':0}
+    return_obj={'Address':None,'area':None,'latitude':None,'longitude':None}
     filter_obj={}
-    shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'strength':0,'input_address':None}
     add_trans = None
     add_parse = None
     thana_param = None
     district_param = None
     add_parse = Address()
     addr = request.form.get('addr')
+    hub_id = request.form.get('hub_id')
     area = request.form.get('redx_area')
     if area!=None and area!="":
         barikoi_areas=shopup_hub_area.get_barikoi_comp_from_shopup(area.strip())
@@ -362,31 +365,37 @@ def shopup_route():
     except Exception as e:
         print(e)
         pass
-    # try:
-    #     shopup_obj['redx_info']=shopup_hub_area.gethub_area(obj['geocoded'])
-    # except Exception as e:
-    #     print(e)
-    #     pass
-    #print(obj)
+    try:
+        #print(obj['geocoded']['latitude'])
+        resp=shopup_hub_area.get_route_info(hub_id,obj['geocoded']['latitude'],obj['geocoded']['longitude'])
+        print(resp)
+        route_info['route_name']=resp[0][0]
+        route_info['hub_name']=resp[0][2]
+        route_info['area_name']=resp[0][1]
+    except Exception as e:
+        print(e)
+        pass
+    # #print(obj)
     try:
         #print(obj['address'])
-        if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and shopup_obj['redx_info']['redx_area']!=None:
+        if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and ['route_info']['route_name']!=None:
             shopup_obj['strength']=1
     except Exception as e:
         print(e)
         pass
     
     try:
-        shopup_obj['geocoded']['Address']=obj['geocoded']['Address']
-        shopup_obj['geocoded']['area']=obj['geocoded']['area']
-        shopup_obj['geocoded']['latitude']=obj['geocoded']['latitude']
-        shopup_obj['geocoded']['longitude']=obj['geocoded']['longitude']
+        return_obj['Address']=obj['geocoded']['Address']
+        return_obj['area']=obj['geocoded']['area']
+        return_obj['latitude']=obj['geocoded']['latitude']
+        return_obj['longitude']=obj['geocoded']['longitude']
         #shopup_obj['confidence_score_percentage']=obj['confidence_score_percentage']
         shopup_obj['input_address']=addr
+        shopup_obj['geocoded']=return_obj
     except Exception as e:
         print(e)
         pass
-    return jsonify(shopup_obj)
+    return jsonify(route_info)
 
 
 

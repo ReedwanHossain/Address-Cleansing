@@ -376,6 +376,7 @@ class Address(object):
                 return True
 
     def check_block(self, token, idx):
+        print('checking block')
         tempList = ['ka', 'kha', 'ga', 'gha', 'uma', 'ca', 'cha', 'ja', 'jha', 'za', 'zha',
                     'ta', 'tha', 'da', 'dha', 'na', 'pa', 'pha', 'fa', 'ma', 'ra', 'la', 'ha', 'ya', 'gp']
         tempList = set(tempList)
@@ -796,7 +797,7 @@ class Address(object):
         if(check_hbrs == 1):
             expand = expand.replace('rrrr', cut_hbrs.strip())
         input_address = expand
-
+        print('Before Regex '+input_address)
         # regex to correct spell of area and subarea
         sec_input_address = input_address
         input_address = re.sub(
@@ -812,7 +813,7 @@ class Address(object):
                 #print(subarea[7].strip().lower())
                 print(e)
                 pass
-        print('after Regex '+input_address)
+        print('After Regex '+input_address)
         # can be changed
         if 'block' in input_address and 'sector' in input_address:
             input_address = input_address.replace('sector', 'section')
@@ -896,16 +897,16 @@ class Address(object):
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
             comp = comp.strip()
-            # print(comp)
+            #print(comp)
 
             if (self.check_sub_area(comp, i)):
                 # print('in check sub area')
                 # print(comp)
                 self.matched_array.append(self.matched[self.subareakey])
-                continue
+                pass
             if (self.check_area(comp, i)):
                 self.matched_array.append(self.matched[self.areakey])
-                continue
+                pass
             # if (self.check_super_sub_area(comp, i)):
             #     self.matched_array.append(self.matched[self.ssareakey])
             #     continue
@@ -913,35 +914,35 @@ class Address(object):
                 # print('in check road')
                 # print(comp)
                 self.matched_array.append(self.matched[self.roadkey])
-                continue
+                pass
             if (self.check_block(comp, i)):
                 # print('in check block')
                 # print(comp)
                 self.matched_array.append(self.matched[self.blockkey])
-                continue
+                pass
             if (self.check_holding(comp, i)):
                 # print('in check holding')
                 # print(comp)
                 self.matched_array.append(self.matched[self.housekey])
-                continue
+                pass
             if (self.check_holding_name(comp, i)):
                 # print('in check holding name'+ comp)
                 self.matched_array.append(self.matched[self.buildingkey])
-                continue
+                pass
             if (self.check_district(comp, i)):
                 if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
                     self.matched_array.append(self.matched[self.districtkey])
 
-                continue
+                pass
             if (self.check_sub_district(comp, i)):
                 if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
                     self.matched_array.append(
                         self.matched[self.sub_districtkey])
-                continue
+                pass
             if (self.check_union(comp, i)):
                 if (self.matched[self.areakey] == None or self.matched[self.areakey] == ''):
                     self.matched_array.append(self.matched[self.unionkey])
-                continue
+                pass
 
         try:
             self.matched[self.roadkey] = self.matched[self.roadkey].replace(
@@ -949,7 +950,8 @@ class Address(object):
         except Exception as e:
             print(e)
             pass
-
+        
+        print(self.matched)
         # print('******************************')
         # print(self.get_multiple_area)
         # print('******************************')
@@ -1458,7 +1460,7 @@ class Address(object):
         pattern_goli = re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s*[.]*\s+goli\s+', s)
         pattern_lane = re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s*[.]*\s+lane\s+', s)
         pattern_line = re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s*[.]*\s+line\s+', s)
-        pattern_block = re.search('(((ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)*\s*[.]*)|(\s+[a-z]))\s+block\s+', s)
+        pattern_block = re.search('(((ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s*[.]*block)|((\s+[a-z]))\s+block\s+)', s)
         pattern_sector = re.search('(ka)*[a-z]*\d*/*[a-z]*(ka)*\d+\s+(no|number)\s*[.]*\s+sector\s+', s)
         pattern_road_feet = re.search('\s+\d+\s*(feet|(ft[.]*|foot)\s+)', s)
         if pattern_road_feet:
