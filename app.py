@@ -286,8 +286,11 @@ def transform_parse():
     add_parse = Address()
     addr = request.form.get('addr')
     area = request.form.get('area')
+    city = request.form.get('city')
     if area!=None and area!="":
         filter_obj['area']=[capwords(area)]
+    if city!=None and city!="":
+        filter_obj['city']=[capwords(city)]
     print(filter_obj)
     print(addr)
     try:
@@ -299,8 +302,17 @@ def transform_parse():
         district_param = request.form.get('district')
     except Exception as e:
         district_param = None
+    
+    addr_en=addr
+    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
+        try:
+            add_trans = Transformer()
+            addr_en=add_trans.bangla_to_english(addr)
+        except Exception as e:
+            pass
     try:
-        obj = add_parse.parse_address(add_trans.bangla_to_english(addr), thana_param, district_param,filter_obj)
+        obj = add_parse.parse_address(addr_en, thana_param, district_param,filter_obj)
+        obj['input_address']=addr
     except Exception as e:
         import get_geo_search_data
         obj['geocoded']=get_geo_search_data.get_geo_data(addr,addr,filter_obj)[0]

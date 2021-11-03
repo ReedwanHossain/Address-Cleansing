@@ -46,8 +46,11 @@ def filter_search_by_area_subarea(q,filter_obj):
         print('error from area subarea filter search')
         return []
 def filter_search(q,filter_obj):
-    #url = "https://rupantor.barikoi.com/autosearch/autocomplete/polygon"
-    url="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+filter_obj['area']+"&city="+filter_obj['city']
+    base_url = "http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+filter_obj['area'][0]
+
+    url=base_url
+    if 'city' in filter_obj:
+        url=base_url+"&city="+filter_obj['city'][0]
     try:
         x = requests.get(url)
         print('from filter search')
@@ -106,7 +109,6 @@ def get_geo_data(raw_input_addr,q,filter_obj):
     print(filter_obj)
     try:
         if len(filter_obj)>=1:
-            #print('Yeah')
             if 'parsed' in filter_obj:
                 data=filter_search_by_area_subarea(q,filter_obj['parsed'])
             if 'area' in filter_obj and len(data)==0:

@@ -80,6 +80,7 @@ class Address(object):
         self.name_search = None
         self.fixed_addr = ''
         self.get_geo_obj = []
+        self.multiple_comps_info=[]
         self.nonsubarea_areas=['Paltan', 'Mugda', 'Kotwali', 'Sher E Bangla Nagar', 'New Market', 'Malibagh', 'Babu Bazar', 'Dayaganj', 'Shantinagar', 'Gendaria', 'Islampur', 'Chawkbazar', 'Keraniganj', 'Dhaka University Campus', 'Shegunbagicha', 'Darussalam', 'Kadamtali', 'Panthapath', 'Ramna', 'Eskaton', 'Shahbagh', 'Bangshal', 'Kamalapur', 'Shahjadpur', 'Siddheshwari', 'New Eskaton', 'Katabon', 'Fakirapul', 'Shahjahanpur', 'Rajarbagh', 'Nadda', 'Kallyanpur', 'Nilkhet', 'Hatirpool', 'Khilkhet', 'Azimpur', 'Bakshi Bazar', 'Chankharpul', 'Fulbaria', 'Nawab Katra', 'Nawabpur', 'Sutrapur', 'Shyampur', 'Tikatuli', 'Shamibagh', 'Kathalbagan', 'Bangla Motor', 'Gulisthan', 'Sadarghat', 'Shantibagh', 'Shahidbagh', 'Dholairpar', 'Gabtoli', 'Kalachandpur', 'Sayedabad', 'Paribagh','Gopibagh','Dhanmondi']
 
     reverse_pattern = {
@@ -169,37 +170,41 @@ class Address(object):
 
         area_list = self.dbinit.get_area_with_regex()
         for j, area in enumerate(area_list):
-            if (area_token[0].lower() == area[0].lower() or area[0].lower() in self.cleanAddressStr.lower()):
+            if (area_token[0].lower() == area[0].lower() or (area[0].lower() in self.cleanAddressStr.lower() and area[0].lower() not in self.get_multiple_area)):
                 self.matched[self.areakey] = area[0].lower()
                 # matched_array.append(area[0].lower())
                 self.area_flag = True
                 self.area_pos = idx
                 self.get_multiple_area.append(area[0].lower())
+                self.multiple_comps_info.append({'area':area[0].lower()})
                 return True
 
     def check_sub_area(self, token, idx):
         if self.area_flag == True:
             area = self.matched[self.areakey].lower()
-            if (idx-self.area_pos == 1 and any(char.isdigit() for char in self.tempArray[idx])):
+            if idx-self.area_pos == 1 and self.tempArray[idx].isdigit() :
+                #print(self.area_pos)
+                #print(idx)
                 if(area.lower() == 'mirpur'):
                     token = 'section ' + self.tempArray[idx]
                 elif(area.lower() == 'uttara'):
                     token = 'sector ' + self.tempArray[idx]
 
-                subarea_list = self.dbinit.get_subarea()
-                for j, subarea in enumerate(subarea_list):
-                    if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
-                        self.matched[self.subareakey] = token.lower()
-                        self.subarea_flag = True
-                        self.get_multiple_subarea.append(token.lower())
-                        tempObj = {
-                            'area': subarea[0].strip().lower(),
-                            'subarea': subarea[1].lower(),
-                            'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]}
-                        self.subarea_list_pattern.append(tempObj)
-                        return True
+            subarea_list = self.dbinit.get_subarea()
+            for j, subarea in enumerate(subarea_list):
+                if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
+                    self.matched[self.subareakey] = token.lower()
+                    self.subarea_flag = True
+                    self.get_multiple_subarea.append(token.lower())
+                    tempObj = {
+                        'area': subarea[0].strip().lower(),
+                        'subarea': subarea[1].lower(),
+                        'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]}
+                    self.subarea_list_pattern.append(tempObj)
+                    self.multiple_comps_info.append(tempObj)
+                    return True
 
-            elif(abs(idx-self.area_pos) > 1 or abs(idx-self.area_pos) == 1 and not any(char.isdigit() for char in self.tempArray[idx])):
+            if(abs(idx-self.area_pos) > 1 or abs(idx-self.area_pos) == 1 and not any(char.isdigit() for char in self.tempArray[idx])):
                 token = token.lstrip('[0:!@#$-=+.]')
                 token = token.rstrip('[:!@#$-=+.]')
                 prefix_flag = False
@@ -215,6 +220,7 @@ class Address(object):
                             'pattern': ['H', 'H', 'H', 'L', 'H']
                         }
                         self.subarea_list_pattern.append(tempObj)
+                        self.multiple_comps_info.append(tempObj)
                     elif(area.lower() == 'uttara'):
                         self. matched[self.subareakey] = 'sector' +  ' ' + self.tempArray[idx+1]
                         self.get_multiple_subarea.append(
@@ -225,6 +231,7 @@ class Address(object):
                             'pattern': ['H', 'H', 'L', 'L', 'H']
                         }
                         self.subarea_list_pattern.append(tempObj)
+                        self.multiple_comps_info.append(tempObj)
                     self.subarea_flag = True
                     return True
 
@@ -241,6 +248,7 @@ class Address(object):
                             'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]
                         }
                         self.subarea_list_pattern.append(tempObj)
+                        self.multiple_comps_info.append(tempObj)
                         # matched_array.append(matched[subareakey])
                         self.subarea_flag = True
 
@@ -265,6 +273,7 @@ class Address(object):
                                 'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]
                             }
                             self.subarea_list_pattern.append(tempObj)
+                            self.multiple_comps_info.append(tempObj)
                     # matched_array.append(matched[areakey])
                     # matched_array.append(matched[subareakey])
                             self.subarea_flag = True
@@ -284,6 +293,7 @@ class Address(object):
                             'pattern': [subarea[2], subarea[3], subarea[4], subarea[5], subarea[6]]
                         }
                         self.subarea_list_pattern.append(tempObj)
+                        self.multiple_comps_info.append(tempObj)
                 # matched_array.append(matched[areakey])
                 # matched_array.append(matched[subareakey])
                         self.subarea_flag = True
@@ -376,7 +386,7 @@ class Address(object):
                 return True
 
     def check_block(self, token, idx):
-        print('checking block')
+        #print('checking block')
         tempList = ['ka', 'kha', 'ga', 'gha', 'uma', 'ca', 'cha', 'ja', 'jha', 'za', 'zha',
                     'ta', 'tha', 'da', 'dha', 'na', 'pa', 'pha', 'fa', 'ma', 'ra', 'la', 'ha', 'ya', 'gp']
         tempList = set(tempList)
@@ -775,6 +785,8 @@ class Address(object):
         input_address = re.sub(r'([a-zA-Z]+)(\d+)', r'\1-\2', input_address)
         # insert a '-' between letters and number
         input_address = re.sub(r'(\d+)([a-zA-Z]+)', r'\1-\2', input_address)
+        input_address = input_address.replace("-", " ")
+        input_address = input_address.replace("–", " ")
         # pre-processing...........................................................
 
         # input_address = re.sub( r'h\s+tower','h* tower', input_address)
@@ -807,10 +819,12 @@ class Address(object):
         subarea_list = self.dbinit.get_subarea()
         for j, subarea in enumerate(subarea_list):
             try:
-                input_address = re.sub(subarea[7].strip().lower(), subarea[0].strip().lower(), input_address)
-                input_address = re.sub(subarea[8].strip().lower(), subarea[1].strip().lower(), input_address)
+                if len(subarea[0])>5:
+                    input_address = re.sub(subarea[7].strip().lower(), subarea[0].strip().lower(), input_address)
+                if len(subarea[1])>5:
+                    input_address = re.sub(subarea[8].strip().lower(), subarea[1].strip().lower(), input_address)
             except Exception as e:
-                #print(subarea[7].strip().lower())
+                print(subarea)
                 print(e)
                 pass
         print('After Regex '+input_address)
@@ -820,6 +834,7 @@ class Address(object):
         #print(input_address+"  "+sec_input_address)
 
         input_address = re.sub(r'([a-zA-Z])(\d)', r'\1*\2', input_address)
+        input_address = re.sub(r'(\d)([a-zA-Z])', r'\1*\2', input_address)
         #print('INPUT ADDRESS............')
         #print(input_address)
         #print(input_address)
@@ -838,14 +853,12 @@ class Address(object):
         # print('after spellcheck '+input_address)
 
         # replace string with 'mirpur dohs' if conains such as 'dohs mirpur'
-        input_address = re.sub('dohs\s*(,)*\s*mirpur',
-                               'mirpur dohs', input_address)
-        input_address = re.sub('dohs\s*(,)*\s*mohakhali',
-                               'mohakhali dohs', input_address)
-        input_address = re.sub('dohs\s*(,)*\s*baridhara',
-                               'baridhara dohs', input_address)
-        input_address = re.sub('dohs\s*(,)*\s*banani',
-                               'banani dohs', input_address)
+        input_address = re.sub('dohs\s*(,)*\s*mirpur','mirpur dohs', input_address)
+        input_address = re.sub('dohs\s*(,)*\s*mohakhali','mohakhali dohs', input_address)
+        input_address = re.sub('dohs\s*(,)*\s*baridhara','baridhara dohs', input_address)
+        input_address = re.sub('dohs\s*(,)*\s*banani','banani dohs', input_address)
+        input_address = re.sub('(mirpur)\s*(15|14|13|12|11|10|9|8|7|6|5|4|3|2|1)\s+',r'section \2 \1 ',input_address+' ')
+        print(input_address)
         expand = input_address
         self.clone_input_address = input_address
 
@@ -883,12 +896,12 @@ class Address(object):
                 self.tempArray.append(temp)
         self.cleanAddressStr = ' '.join(self.tempArray)
         self.cleanAddressStr = re.sub(r" ?\([^)]+\)", "", self.cleanAddressStr)
-        if 'mirpur' in self.cleanAddressStr and 'sector' in self.cleanAddressStr:
-            self.cleanAddressStr = self.cleanAddressStr.replace(
-                "sector", "section")
-        if 'uttara' in self.cleanAddressStr and 'section' in self.cleanAddressStr:
-            self.cleanAddressStr = self.cleanAddressStr.replace(
-                "section", "sector")
+        # if 'mirpur' in self.cleanAddressStr and 'sector' in self.cleanAddressStr:
+        #     self.cleanAddressStr = self.cleanAddressStr.replace(
+        #         "sector", "section")
+        # if 'uttara' in self.cleanAddressStr and 'section' in self.cleanAddressStr:
+        #     self.cleanAddressStr = self.cleanAddressStr.replace(
+        #         "section", "sector")
 
         # self.tempArray = word_tokenize(self.cleanAddressStr)
 
@@ -1253,7 +1266,7 @@ class Address(object):
         # except Exception as e:
         #     print(e)
         #     pass
-
+        print(self.multiple_comps_info)
         self.__init__()
 
         return obj
