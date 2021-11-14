@@ -1,3 +1,5 @@
+import operator
+import itertools
 from fuzzywuzzy import fuzz
 import re
 import csv
@@ -108,7 +110,7 @@ class Address(object):
         # ' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rode ": " road  ", " rd": " road  ", " road#": " road  ", "rd:": " road  ", "r:": " road ", "r#": " road ", "road #": " road ", " r-": " road ", " ,r-": " road ", ",r": " road ", " r ": " road ", "h#": " house ", "h-": " house ", "h:": " house ", " h ": " house ",
         "bl-": " block ", " blk ": " block ", " blc ": " block ", " blk: ": " block ", " blk- ": " block ", " blk# ": " block ", " blk": " block ", " bl ": " block ", " b ": " block ", "bl#": " block ", "bl:": " block ", "b-": " block ", "b:": " block ", "b#": " block ", 'sec-': ' sector ', 'sec.': ' sector ', ' sec ': ' sector ', 'sec#': ' sector ', 'sec:': ' sector ', 's-': ' sector ', ' s-': ' sector ', 's#': ' sector ', 's:': ' sector ', ' s ': ' sector ',
-        'house': ' house ', 'house:': ' house ', ' basha ': ' house ', ' basa ': ' house ', ' bari ': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ', 'section:': ' section ', 'sector': ' sector ', 'sector:': ' sector ',
+        'house': ' house ', 'house:': ' house ', ' basha ': ' house ', ' basa ': ' house ',  'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ', 'section:': ' section ', 'sector': ' sector ', 'sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', ' no ': '', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ', 'sectionno': ' section ', 'sector no': ' sector ', 'sector': ' sector ', 'number': '', 'no :': '', 'no:': '', 'no -': '', 'no-': '', 'no =': '', 'no#': '', 'no=': '', 'no.': '', ' num ': ' no ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ', 'ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ', ' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane', ' len ': ' lane ', 'plot': ' ', ' ltd.': ' limited', ' pvt.': ' private', ' inc.': ' incorporation', ' co.': ' company',
     }
@@ -116,7 +118,7 @@ class Address(object):
         # ' east':' east ', ' west':' west ', ' north':' north ', ' south':' south ', ' middle':' middle ', ' purba':' purba ', ' poschim':' poschim ', ' uttar':' uttar ', ' dakshin':' dakshin ', ' moddho':' moddho ', ' dokkhin':' dokkhin ', ' dakkhin':' dakkhin ',
         "rd#": " road ", "rd-": " road  ", " rode ": " road  ", " rd": " road  ", " road#": " road  ", "rd:": " road  ",
         "bl-": " block ", " blk ": " block ", " blc ": " block ", " blk: ": " block ", " blk- ": " block ", " blk# ": " block ", " blk": " block ", " bl ": " block ", "bl#": " block ", "bl:": " block ",  'sec-': ' sector ', ' sec ': ' sector ', 'sec#': ' sector ', 'sec.': ' sector ', 'sec:': ' sector ',
-        'house': ' house ', 'house:': ' house ', ' basha ': ' house ', ' basa ': ' house ', ' bari ': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ', 'section:': ' section ', 'sector': ' sector ', 'sector:': ' sector ',
+        'house': ' house ', 'house:': ' house ', ' basha ': ' house ', ' basa ': ' house ', 'road:': ' road ', 'block': ' block ', 'block-': ' block ', 'block:': ' block ', 'block#': ' block ', 'section': ' section ', 'section:': ' section ', 'sector': ' sector ', 'sector:': ' sector ',
         'house no': ' house ', 'house no ': ' house ', 'houseno:': ' house ', 'road no': ' road ', 'road no.': ' road ', 'block no': ' block ', 'blockno': ' block ', 'section no': ' section ', 'sectionno': ' section ', 'sector no': ' sector ', 'sector': ' sector ',
         'ave-': ' avenue ', 'ave:': ' avenue ', 'ave#': ' avenue ', 'ave:': ' avenue ', 'avenue:': ' avenue ', 'avenue-': ' avenue ', 'avenue#': ' avenue ', ' ln': ' lane ', ' ln#': ' lane ', ' ln:': ' lane', ' ln-': ' lane',  'plot': ' ', ' ltd.': ' limited', ' pvt.': ' private', ' inc.': ' incorporation', ' co.': ' company',
     }
@@ -133,7 +135,7 @@ class Address(object):
     def check_district(self, token, idx):
         dist_token = self.multiple_replace(self.area_dict, token.lower())
         # dist_token = word_tokenize(dist_token)
-        dist_token = dist_token.split()
+        dist_token = dist_token.split(' ')
 
         district_list = self.dbinit.get_dsu()
         for j, district in enumerate(district_list):
@@ -145,17 +147,18 @@ class Address(object):
     def check_sub_district(self, token, idx):
         sub_dist_token = self.multiple_replace(self.area_dict, token.lower())
         # sub_dist_token = word_tokenize(sub_dist_token)
-        sub_dist_token = sub_dist_token.split()
+        sub_dist_token = sub_dist_token.split(' ')
         sub_district_list = self.dbinit.get_dsu()
         for j, sub_district in enumerate(sub_district_list):
-            if (sub_dist_token[0].lower() == sub_district[3].lower() and sub_dist_token[0].lower() in self.cleanAddressStr.lower()):
-                self.matched[self.sub_districtkey] = sub_district[3].lower()
+            #print(sub_district)
+            if (sub_dist_token[0].lower() == sub_district[2].lower() and sub_dist_token[0].lower() in self.cleanAddressStr.lower()):
+                self.matched[self.sub_districtkey] = sub_district[2].lower()
                 return True
 
     def check_union(self, token, idx):
         union_token = self.multiple_replace(self.area_dict, token.lower())
         # union_token = word_tokenize(union_token)
-        union_token = union_token.split()
+        union_token = union_token.split(' ')
         union_list=self.dbinit.get_dsu()
         for j, union in enumerate(union_list):
             if (union_token[0].lower() == union[1].lower() and union_token[0].lower() in self.cleanAddressStr.lower()):
@@ -182,13 +185,17 @@ class Address(object):
     def check_sub_area(self, token, idx):
         if self.area_flag == True:
             area = self.matched[self.areakey].lower()
-            if idx-self.area_pos == 1 and self.tempArray[idx].isdigit() :
-                #print(self.area_pos)
-                #print(idx)
-                if(area.lower() == 'mirpur'):
-                    token = 'section ' + self.tempArray[idx]
-                elif(area.lower() == 'uttara'):
-                    token = 'sector ' + self.tempArray[idx]
+            # if idx-self.area_pos == 1 and self.tempArray[idx].isdigit() :
+            #     #print(self.area_pos)
+            #     #print(idx)
+            #     if(area.lower() == 'mirpur'):
+            #         token = 'section ' + self.tempArray[idx]
+            #     elif(area.lower() == 'uttara'):
+            #         token = 'sector ' + self.tempArray[idx]
+            #         print('true for uttara')
+            #         print(token)
+            #         print(self.tempArray[idx])
+            #         print(idx)
 
             subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
@@ -618,7 +625,21 @@ class Address(object):
         if response != 'None':
             homeKeys += response
         return homeKeys
-
+    # merge same area objects 
+    def merge_objects(self,comp):
+        #print('get called')
+        finalList=[]
+        outputList=[]
+        comp = sorted(comp, key=operator.itemgetter("area"))
+        for i,g in itertools.groupby(comp,key= operator.itemgetter("area")):
+            outputList.append(list(g))
+        for k in outputList:
+            d={}
+            for i in k:
+                d.update(i)
+            finalList.append(d)
+        #print(str(finalList))
+        return finalList
 
 
 
@@ -838,19 +859,19 @@ class Address(object):
         #print('INPUT ADDRESS............')
         #print(input_address)
         #print(input_address)
-        # x = input_address.split("*")
-        # input_address = " "
+        x = input_address.split("*")
+        input_address = " "
 
-        # # spell_checker
+        # spell_checker
 
-        # spell_check = SpellCheck('area-list.txt')
-        # for i in x:
-        #     i = i.strip()
-        #     if len(i) > 5:
-        #         spell_check.check(i)
-        #         i = str(spell_check.correct())
-        #     input_address += i
-        # print('after spellcheck '+input_address)
+        spell_check = SpellCheck('area-list.txt')
+        for i in x:
+            i = i.strip()
+            if len(i) > 5:
+                spell_check.check(i)
+                i = str(spell_check.correct())
+            input_address += i
+        print('after spellcheck '+input_address)
 
         # replace string with 'mirpur dohs' if conains such as 'dohs mirpur'
         input_address = re.sub('dohs\s*(,)*\s*mirpur','mirpur dohs', input_address)
@@ -858,7 +879,10 @@ class Address(object):
         input_address = re.sub('dohs\s*(,)*\s*baridhara','baridhara dohs', input_address)
         input_address = re.sub('dohs\s*(,)*\s*banani','banani dohs', input_address)
         input_address = re.sub('(mirpur)\s*(15|14|13|12|11|10|9|8|7|6|5|4|3|2|1)\s+',r'section \2 \1 ',input_address+' ')
-        print(input_address)
+        input_address = re.sub('(uttara)\s*([1-9]|1[1-8])\s+',r'sector \2 \1 ',input_address+' ')
+        #print(input_address)
+        input_address=" ".join(input_address.split())
+        #print(input_address)
         expand = input_address
         self.clone_input_address = input_address
 
@@ -958,16 +982,18 @@ class Address(object):
                 pass
 
         try:
-            self.matched[self.roadkey] = self.matched[self.roadkey].replace(
-                '-', '/')
+            self.matched[self.housekey] = self.matched[self.housekey].replace('-', '/')
+            self.matched[self.housekey] = self.matched[self.housekey].replace('-', '/')
         except Exception as e:
             print(e)
             pass
         
-        print(self.matched)
-        # print('******************************')
-        # print(self.get_multiple_area)
-        # print('******************************')
+        self.multiple_comps_info=self.merge_objects(self.multiple_comps_info)
+        print(self.multiple_comps_info)
+        # print(self.matched)
+        print('******************************')
+        print(self.matched[self.subareakey])
+        print('******************************')
         # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
         #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
         getsubarea = list(set(self.get_multiple_subarea))
@@ -982,9 +1008,11 @@ class Address(object):
                 if max_H < subarea['pattern'].count('H') and subarea['subarea'].strip() not in self.get_multiple_area:
                     max_H = subarea['pattern'].count('H')
                     subarea_high = subarea['subarea']
+                    #print(subarea_high)
                 if min_H > subarea['pattern'].count('H') and subarea['subarea'].strip() not in self.get_multiple_area:
                     min_H = subarea['pattern'].count('H')
                     subarea_min = subarea['subarea']
+                    #print(subarea_min)
                 #print(subarea[0])
 
             self.matched[self.subareakey] = subarea_high
@@ -992,6 +1020,8 @@ class Address(object):
                 if (subarea['subarea'].strip() == subarea_high.strip()) and (((subarea['pattern'][0]) == 'H' and self.matched[self.housekey] == None) or ((subarea['pattern'][0]) == 'H' and self.matched[self.housekey] == '') or ((subarea['pattern'][1]) == 'H' and self.matched[self.roadkey] == None) or ((subarea['pattern'][1]) == 'H' and self.matched[self.roadkey] == '') or ((subarea['pattern'][2]) == 'H' and self.matched[self.blockkey] == None) or ((subarea['pattern'][2]) == 'H' and self.matched[self.blockkey] == '') or ((subarea['pattern'][3]) == 'H' and self.matched[self.ssareakey] == None) or ((subarea['pattern'][3]) == 'H' and self.matched[self.ssareakey] == '')):
                     self.matched[self.subareakey] = subarea_min
                     break
+        print('this parsed')
+        print(self.matched[self.subareakey])
         if len(getsubarea)>=2:
             if 'pallabi' in getsubarea and 'section 12' in getsubarea and (self.matched[self.blockkey]!='' or self.matched[self.blockkey]!=None):
                 self.matched[self.subareakey]='section 12' 
@@ -999,13 +1029,14 @@ class Address(object):
                 self.matched[self.subareakey]='section 11'
             if 'pallabi' in getsubarea and ('section 12' in getsubarea or'section 11' in getsubarea ) and (self.matched[self.blockkey]==''or self.matched[self.blockkey]==None):
                 self.matched[self.subareakey]='pallabi'
-            for j, subarea in enumerate(self.subarea_list_pattern):
-                if subarea['subarea'] in self.cleanAddressStr and subarea['area'] in self.cleanAddressStr:
-                    self.matched[self.subareakey] = subarea['subarea']
-                    self.matched[self.areakey]=subarea['area']
+            # for j, subarea in enumerate(self.subarea_list_pattern):
+            #     if subarea['subarea'] in self.cleanAddressStr and subarea['area'] in self.cleanAddressStr:
+            #         self.matched[self.subareakey] = subarea['subarea']
+            #         self.matched[self.areakey]=subarea['area']
                 
 
         #subarea_list = self.dbinit.get_subarea()
+
 
         getarea = list(set(self.get_multiple_area))
         avail_area = getarea
@@ -1076,7 +1107,8 @@ class Address(object):
 
         print('------------------------------------------=====================================')
 
-
+        #print(self.matched[self.subareakey])
+        #print('changed')
         #for baridhara dohs road will be lane
         try:
             if self.matched[self.subareakey]=='baridhara dohs' and self.matched[self.roadkey]!=None:
@@ -1129,6 +1161,9 @@ class Address(object):
                 self.matched[self.roadkey]=temp_road.strip(',').strip()
         except:
             pass
+        print('******************************')
+        print(self.matched[self.subareakey])
+        print('******************************')
         parsed_addr = {
 
             'area': self.matched[self.areakey],

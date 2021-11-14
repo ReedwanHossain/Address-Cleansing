@@ -273,6 +273,52 @@ def geocoder():
     #print(return_obj)
     return jsonify(obj)
 
+@app.route('/parse', methods=['POST'])
+def parse():
+    #print (request.environ['HTTP_ORIGIN'])
+    filter_obj={}
+    obj=[]
+    add_trans = None
+    add_parse = None
+    thana_param = None
+    district_param = None
+    add_trans = Transformer()
+    add_parse = Address()
+    addr = request.form.get('addr')
+    area = request.form.get('area')
+    city = request.form.get('city')
+    if area!=None and area!="":
+        filter_obj['area']=[capwords(area)]
+    if city!=None and city!="":
+        filter_obj['city']=[capwords(city)]
+    print(filter_obj)
+    print(addr)
+    try:
+        thana_param = request.form.get('thana')
+    except Exception as e:
+        thana_param = None
+
+    try:
+        district_param = request.form.get('district')
+    except Exception as e:
+        district_param = None
+    
+    addr_en=addr
+    if re.search('[\u0995-\u09B9\u09CE\u09DC-\u09DF]|[\u0985-\u0994]|[\u09BE-\u09CC\u09D7]|(\u09BC)|()[০-৯]',addr):
+        try:
+            add_trans = Transformer()
+            addr_en=add_trans.bangla_to_english(addr)
+        except Exception as e:
+            pass
+    try:
+        obj = add_parse.parse_address(addr_en, thana_param, district_param,filter_obj)
+    except Exception as e:
+        pass
+
+
+    return jsonify(obj)
+
+
 @app.route('/transparse', methods=['POST'])
 def transform_parse():
     #print (request.environ['HTTP_ORIGIN'])
