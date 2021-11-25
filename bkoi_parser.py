@@ -246,7 +246,7 @@ class Address(object):
                 for j, subarea in enumerate(subarea_list):
                     # subarea[0] = subarea[0].strip()
 
-                    if ((token.lower() in subarea[1].lower() and subarea[1].lower() in self.cleanAddressStr.lower())):
+                    if ((token.lower() in subarea[1].lower() and subarea[1].lower()+' ' in self.cleanAddressStr.lower()+' ')):
                         self.matched[self.subareakey] = subarea[1].lower()
                         self.get_multiple_subarea.append(subarea[1].lower())
                         tempObj = {
@@ -263,7 +263,7 @@ class Address(object):
             # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
             subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
-                if (token.lower().strip() in subarea[1].lower().strip() and subarea[1].lower().strip() in self.cleanAddressStr.lower()):
+                if (token.lower().strip() in subarea[1].lower().strip() and subarea[1].lower().strip()+' ' in self.cleanAddressStr.lower()+' '):
                     # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
                     if (token.lower().strip() == 'section' or token.lower().strip() == 'sector') and len(self.tempArray)-1 > idx:
                         if token.lower().strip()+" "+self.tempArray[idx+1] == subarea[1].lower():
@@ -997,7 +997,8 @@ class Address(object):
         # if self.matched[self.roadkey]!='' or self.matched[self.roadkey]!=None:
         #     self.matched[self.roadkey]=self.matched[self.roadkey].replace('-','/')
         getsubarea = list(set(self.get_multiple_subarea))
-        #print(self.get_multiple_subarea)
+        print(self.get_multiple_subarea)
+        print(self.matched[self.subareakey])
         subarea_min = ''
         subarea_high = ''
         max_H = -1
