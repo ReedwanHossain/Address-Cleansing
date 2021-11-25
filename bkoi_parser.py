@@ -840,9 +840,9 @@ class Address(object):
         subarea_list = self.dbinit.get_subarea()
         for j, subarea in enumerate(subarea_list):
             try:
-                if len(subarea[0])>5:
+                if len(subarea[0])>6:
                     input_address = re.sub(subarea[7].strip().lower(), subarea[0].strip().lower(), input_address)
-                if len(subarea[1])>5:
+                if len(subarea[1])>6:
                     input_address = re.sub(subarea[8].strip().lower(), subarea[1].strip().lower(), input_address)
             except Exception as e:
                 print(subarea)

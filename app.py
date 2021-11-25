@@ -436,7 +436,7 @@ def shopup_route():
     # #print(obj)
     try:
         #print(obj['address'])
-        if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and ['route_info']['route_name']!=None:
+        if (obj['parsed_address']['area']==obj['geocoded']['area'].lower() or ' '+obj['geocoded']['area'].lower()+' ' in ' '+addr_en.lower()+' ' or obj['confidence_score_percentage']>=60) and shopup_obj['route_info']['route_name']!=None:
             shopup_obj['strength']=1
     except Exception as e:
         print(e)
