@@ -72,7 +72,7 @@ class SpellCheck:
             for name in self.dictionary:
 
                 # calulcate the match probability
-                if name[0] == string_words[i][0]:
+                if name[0] == string_words[i][0] and name[-1]==string_words[i][-1]:
                     percent = fuzz.ratio(
                         string_words[i].lower().strip(), name.lower())
                     # if the fuzzywuzzy returns the matched value greater than 80

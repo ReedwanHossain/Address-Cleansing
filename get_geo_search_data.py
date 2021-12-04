@@ -1,7 +1,7 @@
 import requests
 import mysql.connector
 import json
-
+from string import capwords
 def getdb(host, username, password, db):
     mydb = mysql.connector.connect(
         host=host,
@@ -21,6 +21,43 @@ def polygon_search(q, polygon):
     except Exception as e:
         print(e)
         print('from polygon_search')
+        return []
+def filter_search_by_area_subarea(q,filter_obj):
+    print('trying to search by filtering parsed area')
+    #print(filter_obj)
+    data=[]
+    url1="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+capwords(filter_obj['area'])
+    if 'subarea' in filter_obj:
+        url2="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+capwords(filter_obj['area'])+"&subarea="+capwords(filter_obj['subarea'])
+    else:
+        url2=url1
+    try:
+        #print(url1)
+
+        x = requests.get(url2)
+        data=x.json()['places']
+        if len(data)==0:
+            x = requests.get(url1)
+            data=x.json()['places']
+        print('from area subarea filter search')
+        return data
+    except Exception as e:
+        print(e)
+        print('error from area subarea filter search')
+        return []
+def filter_search(q,filter_obj):
+    base_url = "http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+filter_obj['area'][0]
+
+    url=base_url
+    if 'city' in filter_obj:
+        url=base_url+"&city="+filter_obj['city'][0]
+    try:
+        x = requests.get(url)
+        print('from filter search')
+        return x.json()['places']
+    except Exception as e:
+        print(e)
+        print('error from filter search')
         return []
 def get_db_data(item, tablename, field, field_val):
     mydb=getdb('db.barikoi.com', 'barikoiadmin','Amitayef5.7', 'ethikana')
@@ -66,7 +103,18 @@ def get_dsu_comp(addr):
 def modify_search_addr(q):
     q='REDX Logistics HQ'
     return q
-def get_geo_data(raw_input_addr,q):
+def get_geo_data(raw_input_addr,q,filter_obj):
+
+    data=[]
+    print(filter_obj)
+    try:
+        if len(filter_obj)>=1:
+            if 'parsed' in filter_obj:
+                data=filter_search_by_area_subarea(q,filter_obj['parsed'])
+            if 'area' in filter_obj and len(data)==0:
+                data=filter_search(q,filter_obj)
+    except:
+        pass
     try:
         q=' '+q+' '
         if ' redx ' in q and ' tejgaon ' in q:
@@ -74,14 +122,14 @@ def get_geo_data(raw_input_addr,q):
             raw_input_addr=raw_input_addr.lower().replace('tejgaon','tejgaon industrial area')
     except:
         pass
-    data=[]
+    
     comp={'district':None,'sub_district':None,'union':None}
     try:
         comp=get_dsu_comp(raw_input_addr)[0]
     except:
         pass
     try:
-        if comp['union']!=None:
+        if comp['union']!=None and len(data)==0:
             polygon = get_db_data_union(comp['district'], comp['union'])
             # print(str(polygon.split()))
             data = polygon_search(q, str(polygon))

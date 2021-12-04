@@ -2,6 +2,32 @@ import sqlite3
 import requests
 from miniparser import MiniParser
 import fill_up_null_data
+import spatialite
+
+
+
+
+def get_route_info(hub_id,lat,lon):
+    data=[]
+    try:
+        with spatialite.connect('dbconf/outfile.db') as db:
+            r=db.execute("SELECT route_name,area_name,hub_name from redx_route where  contains(PolyFromText(bounds),GEOMFROMTEXT('POINT("+str(lon)+" "+str(lat)+")')) and `hub_id`='"+hub_id+"'")
+            data=r.fetchall()  
+
+    except Exception as e:
+        print(e)
+        pass
+    print(data)
+    return data
+
+
+def get_barikoi_comp_from_shopup(shopup_area):
+    conn=getcon()
+    c = conn.cursor()
+    c.execute("SELECT distinct city,area from Mapping where `RedX Area` like '"+shopup_area+"'  ")
+    check_result = c.fetchall()
+    return check_result
+    
 def getcon():
     try:
         conn = sqlite3.connect('dbconf/outfile.db')
@@ -135,8 +161,8 @@ def gethub_area(geo_address):
         except Exception as e:
             print(e)
             pass
-    print('redex area')
-    print(check_result)
+    #print('redex area')
+    #print(check_result)
     return area_info
 if __name__ == "__main__":
     geo_address={
@@ -152,4 +178,4 @@ if __name__ == "__main__":
         "uCode": "LOLM9148",
         "unions": None
     }
-    #get_subarea_by_parsing(geo_address)
+    #get_route_info('3','23.82336847351428','90.36853956253123')

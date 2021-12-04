@@ -297,6 +297,7 @@ class Operations(object):
 			'keyword_list' : keyword_dict_list
 		}
 		return obj
+	
 
 	def delete_keyword(self,kw_id):
 		kw_id=str(kw_id)
