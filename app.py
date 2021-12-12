@@ -1,7 +1,7 @@
-from flask_cors import CORS
 #import json
 from flask import Flask, request, jsonify, send_file, send_from_directory, make_response
 from flask_restful import reqparse, abort, Api, Resource
+from flask_cors import CORS
 import pandas as pd
 import urllib
 import re
@@ -24,7 +24,12 @@ app = Flask(__name__)
 #CORS(app, resources={r"/*": {"origins": ["https://rupantor.barikoi.com", "http://localhost", "https://admin.barikoi.xyz"]}})
 CORS(app)
 BASE_PATH = os.getcwd()
+import requests
 #print(BASE_PATH)
+#print('loaded')
+# @app.before_first_request
+# def do_something_only_once():
+#     print('Loaded')
 if not os.path.exists(BASE_PATH+'/UPLOADED_FILE'):
     os.makedirs(BASE_PATH+'/UPLOADED_FILE')
 UPLOAD_FOLDER = BASE_PATH + '/UPLOADED_FILE'
@@ -322,6 +327,7 @@ def parse():
 @app.route('/transparse', methods=['POST'])
 def transform_parse():
     #print (request.environ['HTTP_ORIGIN'])
+
     filter_obj={}
     obj={}
     add_trans = None
@@ -461,6 +467,7 @@ def shopup_route():
 
 @app.route('/shopup/verify', methods=['POST'])
 def shopup_parse():
+
     filter_obj={}
     shopup_obj={'geocoded':{'Address':None,'area':None,'latitude':None,'longitude':None},'strength':0,'input_address':None}
     add_trans = None
@@ -812,4 +819,4 @@ def delete_dsu(dsu_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=8010)
+    app.run(debug=True, host='0.0.0.0', port=8010)

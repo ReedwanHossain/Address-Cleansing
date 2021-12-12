@@ -2,6 +2,8 @@ import requests
 import mysql.connector
 import json
 from string import capwords
+import time
+execute_time={}
 def getdb(host, username, password, db):
     mydb = mysql.connector.connect(
         host=host,
@@ -12,6 +14,7 @@ def getdb(host, username, password, db):
     )
     return mydb
 def polygon_search(q, polygon):
+
     #url = "https://rupantor.barikoi.com/autosearch/autocomplete/polygon"
     url="http://elastic.barikoi.com/bkoi/autocomplete/polygon"
     myobj = {'q': q, 'polygon': polygon}
@@ -97,16 +100,28 @@ def get_data_by_polygon_search(q, district):
         pass
     return []
 def get_dsu_comp(addr):
+    url2='http://localhost:8012/dsu'
     url = 'http://3.1.115.160/zone/dsu'
-    r = requests.post(url, data={'addr': addr})
-    return r.json()
+    try:
+        print('trying test server')
+        r = requests.post(url2, data={'addr': addr},timeout=4)
+        #print(r.json())
+        return r.json()
+    except requests.Timeout:
+        print('worked from out')
+        r = requests.post(url, data={'addr': addr})
+        #print(r.json())
+        return r.json()
+
 def modify_search_addr(q):
     q='REDX Logistics HQ'
     return q
+
 def get_geo_data(raw_input_addr,q,filter_obj):
 
     data=[]
     print(filter_obj)
+    start = time.time()
     try:
         if len(filter_obj)>=1:
             if 'parsed' in filter_obj:
@@ -115,6 +130,8 @@ def get_geo_data(raw_input_addr,q,filter_obj):
                 data=filter_search(q,filter_obj)
     except:
         pass
+    end=time.time()
+    execute_time['filter_search_area_subarea']=end-start
     try:
         q=' '+q+' '
         if ' redx ' in q and ' tejgaon ' in q:
@@ -122,12 +139,15 @@ def get_geo_data(raw_input_addr,q,filter_obj):
             raw_input_addr=raw_input_addr.lower().replace('tejgaon','tejgaon industrial area')
     except:
         pass
-    
+    start=time.time()
     comp={'district':None,'sub_district':None,'union':None}
     try:
         comp=get_dsu_comp(raw_input_addr)[0]
     except:
         pass
+    end=time.time()
+    execute_time['find_dsu']=end-start
+    start=time.time()
     try:
         if comp['union']!=None and len(data)==0:
             polygon = get_db_data_union(comp['district'], comp['union'])
@@ -136,6 +156,7 @@ def get_geo_data(raw_input_addr,q,filter_obj):
             print('data from union boundary')
     except:
         pass
+  
 
     try:
         if comp['sub_district']!=None and len(data)==0:
@@ -153,7 +174,9 @@ def get_geo_data(raw_input_addr,q,filter_obj):
             print('data from district boundary')
     except:
         pass
-    
+    end=time.time()
+    execute_time['filter_search_dsu']=end-start
+    start=time.time()
     if len(data)==0:
         #print(q)
         url = 'http://elastic.barikoi.com/bkoi/autocomplete/search?q=' + q
@@ -165,6 +188,9 @@ def get_geo_data(raw_input_addr,q,filter_obj):
         except Exception as e:
             print(e)
     #print(data)
+    end=time.time()
+    execute_time['raw_search']=end-start
+    print(execute_time)
     return data
 
 

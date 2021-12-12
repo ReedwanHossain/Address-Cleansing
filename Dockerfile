@@ -8,7 +8,8 @@ RUN apt-get update \
     && ln -s /usr/bin/python3 python \
     && pip3 install --upgrade pip
 RUN apt-get install -y libenchant1c2a
-RUN pip3 install sklearn
+RUN apt-get install -q sqlite3
+RUN apt-get install libsqlite3-mod-spatialite
 
 WORKDIR /app
 COPY . /app

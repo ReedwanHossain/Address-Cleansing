@@ -12,7 +12,7 @@ from dbconf.initdb import DBINIT
 
 
 from spellcheck import SpellCheck
-
+import time
 
 class Address(object):
 
@@ -84,7 +84,7 @@ class Address(object):
         self.get_geo_obj = []
         self.multiple_comps_info=[]
         self.nonsubarea_areas=['Paltan', 'Mugda', 'Kotwali', 'Sher E Bangla Nagar', 'New Market', 'Malibagh', 'Babu Bazar', 'Dayaganj', 'Shantinagar', 'Gendaria', 'Islampur', 'Chawkbazar', 'Keraniganj', 'Dhaka University Campus', 'Shegunbagicha', 'Darussalam', 'Kadamtali', 'Panthapath', 'Ramna', 'Eskaton', 'Shahbagh', 'Bangshal', 'Kamalapur', 'Shahjadpur', 'Siddheshwari', 'New Eskaton', 'Katabon', 'Fakirapul', 'Shahjahanpur', 'Rajarbagh', 'Nadda', 'Kallyanpur', 'Nilkhet', 'Hatirpool', 'Khilkhet', 'Azimpur', 'Bakshi Bazar', 'Chankharpul', 'Fulbaria', 'Nawab Katra', 'Nawabpur', 'Sutrapur', 'Shyampur', 'Tikatuli', 'Shamibagh', 'Kathalbagan', 'Bangla Motor', 'Gulisthan', 'Sadarghat', 'Shantibagh', 'Shahidbagh', 'Dholairpar', 'Gabtoli', 'Kalachandpur', 'Sayedabad', 'Paribagh','Gopibagh','Dhanmondi']
-
+        self.exceute_time={}
     reverse_pattern = {
         'house': '',
         'road': '',
@@ -173,7 +173,7 @@ class Address(object):
 
         area_list = self.dbinit.get_area_with_regex()
         for j, area in enumerate(area_list):
-            if (area_token[0].lower() == area[0].lower() or (area[0].lower() in self.cleanAddressStr.lower() and area[0].lower() not in self.get_multiple_area)):
+            if (area_token[0].lower() == area[0].lower() or (' '+area[0].lower()+' ' in ' '+self.cleanAddressStr.lower()+' ' and area[0].lower() not in self.get_multiple_area)):
                 self.matched[self.areakey] = area[0].lower()
                 # matched_array.append(area[0].lower())
                 self.area_flag = True
@@ -263,7 +263,7 @@ class Address(object):
             # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
             subarea_list = self.dbinit.get_subarea()
             for j, subarea in enumerate(subarea_list):
-                if (token.lower().strip() in subarea[1].lower().strip() and subarea[1].lower().strip() in self.cleanAddressStr.lower()):
+                if (token.lower().strip() in subarea[1].lower().strip() and ' '+subarea[1].lower().strip()+' ' in ' '+self.cleanAddressStr.lower()+' '):
                     # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
                     if (token.lower().strip() == 'section' or token.lower().strip() == 'sector') and len(self.tempArray)-1 > idx:
                         if token.lower().strip()+" "+self.tempArray[idx+1] == subarea[1].lower():
@@ -646,6 +646,7 @@ class Address(object):
     # Start parsing...
 
     def parse_address(self, input_address, thana_param, district_param,filter_obj):
+        start = time.time()
         # adding extra space before inputted address and convert it into lowercase
         saveTortnAddr = input_address
         print(input_address)
@@ -930,7 +931,10 @@ class Address(object):
         # self.tempArray = word_tokenize(self.cleanAddressStr)
 
             # self.cleanAddressStr="mrpr s2"
+        end = time.time()
+        self.exceute_time['preprocessing']=end-start
 
+        start = time.time()
         # Parsing..............................
         for i, comp in enumerate(self.tempArray):
             comp = comp.strip()
@@ -1161,6 +1165,8 @@ class Address(object):
                 self.matched[self.roadkey]=temp_road.strip(',').strip()
         except:
             pass
+        end = time.time()
+        self.exceute_time['parsing']=end-start
         print('******************************')
         print(self.matched[self.subareakey])
         print('******************************')
@@ -1228,17 +1234,21 @@ class Address(object):
             except Exception as e:
                 print(e)
                 pass
-
+        start = time.time()
         final_address = self.bind_address()
         self.fixed_addr = final_address
-
+        end = time.time()
+        self.exceute_time['binding_address']=end-start
+        start = time.time()
         obj = {
 
-            'status': self.check_address_status(),
+            #'status': self.check_address_status(),
             'address': final_address.strip(),
             'geocoded': self.search_addr_bkoi2(saveTortnAddr,final_address, thana_param, district_param,filter_obj),
 
         }
+        end = time.time()
+        self.exceute_time['search']=end-start
 
         unique_area_flag = 0
         unique_area_pattern = ["m(i+|e+)r\s*p(u+|o+)r\s*d[.]*\s*o[.]*\s*h[.]*\s*s", "ka+(j|z)(e+|i+)\s*pa+ra+", "sh*e+(o|w)o*ra+\s*pa+ra+", "ka+(f|ph)r(o+|u+)l", "(i+|e+)bra+h(i+|e+)m\s*p(u+|o+)r", "m(a|u|o)n(i|e+)\s*p(u+|o+)r", "a+gh*a+rgh*a+o*n*", "m(o+a+)gh*ba+(j|z|g)(a+|e+)r", "k(a+|o+)(s|ch)(o+|u+)\s*kh*e+t", "ba+d+a+", "(z|j)(i+|e+)ga+\s*t(a+|o+)la", "(z|j)a+f(a+|o+)*ra+\s*ba+d",
@@ -1302,7 +1312,9 @@ class Address(object):
         #     print(e)
         #     pass
         print(self.multiple_comps_info)
+        print(self.exceute_time)
         self.__init__()
+
 
         return obj
 
