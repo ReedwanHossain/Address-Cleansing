@@ -1,30 +1,19 @@
 import requests
-import mysql.connector
 import json
 from string import capwords
 import time
 execute_time={}
-def getdb(host, username, password, db):
-    mydb = mysql.connector.connect(
-        host=host,
-        user=username,
-        passwd=password,
-        database=db,
-        raise_on_warnings=True
-    )
-    return mydb
-def polygon_search(q, polygon):
 
-    #url = "https://rupantor.barikoi.com/autosearch/autocomplete/polygon"
-    url="http://elastic.barikoi.com/bkoi/autocomplete/polygon"
-    myobj = {'q': q, 'polygon': polygon}
+def dsu_geo_shape_search(q,filter_query):
+    url="http://elastic.barikoi.com/test/within/geoshape?q="+q+filter_query
     try:
-        x = requests.post(url, data=myobj)
-        return x.json()
+        x = requests.get(url)
+        print('from dsu_geo_shape_search')
+        return x.json()['places']
     except Exception as e:
         print(e)
-        print('from polygon_search')
         return []
+
 def filter_search_by_area_subarea(q,filter_obj):
     print('trying to search by filtering parsed area')
     #print(filter_obj)
@@ -62,42 +51,8 @@ def filter_search(q,filter_obj):
         print(e)
         print('error from filter search')
         return []
-def get_db_data(item, tablename, field, field_val):
-    mydb=getdb('db.barikoi.com', 'barikoiadmin','Amitayef5.7', 'ethikana')
-    data = []
-    #tablename = 'districts'
-    # try:
-    #     mydb = getdb('db.barikoi.com', 'barikoiadmin',
-    #                  'Amitayef5.7', 'ethikana')
-    #     print("Sucessfully connected with ethikana !")
-    #     print('Fetching data from '+tablename+' Please wait..')
-    # except Exception as e:
-    #     print(e)
-    #     print('from get_db_data')
-    insertcursor = mydb.cursor()
-    iteratorcursor = mydb.cursor(buffered=True)
-    querycursor = mydb.cursor()
-    querycursor.execute("SELECT "+item+" from " + tablename + " where "+tablename+"."+field+"="+repr(field_val) + ";")
-    count = 0
-    gotAddress = querycursor.fetchall()
-    return gotAddress
-def get_data_by_polygon_search(q, district):
-    data = []
-    try:
-        polygon = get_db_data('bounds', 'districts', 'adm2_en', district)[0][0]
-        polygon = polygon.replace('MULTI', '')
-        polygon = polygon.replace('(', '')
-        polygon = polygon.replace(')', '')
-        # print(str(polygon.split()))
-        data = polygon_search(q, str(polygon.split()))
-        # print(data)
 
-        return data
-    except Exception as e:
-        print(e)
-        print('from get_db_data_by_polygon_search')
-        return []
-        pass
+    
     return []
 def get_dsu_comp(addr):
     url2='http://localhost:8012/dsu'
@@ -139,6 +94,7 @@ def get_geo_data(raw_input_addr,q,filter_obj):
             raw_input_addr=raw_input_addr.lower().replace('tejgaon','tejgaon industrial area')
     except:
         pass
+    #dsu find and search
     start=time.time()
     comp={'district':None,'sub_district':None,'union':None}
     try:
@@ -147,12 +103,12 @@ def get_geo_data(raw_input_addr,q,filter_obj):
         pass
     end=time.time()
     execute_time['find_dsu']=end-start
+
     start=time.time()
     try:
         if comp['union']!=None and len(data)==0:
-            polygon = get_db_data_union(comp['district'], comp['union'])
-            # print(str(polygon.split()))
-            data = polygon_search(q, str(polygon))
+            query_filter='&district='+comp['district']+'&subdistrict='+comp['sub_district']+'&union='+comp['union']
+            data=dsu_geo_shape_search(q,query_filter)
             print('data from union boundary')
     except:
         pass
@@ -160,9 +116,8 @@ def get_geo_data(raw_input_addr,q,filter_obj):
 
     try:
         if comp['sub_district']!=None and len(data)==0:
-            polygon = get_db_data_subdis(comp['district'], comp['sub_district'])[0][0]
-            # print(str(polygon.split()))
-            data = polygon_search(q, str(polygon.replace('(','').split()))
+            query_filter='&district='+comp['district']+'&subdistrict='+comp['sub_district']
+            data=dsu_geo_shape_search(q,query_filter)
             print('data from subdistrict boundary')
     except:
         pass
@@ -170,12 +125,14 @@ def get_geo_data(raw_input_addr,q,filter_obj):
     
     try:
         if comp['district']!=None and len(data)==0:
-            data=get_data_by_polygon_search(q,comp['district'])
+            query_filter='&district='+comp['district']
+            data=dsu_geo_shape_search(q,query_filter)
             print('data from district boundary')
     except:
         pass
     end=time.time()
     execute_time['filter_search_dsu']=end-start
+
     start=time.time()
     if len(data)==0:
         #print(q)
@@ -195,6 +152,7 @@ def get_geo_data(raw_input_addr,q,filter_obj):
 
 
 def get_db_data_union(district, union):
+    start=time.time()
     data = []
     mydb=getdb('db.barikoi.com', 'barikoiadmin','Amitayef5.7', 'ethikana')
     item = 'bounds'
@@ -228,9 +186,12 @@ def get_db_data_union(district, union):
         print(e)
         pass
     # print(polygon)
+    end=time.time()
+    execute_time['union_polygon_from_db']=end-start
     return polygon
 
 def get_db_data_subdis(district, subdistrict):
+    start=time.time()
     data = []
     item = 'bounds'
     tablename = 'subdistricts'
@@ -250,6 +211,8 @@ def get_db_data_subdis(district, subdistrict):
         "SELECT "+item+" from " + tablename + " where "+tablename+".adm2_en="+repr(district)+" and "+tablename+".adm3_en="+repr(subdistrict)+";")
     count = 0
     gotAddress = querycursor.fetchall()
+    end=time.time()
+    execute_time['subdistrict_polygon_from_db']=end-start
     return gotAddress
 
 # if __name__ == "__main__":
