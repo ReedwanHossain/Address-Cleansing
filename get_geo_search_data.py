@@ -2,6 +2,7 @@ import requests
 import json
 from string import capwords
 import time
+from DSU_API import DSU_Parser
 execute_time={}
 
 def dsu_geo_shape_search(q,filter_query):
@@ -20,7 +21,8 @@ def filter_search_by_area_subarea(q,filter_obj):
     data=[]
     url1="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+capwords(filter_obj['area'])
     if 'subarea' in filter_obj:
-        url2="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+capwords(filter_obj['area'])+"&subarea="+capwords(filter_obj['subarea'])
+        url2="http://elastic.barikoi.com/test/autocomplete/type?q="+q+"&area="+capwords(filter_obj['area'])+"&subarea="+capwords(filter_obj['subarea']).replace('Dohs','DOHS')
+        print(url2)
     else:
         url2=url1
     try:
@@ -28,6 +30,7 @@ def filter_search_by_area_subarea(q,filter_obj):
 
         x = requests.get(url2)
         data=x.json()['places']
+        #print(data)
         if len(data)==0:
             x = requests.get(url1)
             data=x.json()['places']
@@ -55,18 +58,22 @@ def filter_search(q,filter_obj):
     
     return []
 def get_dsu_comp(addr):
-    url2='http://localhost:8012/dsu'
-    url = 'http://3.1.115.160/zone/dsu'
-    try:
-        print('trying test server')
-        r = requests.post(url2, data={'addr': addr},timeout=4)
-        #print(r.json())
-        return r.json()
-    except requests.Timeout:
-        print('worked from out')
-        r = requests.post(url, data={'addr': addr})
-        #print(r.json())
-        return r.json()
+    print('from DSU API')
+    comp= DSU_Parser.DSU_Parser(addr)
+    print(comp)
+    return comp
+    # url2='http://localhost:8012/dsu'
+    # url = 'http://3.1.115.160/zone/dsu'
+    # try:
+    #     print('trying test server')
+    #     r = requests.post(url2, data={'addr': addr},timeout=4)
+    #     #print(r.json())
+    #     return r.json()
+    # except requests.Timeout:
+    #     print('worked from out')
+    #     r = requests.post(url, data={'addr': addr})
+    #     #print(r.json())
+    #     return r.json()
 
 def modify_search_addr(q):
     q='REDX Logistics HQ'
@@ -216,4 +223,4 @@ def get_db_data_subdis(district, subdistrict):
     return gotAddress
 
 # if __name__ == "__main__":
-#     print(get_geo_data('mirpur'))
+#     print(get_dsu_comp('barisal bakerganj'))

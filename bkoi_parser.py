@@ -7,8 +7,7 @@ import enchant
 import similarity
 from bkoi_e2b import ReverseTransformer
 import get_geo_search_data
-
-from dbconf.initdb import DBINIT
+import load_data
 
 
 from spellcheck import SpellCheck
@@ -71,11 +70,7 @@ class Address(object):
         self.get_multiple_area = []
         self.subarea_list_pattern = []
         self.GeoTrueFor = {}
-        self.dbinit = DBINIT()
-        self.dbinit.load_area_with_regex()
-        self.dbinit.load_area()
-        self.dbinit.load_subarea()
-        self.dbinit.load_dsu()
+
         self.globalAddress = ''
         self.extraHomeKeys = ''
         self.distance = 99
@@ -137,7 +132,7 @@ class Address(object):
         # dist_token = word_tokenize(dist_token)
         dist_token = dist_token.split(' ')
 
-        district_list = self.dbinit.get_dsu()
+        district_list = load_data.get_dsu()
         for j, district in enumerate(district_list):
             #print(district)
             if (dist_token[0].lower() == district[3].lower() and dist_token[0].lower() in self.cleanAddressStr.lower()):
@@ -148,7 +143,7 @@ class Address(object):
         sub_dist_token = self.multiple_replace(self.area_dict, token.lower())
         # sub_dist_token = word_tokenize(sub_dist_token)
         sub_dist_token = sub_dist_token.split(' ')
-        sub_district_list = self.dbinit.get_dsu()
+        sub_district_list = load_data.get_dsu()
         for j, sub_district in enumerate(sub_district_list):
             #print(sub_district)
             if (sub_dist_token[0].lower() == sub_district[2].lower() and sub_dist_token[0].lower() in self.cleanAddressStr.lower()):
@@ -159,7 +154,7 @@ class Address(object):
         union_token = self.multiple_replace(self.area_dict, token.lower())
         # union_token = word_tokenize(union_token)
         union_token = union_token.split(' ')
-        union_list=self.dbinit.get_dsu()
+        union_list=load_data.get_dsu()
         for j, union in enumerate(union_list):
             if (union_token[0].lower() == union[1].lower() and union_token[0].lower() in self.cleanAddressStr.lower()):
                 self.matched[self.unionkey] = union[1].lower()
@@ -171,7 +166,7 @@ class Address(object):
         # area_token = word_tokenize(area_token)
         area_token = area_token.split()
 
-        area_list = self.dbinit.get_area_with_regex()
+        area_list = load_data.get_area_with_regex()
         for j, area in enumerate(area_list):
             if (area_token[0].lower() == area[0].lower() or (' '+area[0].lower()+' ' in ' '+self.cleanAddressStr.lower()+' ' and area[0].lower() not in self.get_multiple_area)):
                 self.matched[self.areakey] = area[0].lower()
@@ -197,7 +192,7 @@ class Address(object):
             #         print(self.tempArray[idx])
             #         print(idx)
 
-            subarea_list = self.dbinit.get_subarea()
+            subarea_list = load_data.get_subarea()
             for j, subarea in enumerate(subarea_list):
                 if (area.lower() == subarea[0].lower() and token.lower() == subarea[1].lower()):
                     self.matched[self.subareakey] = token.lower()
@@ -242,7 +237,7 @@ class Address(object):
                     self.subarea_flag = True
                     return True
 
-                subarea_list = self.dbinit.get_subarea()
+                subarea_list = load_data.get_subarea()
                 for j, subarea in enumerate(subarea_list):
                     # subarea[0] = subarea[0].strip()
 
@@ -261,7 +256,7 @@ class Address(object):
 
         elif self.area_flag == False:
             # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
-            subarea_list = self.dbinit.get_subarea()
+            subarea_list = load_data.get_subarea()
             for j, subarea in enumerate(subarea_list):
                 if (token.lower().strip() in subarea[1].lower().strip() and ' '+subarea[1].lower().strip()+' ' in ' '+self.cleanAddressStr.lower()+' '):
                     # print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$1   "+token)
@@ -333,7 +328,7 @@ class Address(object):
                 check_match = 0
                 #print('279------------')
                 #print(token)
-                area_list = self.dbinit.get_subarea()
+                area_list = load_data.get_subarea()
                 for j, area in enumerate(area_list):
                     if area[0].lower() == self.tempArray[idx-1].lower():
                         check_match = 1
@@ -552,7 +547,7 @@ class Address(object):
         return any(char.isdigit() for char in inputString)
 
     def check_address_status(self):
-        area_pattern = self.dbinit.get_subarea()
+        area_pattern = load_data.get_subarea()
         checkst = 0
         getarea = 0
         same_sub_area_count = 0
@@ -838,7 +833,7 @@ class Address(object):
             'sh*id+h*es+h*\s*w*(o+|a+)r(i|y)', 'siddheshwari', input_address)
         input_address = re.sub(
             'n(i|e)k(u+|o+|)n(j|g|z)h*(a|o)*', 'nikunja', input_address)
-        subarea_list = self.dbinit.get_subarea()
+        subarea_list = load_data.get_subarea()
         for j, subarea in enumerate(subarea_list):
             try:
                 if len(subarea[0])>5:
@@ -860,19 +855,19 @@ class Address(object):
         #print('INPUT ADDRESS............')
         #print(input_address)
         #print(input_address)
-        x = input_address.split("*")
-        input_address = " "
+        # x = input_address.split("*")
+        # input_address = " "
 
-        # spell_checker
+        # # spell_checker
 
-        spell_check = SpellCheck('area-list.txt')
-        for i in x:
-            i = i.strip()
-            if len(i) > 5:
-                spell_check.check(i)
-                i = str(spell_check.correct())
-            input_address += i
-        print('after spellcheck '+input_address)
+        # spell_check = SpellCheck('area-list.txt')
+        # for i in x:
+        #     i = i.strip()
+        #     if len(i) > 5:
+        #         spell_check.check(i)
+        #         i = str(spell_check.correct())
+        #     input_address += i
+        # print('after spellcheck '+input_address)
 
         # replace string with 'mirpur dohs' if conains such as 'dohs mirpur'
         input_address = re.sub('dohs\s*(,)*\s*mirpur','mirpur dohs', input_address)
@@ -1039,7 +1034,7 @@ class Address(object):
             #         self.matched[self.areakey]=subarea['area']
                 
 
-        #subarea_list = self.dbinit.get_subarea()
+        #subarea_list = load_data.get_subarea()
 
 
         getarea = list(set(self.get_multiple_area))
@@ -1048,7 +1043,7 @@ class Address(object):
             #print(self.subarea_list_pattern)
             chk = 0
             for area in getarea:
-                subarea_list = self.dbinit.get_subarea()
+                subarea_list = load_data.get_subarea()
                 try:
                     if self.matched[self.subareakey] in self.matched[self.roadkey]:
                         self.matched[self.subareakey] = ""

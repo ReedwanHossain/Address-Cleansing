@@ -1,0 +1,545 @@
+subdistrict,district,subdistrict_regex
+Abhaynagar,Jessore,(a+|o)(bh*|v)(a+|o)(i|y)\s*n(a|o)g+h*(a|o)r
+Adabor,Dhaka,\s+a+dh*a+b(a|o)r\s+
+Adamdighi,Bogra,a+d(a|o|u)m\s*d(i|e)gh*i
+Aditmari,Lalmonirhat,\s+a+dit\s*ma+r(i|y)\s+
+Agailjhara,Barisal,\s+a+gh*(a|o)a*il\s*(j|z)h*ara\s+
+Ajmiriganj,Habiganj,a(j|z)mir(i|y)\s*gh*(o|a)n(j|z)
+Akhaura,Brahamanbaria,\s+a+kh*(a|o)+(o|u|w)ra\s+
+Akkelpur,Joypurhat,\s+ak+h*(a|e)lp(o+|u)r\s+
+Alamdanga,Chuadanga,al(o+|a+)mdh*angh*a+
+Alfadanga,Faridpur,al+fh*adh*angh*a+
+Alikadam,Bandarban,al(i|e)+\s*(c|k)(o|a)d(a|o)m
+Amtali,Barguna,\s+amt(o|a)l(i|e+|y+)\s+
+Anowara,Chittagong,\s+an(o+|u)*w*(a|o)ra+\s+
+Araihazar,Narayanganj,a+r+a(i|y)ha(j|z)ar
+Ashuganj,Brahamanbaria,\s+ash*(o+|u)gh*(o|a)n(j|z)\s+
+Assasuni,Satkhira,\s+as+h*ash*(o|u)n(i|y)\s+
+Atgharia,Pabna,a+(d|t+)h*gh*(a|o)riy*a
+Atpara,Netrakona,\s+a+(d|t+)h*pa+ra\s+
+Atrai,Naogaon,\s+a+(d|t+)ra(i|y)\s+
+Atwari,Panchagarh,a+t+h*(u|o)*war(i|e)|at(u|o)w*ari
+Austagram,Kishoreganj,\s+(a|o)u*str*(a|o)\s*gh*ra+m\s+
+Babuganj,Barisal,\s+ba+b(o|u)\s*gh*(o|a)n(j|z)\s+
+Badalgachhi,Naogaon,\s+ba+d(a|o)l\s*gh*ach+(i|y)\s+
+Badarganj,Rangpur,b(a+|o)d(a+|o)r\s*gh*(o|a)n(j|z)
+Badda,Dhaka,\s+bad+a\s+
+Bagati Para,Natore,\s+bh*agh*at(i|y)\s*pa+ra\s+
+Bagerhat Sadar,Bagerhat,ba+gh*erhath*\s*s(a|o)d(a|o)r
+Bagha,Rajshahi,\s+bagha\s+
+Baghai Chhari,Rangamati,ba+gh*a(i|y)\s*ch+(a|o)r(i|y)
+Bagher Para,Jessore,\s+ba+gh*(a|e)r\s*pa+ra\s+
+Baghmara,Rajshahi,\s+ba+gh*\s*ma+ra\s+
+Bahubal,Habiganj,\s+ba+h(o+|u)bh*(a+|o+)+l\s+
+Bajitpur,Kishoreganj,\s+ba+(j|z)(i|e)t\s*p(o+|u)r\s+
+Bakalia,Chittagong,\s+ba+k+a*liy*a+\s+
+Bakerganj,Barisal,\s+bh*a+ker\s*gh*(o|a)n(j|z)\s+
+Bakshiganj,Jamalpur,\s+b(a+|o|u)ksh*i\s*gh*(o|a)n(j|z)\s+
+Balaganj,Sylhet,\s+bh*a+la+\s*gh*(o|a)n(j|z)\s+
+Balia Kandi,Rajbari,\s+ba+liy*a\s*kh*a+nd(i|y)\s+
+Baliadangi,Thakurgaon,\s+ba+liy*a\s*dh*angh*(i|y)\s+
+Bamna,Barguna,\s+bamna\s+
+Banari Para,Barisal,\s+banar(i|y)+\s*pa+ra\s+
+Banchharampur,Brahamanbaria,b(a|o)nch+(a|o)ra+m\s*p(o|u)r|b(a|o)nsh*ara+m\s*p(o+|u)r
+Bandar,Narayanganj,\s+b(o|a)ndh*(a|o)r\s+
+Bandarban Sadar,Bandarban,bh*(a|o)ndh*(a|o)rb(a|o)n\s*s(a|o)d(a|o)r
+Bangshal,Dhaka,\s+b(a|o)ng*sh*al\s+
+Baniachong,Habiganj,ba+niy*a\s*ch*(a|o)n(g|z)
+Banshkhali,Chittagong,ba+(s|n)s*h*\s*kh*al(i|y)
+Baraigram,Natore,\s+b(a|o|u)+ra+i\s*gh*ra+m\s+
+Barguna Sadar,Barguna,b(a|o)ro*g(a|o|u)na\s*s(a|o)d(a|o)r
+Barhatta,Netrakona,\s+ba+rhat+h*a\s+
+Kotwali,Barisal,\s+ko+twa+l(e+|i+)\s+
+Barkal,Rangamati,\s+b(a+|o)ro*k(a|o)l\s+
+Barlekha,Maulvibazar,\s+b(a|o)ro*l(i|e)kh*a\s+
+Barura,Comilla,\s+b(a+|o)r(o+|u)ra+\s+
+Basail,Tangail,\s+ba+(s|c)h*a+il\s+
+Batiaghata,Khulna,\s+b(a|o|u)tiy*a\s*gh*ata\s+
+Bauphal,Patuakhali,\s+bh*a(o|u)(p|f)h*(a|o)l\s+
+Bayejid Bostami,Chittagong,bh*ay*(i|e)(j|z)id\s*b(a|o|u)stam(i|y)|ba*io(j|z)id\s*b(a|o|u)stam(i|y)
+Beani Bazar,Sylhet,\s+b(e|i)a+n(i|y)\s*ba+(j|z)ar\s+
+Begumganj,Noakhali,b(i|e)g+h*(a+|u)m\s*gh*(o|a)n(j|z)
+Belabo,Narsingdi,\s+bela+bh*o\s+
+Belai Chhari,Rangamati,\s+bela+(i|y)\s*ch+a+r(i|y)\s+
+Belkuchi,Sirajganj,\s+be+lkuc+h*(i|y)\s+
+Bera,Pabna,\s+berah*\s+
+Betagi,Barguna,\s+b(i|e)th*agh*(i|y)\s+
+Bhairab,Kishoreganj,\s+bh*ay*ir(a|o)b|v(a|o)ir(a|o)b\s+
+Bhaluka,Mymensingh,\s+bh*al(o+|u)kh*a|vh*al(o+|u)kh*a\s+
+Bhandaria,Pirojpur,bh*andariy*a|vh*andariy*a
+Bhanga,Faridpur,\s+bh*a+ngh*a\s+
+Bhangura,Pabna,bh*a+ngh*(o|u)ra|vh*a+ngh*(o|u)ra
+Bhedarganj,Shariatpur,\s+bh*e+d(a+|o)r\s*gh*(o|a)n(j|z)\s+
+Bheramara,Kushtia,\s+bh*(a|e)ra\s*ma+ra\s+
+Bhola Sadar,Bhola,bh*(o|u)la\s*s(a|o)d(a|o)r
+Bholahat,Chapainawabganj,\s+bh*(o+|u)la+ha+th*\s+
+Bhuapur,Tangail,\s+(bh|v)(u|o)y*ap(o+|u)r\s+
+Bhurungamari,Kurigram,(bh|v)ur(o+|u)ngh*a\s*ma+ri
+Bijoynagar,Brahamanbaria,b(i|e)(j|z)h*(a|o)(i|y)\s*n(a|o)gh*(a|o)r
+Biman Bandar,Dhaka,(bh*|v)ima+n\s*bh*(a|o)nd(a|o)r
+Biral,Dinajpur,\s+bh*ir(a|o)l\s+
+Birampur,Dinajpur,\s+bh*ira+mp(o+|u)r\s+
+Birganj,Dinajpur,\s+(bh*|v)ir\s*gh*(o|a)n(j|z)\s+
+Bishwambarpur,Sunamganj,(bh*|v)(i|e)(s+|c)h*w*(a|e|o)m(b|v)(a|e)rp(o+|u)r
+Bishwanath,Sylhet,(bis+h*(a*|o*)w+a*n(a*|o*)th*)|(biss+h*(a*|o*)w*a*n(a*|o*)th*)
+Boalia,Rajshahi,\s+b(o|u)aliy*a\s+
+Boalkhali,Chittagong,\s+bh*(o|u)a+lkh*al(i|y)\s+
+Boalmari,Faridpur,\s+bh*(o+|u)a+lma+r(i|y)\s+
+Bochaganj,Dinajpur,(bh*|v)(o+|u)(c+|s)h*agh*(o|a)n(j|z)
+Boda,Panchagarh,\s+boda\s+
+Bogra Sadar,Bogra,(bh*|v)(o|u)g(o|u)*ra\s*s(a|o)d(a|o)r
+Brahman Para,Comilla,(bh*|v)ra+h*m+(a|o)n\s*pa+ra
+Brahmanbaria Sadar,Brahamanbaria,((brah*a*m+(a|o)n)|\s+b)\s*bar(i|e)y*a\s*sh*(a|o)d(a|o)r
+Burhanuddin,Bhola,\s+bh*(o|u)rh(a|o)nud+in\s+
+Burichang,Comilla,(bh*|v)(o|u)r(i|y)ch*(a+|o)ng
+Cantonment,Dhaka,((c(a|e)nt(o|a)nm(e|a)nt*)|cant\.*)
+Chak Bazar,Dhaka,\s+ch(o|a)k\s*ba+(j|z)ar\s+
+Chakaria,Cox's Bazar,\s+ch*(a+|o)k(a|o)riy*a\s+
+Chandanaish,Chittagong,ch*(a+|o)nd(a+|o+)nai(c|s)h*
+Chandgaon,Chittagong,ch(a+|o)ndg(a+|o)(o|u|a)n
+Chandina,Comilla,\s+ch*andh*(i|e)na\s+
+Chandpur Sadar,Chandpur,\s*ch*an*dp(u|o+)r\s*s(a|o)d(a|o)r
+Char Bhadrasan,Faridpur,ch*(a|o)r\s*(bh*|v)(a|o)dra(c|s)h*(a|o)n
+Char Fasson,Bhola,ch*(a|o)r\s*fas+h*i*on
+Char Rajibpur,Kurigram,ch*(a|o)r\s*ra(g|j|z)ibp(u|o+)r
+Charghat,Rajshahi,\s+ch*(a+|o)rgh*a+th*\s+
+Chatkhil,Noakhali,\s+ch*a+tkh*(i|y)l\s+
+Chatmohar,Pabna,\s+ch*a+tm(o+|u)h(a+|o+)r\s+
+Chauddagram,Comilla,ch(a+|o+)(u|w)*d+(a+|o+)gh*ra+m
+Chaugachha,Jessore,ch*(a|o)(u|o)gach+a|ch(a|o)wo*gach*a
+Chauhali,Sirajganj,\s+ch(a+|o)(u|o)hal(i|y)|ch(a|o)whal(i|y)\s+
+Chhagalnaiya,Feni,ch+ag(a|o)l\s*na+iya|ch*ag(a|o)l\s*naiy+a
+Chhatak,Sunamganj,\s+ch*a+t(a+|o+)k\s+
+Chilmari,Kurigram,\s+ch*i+l+ma+r(i|y)\s+
+Chirirbandar,Dinajpur,ch*i+rir\s*b(a|o)ndh*(a|o)r
+Chitalmari,Bagerhat,\s+ch*it(a+|o)lma+r(i|y)\s+
+Chittagong Port,Chittagong,(\s+ctg\s+)\s*port|(ch*it+ag(a|o)ng)\s*port|(ch*(a|o)t+r*(a|o)gra+m)\s*port
+Chuadanga Sadar,Chuadanga,ch*(u|o+)ad(a+|o|u)ngh*a+\s*s(a|o)d(a|o)r
+Chunarughat,Habiganj,ch*(o+|u)na+r(o|u)gh*a+th*
+Comilla Sadar,Comilla,(c(o|u)m+il+a)\s*(ad(a+|o+)rsh*(a|o))*\s*s(a|o)d(a|o)r
+Comilla Sadar Dakshin,Comilla,c(o|u)m+il+a\s*s(a|o)d(a|o)r\s*dh*(a|o)k+s*h*in
+Companiganj,Noakhali,c(a|o)mpan(i|y|e+)\s*gh*(o|a)n(j|z)
+Companiganj,Sylhet,c(a|o)mpan(i|y|e+)\s*gh*(o|a)n(j|z)
+Cox's Bazar Sadar,Cox's Bazar,c(a|o)x(o|e)*\s*[']*\s*s*\s*ba+(z|j|g)a+r\s*s(a|o)d(a|o)r
+Dacope,Khulna,\s+dh*ac(o|u)pe*|dh*ac(o|u)f\s+
+Daganbhuiyan,Feni,dh*ag(a+|o|u)n\s*bh*(o|u)iy*an
+Dakshin Sunamganj,Sunamganj,dh*(a|o)k+s*h*in\s*s(u|o+)na+mgh*(a|o)n(j|z)
+Dakshin Surma,Sylhet,dh*(a|o)k+s*h*in\s*sh*(o|u)rma+
+Dakshinkhan,Dhaka,dh*(a|o)k+s*h*in\s*kh*an
+Damudya,Shariatpur,\s+dh*am(o+|u)di*y*a\s+
+Damurhuda,Chuadanga,dh*a+m(o+|u)rh(o|u)dh*a
+Darus Salam,Dhaka,dh*ar(\s|-)*(o|u)s(\s|-)*sa+lam
+Dashmina,Patuakhali,\s+d(a+|o)sh*mina\s+
+Daudkandi,Comilla,da+(o|u)dkh*and(i|y)|da+w*(a|o|u)*dkh*and(i|y)
+Daulatkhan,Bhola,da(o|u)l(a|o)tkh*an|dawl(a|o)tkh*an
+Daulatpur,Manikganj,da(o|u)l(a|o)tp(o+|u)r|dawl(a|o)tp(o+|u)r
+Daulatpur,Khulna,da(o|u)l(a|o)tp(o+|u)r|dawl(a|o)tp(o+|u)r
+Daulatpur,Kushtia,da(o|u)l(a|o)tp(o+|u)r|dawl(a|o)tp(o+|u)r
+Debhata,Satkhira,\s+de(b|v)ha+ta\s+
+Debidwar,Comilla,\s+de(b|v)id(h|w)*ar\s+
+Debiganj,Panchagarh,\s+de(b|v)i\s*gh*(o|a)n(j|z)\s+
+Delduar,Tangail,\s+dh*(a|e)ld(o|u)w*ar\s+
+Demra,Dhaka,\s+demra\s+
+Derai,Sunamganj,\s+derai\s+
+Dewanganj,Jamalpur,de(a|o|w)a+ngh*(o|a)n(j|z)
+Dhamoirhat,Naogaon,dh*a+m(a|o)(i|y)rha+th*
+Dhamrai,Dhaka,\s+dh*a+mra(i|y)\s+
+Dhanbari,Tangail,\s+dh*(a+|o)no*\s*ba+r(e+|i+)\s+
+Dhanmondi,Dhaka,dh*anm(a|o)nd(i|y)
+Dharampasha,Sunamganj,dh*ara*m(a+|o)*pa+sh*a
+Dhobaura,Mymensingh,\s+dh*(o|u)ba(o|u)ra\s+
+Dhunat,Bogra,\s+dh*(o+|u)na+t\s+
+Dhupchanchia,Bogra,dh*(o|u)pch*an*ch*iy*a
+Dighalia,Khulna,dh*ig(o|ha)liy*a|dh*igh*o*liy*a
+Dighinala,Khagrachhari,\s+dh*igh*ina+la\s+
+Dimla,Nilphamari,\s+dimla\s+
+Dinajpur Sadar,Dinajpur,d(e+|i)na+(j|g|z)h*p(u|o+)r\s*s(a|o)d(a|o)r
+Dohar,Dhaka,\s+doha+r\s+
+Domar,Nilphamari,\s+doma+r\s+
+Double Mooring,Chittagong,double\s*m(u|o+)u*ring
+Dowarabazar,Sunamganj,d(o|u)w*araba+(z|j|g)a+r
+Dumki,Patuakhali,\s+dumk(i|y)\s+
+Dumuria,Khulna,\s+d(o|u)m(o|u)riy*a\s+
+Durgapur,Netrakona,\s+dh*urgh*ap(o+|u)r\s+
+Durgapur,Rajshahi,\s+dh*urgh*ap(o+|u)r\s+
+Fakirhat,Bagerhat,\s+f(a+|o)kirha+th*\s+
+Faridganj,Chandpur,f(a|o|u)r(i|e+)dgh*(o|a)n(j|z)
+Faridpur,Pabna,f(a|o|u)r(i|e+)d\s*p(u|o+)r
+Faridpur Sadar,Faridpur,f(a|o|u)r(i|e+)d\s*p(u|o+)r\s*s(a|o)d(a|o)r
+Fatikchhari,Chittagong,f(a|o)tikch+(a|o)r(i|y)|f(a|o)tikch*ori
+Fenchuganj,Sylhet,fe+n(c|s)h*(oo+|u)gh*(o|a)n(j|z)
+Feni Sadar,Feni,\s+feni\s+\s*s(a|o)d(a|o)r
+Fulbari,Dinajpur,\s+f(oo+|u)lba+r(e+|i+)\s+
+Fulbaria,Mymensingh,\s+f(oo+|u)lbariy*a\s+
+Fulchhari,Gaibandha,\s+f(oo+|u)lch+(a|o)r(i|y)\s+
+Fulgazi,Feni,\s+f(oo+|u)lgh*a+(j|z|g)(i|e)\s+
+Gabtali,Bogra,\s+ga+bt(a|o)l(i|y)\s+
+Gaffargaon,Mymensingh,g(a|o)f+(a|o)rgh*ao*n*
+Gaibandha Sadar,Gaibandha,gh*a(e|i)ba+ndh*a\s*s(a|o)d(a|o)r
+Galachipa,Patuakhali,\s+gh*(a|o)lach*ipa\s+
+Gangachara,Rangpur,gh*(a|o)n(g|j)a\s*ch(a|o)ra
+Gangni,Meherpur,\s+gh*(a|o)ngi*n(i|y)\s+
+Gauripur,Mymensingh,\s+g(a+|o)(w|u)rip(u|o+)r\s+
+Gaurnadi,Barisal,g(a|o)(w|u)r(a|o)*n(a|o)di
+Gazaria,Munshiganj,\s+gh*(a|o)(j|z)ariy*a\s+
+Gazipur Sadar,Gazipur,gh*a+(j|z|g)(i|e)p(u|o+)r\s*s(a|o)d(a|o)r
+Gendaria,Dhaka,\s+gh*(a|e)nda+riy*a\s+
+Ghatail,Tangail,\s+gh*a+ta+(i|y)l\s+
+Ghior,Manikganj,\s+gh*(i|e)(a|o)r\s+
+Ghoraghat,Dinajpur,gh*(a+|o)ragh*a+t
+Goalandaghat,Rajbari,gh*(o|u)al(a|o)nd(a|o)gh*a+t
+Gobindaganj,Gaibandha,g(a|o)bind(a|o)gh*(o|a)n(j|z)
+Godagari,Rajshahi,gh*(u|o)dh*agh*ar(i|y)
+Golabganj,Sylhet,g(o+|u)la+bgh*(o|a)n(j|z)
+Gomastapur,Chapainawabganj,g(o|u)m(a|o)sh*t(a|o)p(u|o+)r
+Gopalganj Sadar,Gopalganj,g(o+|u)pa+lgh*(a|o)nj\s*s(a|o)d(a|o)r
+Gopalpur,Tangail,g(o+|u)pa+lp(u|o+)r
+Gosairhat,Shariatpur,g(o+|u)sh*a+irh(a+|u)th*
+Gowainghat,Sylhet,g(o|u)(w|y)a+ingh*a+t
+Gulshan,Dhaka,\s+g(o|u)lsh*an\s+
+Gurudaspur,Natore,g(o|u)r(o|u)da+sh*p(o+|u)r
+Habiganj Sadar,Habiganj,h(a|o)bigh*(a|o)nj\s*s(a|o)d(a|o)r
+Haim Char,Chandpur,ha(i|e)m\s*(s|ch*)(a+|o+)r
+Hajiganj,Chandpur,\s+ha(j|z)(i|e)+gh*(o|a)n(j|z)\s+
+Hakimpur,Dinajpur,\s+hak(i|e)+mp(o+|u)r\s+
+Halishahar,Chittagong,hal(i|y)sh*(a+|o)h(a|o)r
+Haluaghat,Mymensingh,\s+hal(o|u)(o+|w)*agh*at\s+
+Harinakunda,Jhenaidah,h(a|o)r(i|y)nak(o|u)nd(a|o)
+Haripur,Thakurgaon,\s+h(a|o)r(i|e)+p(o+|u)r\s+
+Harirampur,Manikganj,h(a+|o)r(i|y)ra+mp(o+|u)r
+Hathazari,Chittagong,ha+th*ha+(j|z)a+r(i|e|y)|ha+th*a*h*a+(j|z)a+r(i|e|y)
+Hatibandha,Lalmonirhat,ha+t(i|e)b(a|o)ndh*a
+Hatiya,Noakhali,\s+ha+t(i|y)(w|y)a+\s+
+Hazaribagh,Dhaka,ha+(j|z|g)a+r(e+|i+)\s*b(a+|u+)gh*
+Hizla,Barisal,\s+hi(j|z)la+\s+
+Homna,Comilla,\s+homna\s+
+Hossainpur,Kishoreganj,h(o|u)s+(a|e)+i*np(o+|u)r
+Ishwardi,Pabna,(i|e)s+hw(a|o)rd(i|e)|(i|e)s+h*(a|o)rd(i|e)
+Ishwarganj,Mymensingh,(i|e)s+hw(a|o)rgh*(o|a)n(j|z)|(i|e)s+h*(a|o)rgh*(o|a)n(j|z)
+Islampur,Jamalpur,\s+isla+mp(o+|u)r\s+
+Itna,Kishoreganj,\s+itna\s+
+Jagannathpur,Sunamganj,j(a|o)g(a|o)n+a+th*\s*p(o+|u)r
+Jaintiapur,Sylhet,j(a|o)inti*ap(o+|u)r
+Jaldhaka,Nilphamari,\s+jh*(a|o)ldh*aka\s+
+Jamalganj,Sunamganj,ja+ma+lgh*(o|a)n(j|z)
+Jamalpur Sadar,Jamalpur,(j|z)a+ma+l\s*p(u|o+)r\s*s(a|o)d(a|o)r
+Jatrabari,Dhaka,(g|z|j)a+tra+\s*ba+r(e+|i+)
+Jhalokati Sadar,Jhalokati,(z|j)h*al(o|u)ka+(th*|d)i\s*s(a|o)d(a|o)r
+Jhenaidah Sadar,Jhenaidah,(z|j)h*(e|i)na*(i|y)dh*(a+|o)h*o*\s*s(a|o)d(a|o)r
+Jhenaigati,Sherpur,(z|j)h*(e|i)na(i|y)gh*at(i|e|y)
+Jhikargachha,Jessore,(z|j)h*ik(a|o)rga(c+|s+)h*a
+Jiban Nagar,Chuadanga,(z|j)ib(a|o)n\s*n(a|o)gh*(a|o)r
+Joypurhat Sadar,Joypurhat,(z|j)(a|o)(i|y)p(u|o+)rha+th*\s*s(a|o)d(a|o)r
+Jurai Chhari,Rangamati,(j|z)h*(o+|u)ra+(i|y)*\s*ch*(a|o)r(i|y)
+Juri,Maulvibazar,\s+juri\s+
+Kabirhat,Noakhali,\s+k(a+|o)birha+th*\s+
+Kachua,Chandpur,\s+k(a|o)ch*(o|u)a+\s+
+Kachua,Bagerhat,\s+k(a|o)ch*(o|u)a+\s+
+Kadamtali,Dhaka,k(a+|o)d(a|o)mt(a|o)l(i|y)
+Kafrul,Dhaka,\s+ka+(f|ph)r(o+|u+)l\s+
+Kahaloo,Bogra,\s+ka+halo+\s+
+Kaharole,Dinajpur,\s+kahar(o|u)le*\s+
+Kala Para,Patuakhali,\s+ka+la+\s*pa+ra+\s+
+Kalabagan,Dhaka,k(a+|o+)la+\s*ba+gh*a+n
+Kalai,Joypurhat,\s+kalai\s+
+Kalaroa,Satkhira,k(a|o)lar(o|u)a+
+Kalia,Narail,\s+kaliy*a\s+
+Kaliakair,Gazipur,\s+kaliy*ak(a|o)ir\s+
+Kaliganj,Gazipur,ka+l(i|y)gh*(o|a)n(j|z)
+Kaliganj,Jhenaidah,ka+l(i|y)gh*(o|a)n(j|z)
+Kaliganj,Satkhira,ka+l(i|y)gh*(o|a)n(j|z)
+Kaliganj,Lalmonirhat,ka+l(i|y)gh*(o|a)n(j|z)
+Kalihati,Tangail,ka+l(i|y)h*a+t(i|y)
+Kalkini,Madaripur,\s+ka+lkin(i|y)\s+
+Kalmakanda,Netrakona,ka+lma+ka+nda
+Kalukhali,Rajbari,\s+kal(o+|u)kh*al(i|y)\s+
+Kamalganj,Maulvibazar,ka+ma+lgh*(o|a)n(j|z)
+Kamalnagar,Lakshmipur,ka+ma+l\s*n(a|o)gh*(a|o)r
+Kamarkhanda,Sirajganj,ka+ma+rkh*(a|o)nd(a|o)
+Kamrangir Char,Dhaka,ka+mra+ng(e+|i+)r\s*(s|ch*)(a+|o+)r
+Kanaighat,Sylhet,\s+ka+na+(i|y)gh*ath*\s+
+Kanthalia,Jhalokati,\s+ka+n*th*a+liy*a\s+
+Kapasia,Gazipur,ka+pa+(s|c)h*iy*a+
+Kaptai,Rangamati,\s+ka+pta+(i|y)\s+
+Karimganj,Kishoreganj,k(a+|o)rimgh*(o|a)n(j|z)
+Kasba,Brahamanbaria,\s+k(a|o)sh*bh*a+\s+
+Kashiani,Gopalganj,ka+(c|s)h*iy*ani
+Katiadi,Kishoreganj,\s+k(a|o)tiy*a+di|k(a|o)it+y*adi\s+
+Kaunia,Rangpur,\s+ka+(o|w|u)niy*a+\s+
+Kawkhali,Pirojpur,\s+ka+(o|u|w)kh*al(i|y)\s+
+Kawkhali (Betbunia),Rangamati,\s+ka+(o|w|u)kh*al(i|y)\s+
+Kazipur,Sirajganj,\s+ka+(j|z)(e+|i+)p(o+|u)r\s+
+Kendua,Netrakona,\s+k(a+|e+)nd(o|u)a+\s+
+Keraniganj,Dhaka,ke+ra+n(i|e)gh*(o|a)n(j|z)
+Keshabpur,Jessore,ke+sh*(a|o)(b|v)p(o+|u)r
+Khagrachhari Sadar,Khagrachhari,khagh*ra+(ch*|s+)(a|o)ri\s*s(a|o)d(a|o)r
+Khaliajuri,Netrakona,kh*aliy*a(j|z)h*(o|u)r(i|y)
+Khalishpur,Khulna,kh*a+l(i|y)sh*p(o+|u)r
+Khan Jahan Ali,Khulna,\s+kha+n\s*(z|j)a+ha+n\s*ali\s+
+Khansama,Dinajpur,\s+kh*a+nsh*a+ma+\s+
+Khetlal,Joypurhat,\s+kh*etla+l\s+
+Khilgaon,Dhaka,kh*(e+|i+)l\s*ga+o*n*
+Khilkhet,Dhaka,kh*(i+|e+)lkh*et
+Khoksa,Kushtia,\s+kho+ksh*a+\s+
+Khulna Sadar,Khulna,khulna+\s*s(a|o)d(a|o)r
+Khulshi,Chittagong,\s+kh(o+|u)lsh*i\s+
+Kishoreganj,Nilphamari,k(i|e)s+h*(o+|u)re*gh*(a|o)nj
+Kishoreganj Sadar,Kishoreganj,k(i|e)s+h*(o+|u)re*gh*(a|o)nj\s*s(a|o)d(a|o)r
+Kotali Para,Gopalganj,k(o+|u)ta+l(i+|e+)\s*pa+ra+
+Kotchandpur,Jhenaidah,k(o+|u)tch*andp(o+|u)r|k(o+|u)tch*a+n*dp(o+|u)r
+Kotwali,Chittagong,\s+ko+to*wa+l(e+|i+)\s+
+Kotwali,Dhaka,\s+ko+to*wa+l(e+|i+)\s+
+Kotwali,Jessore,\s+ko+to*wa+l(e+|i+)\s+
+Koyra,Khulna,\s+k(a|o)(i|y)ra+\s+
+Kulaura,Maulvibazar,\s+k(o+|u)la+(o|u)ra+\s+
+Kuliar Char,Kishoreganj,k(o+|u)liy*a+r\s*ch(a+|o+)r|k(o+|u)il+a+r*\s*ch(a+|o+)r
+Kumarkhali,Kushtia,k(o+|u)ma+rkh*a+l(i|y)
+Kurigram Sadar,Kurigram,kur(e|i)gh*ra+m\s*s(a|o)d(a|o)r
+Kushtia Sadar,Kushtia,kush*tia\s*s(a|o)d(a|o)r
+Kutubdia,Cox's Bazar,k(o+|u)t(u|o)bdiy*a
+Lakhai,Habiganj,\s+la+kh*a+(i|y)\s+
+Laksam,Comilla,\s+l(a+|u)+kh*sh*y*(a+|u)m|l(a+|u)xsh*y*(a+|u)m\s+
+Lakshmichhari,Khagrachhari,la+ksh*mich+(a+|o+)r(i|y)|la+xmich+(a+|o+)r(i|y)|l(a+|o+)k+h*ich+(a+|o+)r(i|y)
+Lakshmipur Sadar,Lakshmipur,(la+kh*s+h*m(e|i)\s*p(u|o+)r)|(l(a|o)k+h*i\s*p(u|o+)r)\s*s(a|o)d(a|o)r
+Lalbagh,Dhaka,\s+la+l\s*b(a+|u+)gh*\s+
+Lalmohan,Bhola,\s+lalm(o|u)ha+n\s+
+Lalmonirhat Sadar,Lalmonirhat,la+lm(o+|u)n(i|e)rha+th*\s*s(a|o)d(a|o)r
+Lalpur,Natore,\s+lalp(o+|u)r\s+
+Lama,Bandarban,\s+la+ma+\s+
+Langadu,Rangamati,l(a+|o+)ngg*h*(a+|o)dh*(o+|u)
+Lohagara,Chittagong,\s+lo+ha+gh*a+ra+\s+
+Lohagara,Narail,\s+lo+ha+gh*a+ra+\s+
+Lohajang,Munshiganj,lo+u*h(a+|o+)(j|g)h*(a+|o+)ng*
+Madan,Netrakona,\s+m(a+|o+)d(a+|o+)n\s+
+Madarganj,Jamalpur,m(a+|o+)dh*a+r\s*gh*(o|a)n(j|z)|m(a+|o+)ther\s*gh*(o|a)n(j|z)
+Madaripur Sadar,Madaripur,ma+dh*a+r(i|e)p(u|o+)r\s*s(a|o)d(a|o)r
+Madhabpur,Habiganj,ma+dh*(a+|o+)bp(o+|u)r
+Madhukhali,Faridpur,m(a+|o+)dh(o+|u)kh*al(i|y)
+Madhupur,Tangail,\s+m(a+|o+)dh(o+|u)p(o+|u)r\s+
+Magura Sadar,Magura,ma+gh*ura+\s*s(a|o)d(a|o)r
+Mahadebpur,Naogaon,m(a+|o+)ha+dh*e+(b|v)\s*p(o+|u)r
+Mahalchhari,Khagrachhari,m(a+|o+)ha+lch+(a+|o+)r(i|y)
+Maheshkhali,Cox's Bazar,m(a+|o+)heshkh*al(i|y)
+Maheshpur,Jhenaidah,m(a+|o+)hesh*p(o+|u)r
+Manda,Naogaon,\s+ma+nda\s+
+Manikchhari,Khagrachhari,\s+ma+nik\s*ch+(a+|o+)r(i|y)\s+
+Manikganj Sadar,Manikganj,ma+n(i|e)kgh*(a|o)nj\s*s(a|o)d(a|o)r
+Manirampur,Jessore,m(a+|o+)nira+mp(o+|u)r
+Manohardi,Narsingdi,m(a+|o+)n(o+|u)h(a+|o+)rd(i|y)
+Manoharganj,Comilla,m(a+|o+)n(o+|u)h(a+|o+)r\s*gh*(o|a)n(j|z)
+Manpura,Bhola,\s+m(a+|o+)np(o+|u)ra+\s+
+Mathbaria,Pirojpur,m(a+|o+)th*\s*ba+riy*a
+Matihar,Rajshahi,\s+m(a+|o+)t(i|y)ha+r\s+
+Matiranga,Khagrachhari,\s+ma+t(i|y)\s*ra+nga+\s+
+Matlab Dakshin,Chandpur,m(a+|o+)tl(a+|o+)b\s*(d(a+|o+)k+s*h*in|south)
+Matlab Uttar,Chandpur,m(a+|o+)tl(a+|o+)b\s*ut+(a+|o+)r
+Maulvi Bazar Sadar,Maulvibazar,m(a|o)u*l(o|u)*(v|bh*)i\s*ba+(z|j|g)a+r\s*s(a|o)d(a|o)r
+Meghna,Comilla,\s+meghna+\s+
+Mehendiganj,Barisal,m(a+|e+)h(a+|e+)nd(i|y)gh*(o|a)n(j|z)|m(a+|e+)nd(i|y)gh*(o|a)n(j|z)
+Meherpur Sadar,Meherpur,m(e|a)h(e|a)r\s*p(u|o+)r\s*s(a|o)d(a|o)r
+Melandaha,Jamalpur,m(a+|e+)la+nd(a+|o+)h(a*|o*)
+Mirpur,Dhaka,\s+m(i+|e+)r\s*p(u+|o+)r\s+
+Mirpur,Kushtia,\s+m(i+|e+)r\s*p(u+|o+)r\s+
+Mirsharai,Chittagong,mi+rsh*(a+|o+)ra(i|y)
+Mirzaganj,Patuakhali,mi+r(j|z)a+gh*(o|a)n(j|z)
+Mirzapur,Tangail,\s+mi+r(j|z)ap(o+|u)r\s+
+Mitha Pukur,Rangpur,\s+mi+th*a\s*p(o+|u)ku+r\s+
+Mithamain,Kishoreganj,\s+mi+th*am(a+|o+)(i|y)n\s+
+Mohammadpur,Dhaka,m(u+|o+|a+)ha+m+(a+|o+|e+)d\s*p(u+|o+)r
+Mohammadpur,Magura,m(u+|o+|a+)ha+m+(a+|o+|e+)d\s*p(u+|o+)r
+Mohanganj,Netrakona,m(o+|u)h(a+|o+)ngh*(o|a)n(j|z)
+Mohanpur,Rajshahi,\s+m(o+|u)h(a+|o+)np(o+|u)r\s+
+Mollahat,Bagerhat,\s+m(o+|u)l+aha+th*\s+
+Mongla,Bagerhat,\s+m(a|o+|u)ngla+\s+
+Morrelganj,Bagerhat,m(o+|u)r+(e|o|u)l\s*gh*(o|a)n(j|z)
+Motijheel,Dhaka,mot(i+|e+)\s*(j|g|z)h*(i+|e+)l+
+Mujib Nagar,Meherpur,m(o+|u)(j|z)i(b|v)\s*n(a|o)gh*(a|o)r
+Muksudpur,Gopalganj,m(o+|u)k(c|s)h*(o|u)dp(o+|u)r
+Muktagachha,Mymensingh,m(o+|u)kt(a+|o+)\s*ga+ch*a
+Muladi,Barisal,\s+m(o+|u)la+d(i|y)\s+
+Munshiganj Sadar,Munshiganj,m(u|o+)nsh*(e|i)gh*(a|o)nj\s*s(a|o)d(a|o)r
+Muradnagar,Comilla,m(o+|u)ra+d\s*n(a|o)gh*(a|o)r
+Mymensingh Sadar,Mymensingh,((m(y|a*i)m(a|e)nsh*ingh*o*)\s*s(a|o)d(a|o)r)|(m(a|o)imonsh*ingh*o*)\s*s(a|o)d(a|o)r
+Nabiganj,Habiganj,n(a+|o+)(b|v)(i|y)gh*(o|a)n(j|z)
+Nabinagar,Brahamanbaria,n(a+|o+)(b|v)(i|y)n(a|o)gh*(a|o)r
+Nachole,Chapainawabganj,\s+na+ch*ole*\s+
+Nagarkanda,Faridpur,n(a|o)gh*(a|o)rkh*a+nda+
+Nagarpur,Tangail,\s+na+gh*(a|o)rp(o+|u)r\s+
+Nageshwari,Kurigram,na+ge+(sh|s+)*(sh|w)*(a|o)ri
+Naikhongchhari,Bandarban,na+(i|y)k+h*(a+|o+)ng*ch+(a+|o+)ri
+Nakla,Sherpur,\s+n(a+|o+)kh*la+\s+
+Nalchity,Jhalokati,n(a+|o+)lch*it(i|y)
+Nalitabari,Sherpur,na+lita+\s*ba+r(e+|i+)
+Nandail,Mymensingh,\s+na+nda+(i|y)l\s+
+Nandigram,Bogra,n(a+|o+)nd(i|y)gh*ra+m
+Nangalkot,Comilla,na+n*g+(a+|o+)lk(o+|u)t
+Naniarchar,Rangamati,na+niy*a+r\s*ch(a+|o+)r
+Naogaon Sadar,Naogaon,\s+na*(o|u)u*gh*a(on)*\s+\s*s(a|o)d(a|o)r
+Narail Sadar,Narail,\s+n(a|o)r(ai|y)l\s+\s*s(a|o)d(a|o)r
+Narayanganj Sadar,Narayanganj,na+ra+y(o|a)ngh*(a|o)nj\s*s(a|o)d(a|o)r
+Naria,Shariatpur,\s+n(a+|o)riy*a+\s+
+Narsingdi Sadar,Narsingdi,nara*sh*ing*dh*i\s*s(a|o)d(a|o)r
+Nasirnagar,Brahamanbaria,na+sh*ir\s*n(a|o)gh*(a|o)r
+Natore Sadar,Natore,\s+natore*\s+\s*s(a|o)d(a|o)r
+Nawabganj,Dhaka,n(a+|o)(w|b)a+b\s*gh*(o|a)n(j|z)
+Nawabganj,Dinajpur,n(a+|o)(w|b)a+b\s*gh*(o|a)n(j|z)
+Chapainawabganj Sadar,Chapainawabganj,cha+pa+(i|y)\s*n(a+|o)(w|b)a+bgh*(o|a)n(j|z)\s*s(a|o)d(a|o)r
+Nazirpur,Pirojpur,\s+na+(g|z|j)i+r\s*p(o+|u)r\s+
+Nesarabad (Swarupkati),Pirojpur,\s+ne+(c|s+)h*a+ra+ba+d\s+
+Netrokona Sadar,Netrakona,n(e|a)tr(o|a)kh*ona\s*s(a|o)d(a|o)r
+New Market,Dhaka,new\s*m(a+|e+)rc*k(a+|e+)t
+Niamatpur,Naogaon,ni+y*a+m(a+|o+)t\s*p(o+|u)r
+Nikli,Kishoreganj,\s+ni+kl(i|y)\s+
+Nilphamari Sadar,Nilphamari,n(i|e+)l(ph*|f)ama+ri\s*s(a|o)d(a|o)r
+Noakhali Sadar (Sudharam),Noakhali,n(o|u|ow)akh*a+li\s*s(a|o)d(a|o)r
+Paba,Rajshahi,\s+p(a+|o+)ba+\s+
+Pabna Sadar,Pabna,pa+bna+\s*s(a|o)d(a|o)r
+Pahartali,Chittagong,\s+pa+ha+r\s*t(a+|o+)l(i|y)\s+
+Paikgachha,Khulna,pa+(i|y)kgh*a+ch*a
+Pakundia,Kishoreganj,\s+pa+k(o+|u)ndiy*a\s+
+Palash,Narsingdi,\s+p(a+|o+)la+sh\s+
+Palashbari,Gaibandha,p(a+|o+)la+shba+r(e+|i+)
+Pallabi,Dhaka,\s+p(a+|o+)l+(a+|o+)b(i+|e+)\s+
+Paltan,Dhaka,\s+p(a+|o+)lt(a+|o+)n\s+
+Panchagarh Sadar,Panchagarh,p(a|o)n(ch*|s+)(a|o)g(a|o)rh*\s*s(a|o)d(a|o)r
+Panchbibi,Joypurhat,\s+pa+n*ch*bibi\s+
+Panchhari,Khagrachhari,\s+pa+nch+(a+|o+)r(i|y)\s+
+Panchlaish,Chittagong,pa+n*ch+la+ish*
+Pangsha,Rajbari,\s+pa+ng*sh*a+\s+
+Parbatipur,Dinajpur,pa+rb(a+|o+)t(i|y)\s*p(o+|u)r
+Parshuram,Feni,p(a+|o+)rsh*(o|u)ra+m
+Patenga,Chittagong,\s+p(a+|o+)te+ngh*a+\s+
+Patgram,Lalmonirhat,\s+pa+tgh*ra+m\s+
+Patharghata,Barguna,pa+th*(a+|o+)rgh*a+ta
+Patiya,Chittagong,\s+p(a+|o+)tiy*a+\s+
+Patnitala,Naogaon,p(a+|o+)th*n(i|y|e)t(a+|o+)la
+Patuakhali Sadar,Patuakhali,p(a|o|u)t+(o|u)akh*a+l(i|e)\s*s(a|o)d(a|o)r
+Pekua,Cox's Bazar,\s+pek(o+|u)a+\s+
+Phulbari,Kurigram,\s+(f|p)h*(oo+|u)lba+r(e+|i+)\s+
+Phulpur,Mymensingh,\s+(f|p)h*(o+|u)l\s*p(o+|u)r\s+
+Phultala,Khulna,(f|p)h*(o+|u)lt(a+|o+)la+
+Pirgachha,Rangpur,\s+p(i|e+)rga+ch*a\s+
+Pirganj,Rangpur,\s+p(i|e+)rgh*(o|a)n(j|z)\s+
+Pirganj,Thakurgaon,\s+p(i|e+)rgh*(o|a)n(j|z)\s+
+Pirojpur Sadar,Pirojpur,p(i|e+)r(o+|a)(j|z)h*\s*p(u|o+)r\s*s(a|o)d(a|o)r
+Porsha,Naogaon,\s+po+u*rsh*a\s+
+Purbadhala,Netrakona,p(o+|u)rb(a+|o)dh*(a+|o+)la
+Puthia,Rajshahi,\s+p(o+|u)th*iy*a\s+
+Rajapur,Jhalokati,\s+ra+(j|z)a+p(o+|u)r\s+
+Rajarhat,Kurigram,ra+(j|z)a+rh(a+|u)th*
+Rajasthali,Rangamati,ra+(z|j)h*(a+|o+)sh*th*(a|o)l(i|y)
+Rajbari Sadar,Rajbari,ra+(j|z|g)h*ba+r(i|e)\s*s(a|o)d(a|o)r
+Rajnagar,Maulvibazar,\s+ra+(z|j)\s*n(a|o)gh*(a|o)r\s+
+Rajoir,Madaripur,\s+ra+(z|j)o(i|y|e)r\s+
+Rajpara,Rajshahi,\s+ra+(z|j)pa+ra+\s+
+Ramganj,Lakshmipur,\s+ra+m\s*gh*(o|a)n(j|z)\s+
+Ramgarh,Khagrachhari,ra+mgh*(a|o)rh*
+Ramgati,Lakshmipur,\s+ra+mg(a+|o+)t(i|y)\s+
+Ramna,Dhaka,\s+r(a+|o+)mna+\s+
+Rampal,Bagerhat,\s+ra+mpa+l\s+
+Rampura,Dhaka,ra+m\s*p(u+|o+)r+a+
+Ramu,Cox's Bazar,\s+ra+mu\s+
+Rangamati Sadar,Rangamati,rangh*ama+t(i|e)\s*s(a|o)d(a|o)r
+Rangpur Sadar,Rangpur,r(a|o)ngh*p(u|o+)r\s*s(a|o)d(a|o)r
+Rangunia,Chittagong,ra+ng(o|u)niy*a+
+Raninagar,Naogaon,ra+nin(a|o)gh*(a|o)r
+Ranisankail,Thakurgaon,ra+nish*(a+|o+)nk(a+|o+)(i|y)*l
+Raozan,Chittagong,\s+r(a+w+|o+a+|a+o+|ow+)(j|z)a+n\s+
+Raumari,Kurigram,\s+r(a+|o)w*(u|o)*ma+r(i|y)\s+
+Rowangchhari,Bandarban,r(o+|u)(w|y)*a+ng*ch*(a+|o+)r(i|e)
+Royganj,Sirajganj,r(a+|o+)(i|y)\s*gh*(o|a)n(j|z)
+Roypur,Lakshmipur,\s+r(a+|o+)(i|y)p(o+|u)r\s+
+Roypura,Narsingdi,r(a+|o+)(i|y)p(o+|u)ra+
+Ruma,Bandarban,\s+r(o|u)ma+\s+
+Rupganj,Narayanganj,\s+r(o+|u)pgh*(o|a)n(j|z)o*\s+
+Rupsa,Khulna,\s+r(o|u)psh*a+\s+
+Sabujbagh,Dhaka,sh*(a+|o+)b(o+|u+)(j|g|z)h*\s*b(a+|u+)gh*
+Sadarpur,Faridpur,sh*(a+|o+)d(a+|o+)r\s*p(o+|u)r
+Sadullapur,Gaibandha,sh*a+d(o+|u)l+a+h*\s*p(o+|u)r
+Saghatta,Gaibandha,sh*a+gh*a+t+a+
+Saidpur,Nilphamari,sh*(a+|o+)i*y*o*dp(o+|u)r
+Sakhipur,Tangail,sh*(a+|o+)kh*(i|e)\s*p(o+|u)r
+Saltha,Faridpur,\s+sh*a+lth*a+\s+
+Sandwip,Chittagong,\s+sh*(a+|o+)ndw*i+p\s+
+Santhia,Pabna,\s+sh*a+n*th*iy*a+\s+
+Sapahar,Naogaon,\s+sh*a+pa+ha+r\s+
+Sarail,Brahamanbaria,\s+sh*(a+|o+)ra+il\s+
+Sarankhola,Bagerhat,sh*(a+|o+)r(a+|o+)n\s*kh*ola+
+Sariakandi,Bogra,sh*a+riy*a+ka+nd(i+|e)
+Sarishabari,Jamalpur,sh*(a+|o+)rish*a\s*ba+r(e+|i+)
+Satkania,Chittagong,sh*a+th*ka+niy*a+
+Satkhira Sadar,Satkhira,sa+th*kh*(i|e)ra\s*s(a|o)d(a|o)r
+Saturia,Manikganj,\s+sh*a+t(o+|u)riy*a\s+
+Savar,Dhaka,\s+sa+va+r\s+
+Senbagh,Noakhali,\s+sh*e+n\s*b(a+|u+)gh*\s+
+Serajdikhan,Munshiganj,sh*(e|i)ra+(j|z)d(i|e)kh*a+n
+Shah Ali,Dhaka,\s+shah*\s*a+l(i+|y+|e+)\s+
+Shah Makhdum,Rajshahi,sh*a+h*a*\s*m(a|o)kh*d(a|o|u)m
+Shahbagh,Dhaka,sh*a+h*a*\s*b(a+|u+)gh*
+Shahjadpur,Sirajganj,sh*a+h*(j|g|z)a+d\s*p(o+|u+)r
+Shahrasti,Chandpur,sh*aho*ra+st(i+|e+)
+Shailkupa,Jhenaidah,sh*(a+|o)ilkh*u+p+a+
+Shajahanpur,Bogra,sh*a+h*a*(j|g|z)a+h*a*n\s*p(u+|o+)r
+Shalikha,Magura,\s+sh*a+likh*a+\s+
+Shariatpur Sadar,Shariatpur,sh*(a|o)r(i|e)y*(a|o)t\s*p(u|o+)r\s*s(a|o)d(a|o)r
+Sharsha,Jessore,\s+sh*a+rsh*a+\s+
+Sher-e-bangla Nagar,Dhaka,sh*(e+|a+|i+)re*(\s*|-)(e|a)(\s*|-)b(a+|e+)nga*la\s*n(a+|o+)g(a+|o+)re*
+Sherpur,Bogra,\s+sh*e+rp(o+|u)r\s+
+Sherpur Sadar,Sherpur,sh*(e|a)rp(u|o+)r\s*s(a|o)d(a|o)r
+Shib Char,Madaripur,sh*i(b|v)\s*ch(a+|o+)r
+Shibalaya,Manikganj,sh*i(b|v)a+l(a+|o+)(i|y)a*
+Shibganj,Bogra,\s+sh*i(b|v)gh*(o|a)n(j|z)\s+
+Shibganj,Chapainawabganj,\s+sh*i(b|v)gh*(o|a)n(j|z)\s+
+Shibpur,Narsingdi,\s+sh*i(b|v)p(o+|u)r\s+
+Shyamnagar,Satkhira,sh*y*a+m\s*n(a|o)gh*(a|o)r|sh*e+m\s*n(a|o)gh*(a|o)r
+Shyampur,Dhaka,sh*y*a+m\s*p(o+|u)r|sh*e+m\s*p(o+|u)r
+Singair,Manikganj,\s+sh*inga+(i|y)r\s+
+Singra,Natore,\s+sh*i+ngra+\s+
+Sirajganj Sadar,Sirajganj,sh*(i|e)ra+(j|z)h*gh*(a|o)nj\s*s(a|o)d(a|o)r
+Sitakunda,Chittagong,sh*i+tak(o+|u)nda*
+Sonadanga,Khulna,sh*(o+|u)na+d(a+|o|u)ngh*a+
+Sonagazi,Feni,sh*(o|u)na+gh*a+(j|z|g)(i|y)
+Sonaimuri,Noakhali,sh*(o+|u)na+(i|y)m(o|u)r(i+|y)
+Sonargaon,Narayanganj,sh*(o+|u)na+rgh*a+o*n*
+Sonatola,Bogra,sh*(o+|u)na+t(a|o)la+
+Sreebardi,Sherpur,s(re+|ri)(b|v)(a+|o+)rd(i+|e+)
+Sreemangal,Maulvibazar,s(re+|ri)m(a+|o+)ngh*(a+|o+)l
+Sreenagar,Munshiganj,s(re+|ri)\s*n(a|o)gh*(a|o)r
+Sreepur,Gazipur,\s+s(ree|ri)p(o+|u)r\s+
+Sreepur,Magura,\s+s(ree|ri)p(o+|u)r\s+
+Subarnachar,Noakhali,sh*(o+|u)b(a+|o+)rn(a+|o+)\s*ch(a+|o+)r
+Sujanagar,Pabna,sh*(o+|u)(j|z)a+\s*n(a|o)gh*(a|o)r
+Sulla,Sunamganj,\s+sh*(o+|u)l+a+h*|sh*a+l+ah*\s+
+Sunamganj Sadar,Sunamganj,s(u|o+)na+mgh*(a|o)nj\s*s(a|o)d(a|o)r
+Sundarganj,Gaibandha,sh*(o|u)nd(a+|o+)r\s*gh*(o|a)n(j|z)
+Sutrapur,Dhaka,sh*(o+|u)tra+\s*p(o+|u)r
+Sylhet Sadar,Sylhet,sylh*et\s*s(a|o)d(a|o)r
+Tahirpur,Sunamganj,\s+ta+hi+r\s*p(o+|u)r\s+
+Tala,Satkhira,\s+ta+la+\s+
+Tangail Sadar,Tangail,ta+ngh*a(i|y)l\s*s(a|o)d(a|o)r
+Tanore,Rajshahi,\s+ta+nore*\s+
+Taraganj,Rangpur,\s+ta+ra+\s*gh*(o|a)n(j|z)\s+
+Tarail,Kishoreganj,\s+ta+ra+(i|y)l\s+
+Tarash,Sirajganj,\s+ta+ra+sh*\s+
+Tazumuddin,Bhola,t(a+|o+)(z|j)(o|u)m(o|u)d+i+n
+Tejgaon,Dhaka,\s+te(j|z|g)ga+o*n*\s+
+Tejgaon Ind. Area,Dhaka,te(j|z|g)ga+o*n*\s*(ind(o|u)str*ia+l|ind.)\s*area
+Teknaf,Cox's Bazar,\s+te+kna+f\s+
+Tentulia,Panchagarh,ten*th*(o+|u)liy*a+
+Terokhada,Khulna,th*e+ro+kh*a+da+
+Thakurgaon Sadar,Thakurgaon,th*a+kurgaon*\s*s(a|o)d(a|o)r
+Thanchi,Bandarban,\s+th*a+nch*(i+|e)\s+
+Titas,Comilla,\s+tita+sh*\s+
+Tongibari,Munshiganj,t(o+|u)ng(i|y)\s*ba+r(e+|i+)
+Trishal,Mymensingh,\s+(tr|t)(i+|e+)sh*a+l\s+
+Tungi Para,Gopalganj,t(o+|u)ng(i|y)\s*pa+ra+
+Turag,Dhaka,\s+t(o+|u+)ra+g\s+
+Ukhia,Cox's Bazar,\s+(o+|u)h*kh*iy*a+\s+
+Ulipur,Kurigram,\s+(o+|u)li+\s*p(o+|u)r\s+
+Ullah Para,Sirajganj,(o+|u)l+ah*\s*pa+ra+
+Uttar Khan,Dhaka,(o+|u)t+(o|a)r\s*kh*a+n
+Uttara,Dhaka,\s+ut+(a+|o+)ra+\s+
+Wazirpur,Barisal,(w|o|u)(a|o)(z|j)irp(o+|u)r|(w|o+|u)o*(j|z)ip(o+|u)r
+Zakiganj,Sylhet,(z|j)h*(a|o)k(i|e)\s*gh*(o|a)n(j|z)
+Zanjira,Shariatpur,(z|j)h*a+n*(j|z)h*ira+|(z|j)h*a+jira+
+Zianagar,Pirojpur,(z|j|g)h*ia+\s*n(a|o)gh*(a|o)r
